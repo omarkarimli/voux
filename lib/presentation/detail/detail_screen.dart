@@ -22,6 +22,17 @@ class DetailScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/images/abstract_1.png',
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
+          ),
           SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, top: MediaQuery.of(context).padding.top + 16, bottom: 64),
