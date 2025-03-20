@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "81666312420",
+    "project_id": "voux39",
+    "storage_bucket": "voux39.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:81666312420:android:3edb24374fc7d8568c04f1",
+        "android_client_info": {
+          "package_name": "com.omarkarimli.voux"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm8lAGHS_Yb-Vz5c85GjXjKxZm98ya6Js"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,29 @@
+extension StringExtensions on String {
+  String capitalizeFirst() {
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
+  }
+}
+
+extension TextFormatter on String {
+  String chunkText(int length) {
+    List<String> words = this.trim().split(RegExp(r'\s+')); // Split by spaces
+    List<String> lines = [];
+    String currentLine = "";
+
+    for (String word in words) {
+      if ((currentLine + word).length <= length) {
+        currentLine += (currentLine.isEmpty ? "" : " ") + word;
+      } else {
+        lines.add(currentLine); // Save the current line
+        currentLine = word; // Start a new line with the current word
+      }
+    }
+
+    if (currentLine.isNotEmpty) {
+      lines.add(currentLine); // Add the last line if any
+    }
+
+    return lines.join("\n"); // Join lines with line breaks
+  }
+}
