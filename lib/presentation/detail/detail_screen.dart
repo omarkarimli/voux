@@ -63,33 +63,33 @@ class DetailScreen extends StatelessWidget {
                           ),
                         ),
                         Positioned(
-                          bottom: 24,
-                          right: 24,
-                          child: Row(
-                            spacing: 8,
-                            children: [
-                              if (isChildOrNot)
-                                CircleAvatar(
-                                radius: 24,
-                                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                                child: IconButton(
-                                  icon: Icon(Icons.child_care_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                                  onPressed: () {
-                                    // Your action
-                                  },
-                                ),
-                              ),
-                              if (gender != Constants.unknown)
-                                CircleAvatar(
-                                radius: 24,
-                                backgroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                                child: Icon(
-                                    gender == Constants.male ? Icons.male_rounded : Icons.female_rounded,
-                                    color: Theme.of(context).colorScheme.secondaryContainer
-                                )
-                              ),
-                            ]
-                          )
+                            bottom: 24,
+                            right: 24,
+                            child: Row(
+                                spacing: 8,
+                                children: [
+                                  if (isChildOrNot)
+                                    CircleAvatar(
+                                      radius: 24,
+                                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                      child: IconButton(
+                                        icon: Icon(Icons.child_care_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                                        onPressed: () {
+                                          // Your action
+                                        },
+                                      ),
+                                    ),
+                                  if (gender != Constants.unknown)
+                                    CircleAvatar(
+                                        radius: 24,
+                                        backgroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                                        child: Icon(
+                                            gender == Constants.male ? Icons.male_rounded : Icons.female_rounded,
+                                            color: Theme.of(context).colorScheme.secondaryContainer
+                                        )
+                                    ),
+                                ]
+                            )
                         ),
                       ],
                     ),
@@ -124,7 +124,7 @@ class DetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Existing UI elements
-                        SizedBox(height: 22),
+                        SizedBox(height: 12),
                         ...clothingItems.map((item) => _buildItemWidget(context, item)),
                       ],
                     )
@@ -219,15 +219,15 @@ class DetailScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 22),
                   Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (item.size != Constants.unknown)
-                          Text(item.size, style: Theme.of(context).textTheme.bodyLarge),
-                        Text(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge),
-                      ],
-                    )
+                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (item.size != Constants.unknown)
+                            Text(item.size, style: Theme.of(context).textTheme.bodyLarge),
+                          Text(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge),
+                        ],
+                      )
                   )
                 ],
               ),
