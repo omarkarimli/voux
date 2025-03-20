@@ -7,6 +7,7 @@ import 'utils/constants.dart';
 import 'presentation/onboarding/onboarding_screen.dart';
 import 'presentation/home/home_screen.dart';
 import 'presentation/home/home_bloc.dart';
+import 'presentation/anim/anim_transition_route.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,26 +16,9 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // Define a common fade transition
-  PageRouteBuilder _fadeTransitionRoute(Widget page) {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = 0.0; // Start opacity for the fade
-        const end = 1.0;   // End opacity for the fade
-        const curve = Curves.easeInOut;
-
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        var opacityAnimation = animation.drive(tween);
-
-        return FadeTransition(opacity: opacityAnimation, child: child);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final brightness = MediaQuery.of(context).platformBrightness; // Fix here
+    final brightness = MediaQuery.of(context).platformBrightness;
 
     TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
 
@@ -47,7 +31,7 @@ class MyApp extends StatelessWidget {
         print('Navigating to: ${settings.name}');
         switch (settings.name) {
           case HomeScreen.routeName:
-            return _fadeTransitionRoute(
+            return animTransitionRoute(
               BlocProvider(
                 create: (context) => HomeBloc(),
                 child: HomeScreen(),

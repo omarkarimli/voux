@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'home_bloc.dart';
 import '../../utils/constants.dart';
+import '../anim/anim_transition_route.dart';
 import '../detail/detail_screen.dart';
 import '../detail/stacked_avatar_badge.dart';
-import 'home_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -62,8 +63,8 @@ class HomeScreen extends StatelessWidget {
           if (state is HomeSuccessState) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => DetailScreen(
+              animTransitionRoute(
+                DetailScreen(
                   imagePath: state.imagePath,
                   clothingItems: state.clothingItems,
                   gender: state.gender,
