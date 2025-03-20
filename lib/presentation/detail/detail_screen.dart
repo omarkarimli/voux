@@ -15,6 +15,12 @@ class DetailScreen extends StatelessWidget {
   const DetailScreen({super.key, required this.imagePath, required this.clothingItems, required this.gender, required this.isChildOrNot});
 
   static const routeName = '/${Constants.detail}';
+  static const listImg = [
+    "assets/images/d1.png",
+    "assets/images/d2.png",
+    "assets/images/d3.png",
+    "assets/images/d4.png"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +186,14 @@ class DetailScreen extends StatelessWidget {
         elevation: 3,
         child: Stack(
           children: [
+            Positioned(
+                bottom: -32,
+                right: -58,
+                child: Image.asset(
+                  listImg[clothingItems.indexOf(item) % listImg.length],
+                  width: 192,
+                )
+            ),
             Padding(
               padding: const EdgeInsets.all(8),
               child: Column(
