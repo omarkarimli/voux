@@ -11,6 +11,7 @@ class Constants {
   static const String cseId = "55f994cb2ea4442b2";
 
   static const String appName = "Voux";
+  static const String splash = "splash";
   static const String onboarding = "onboarding";
   static const String home = "home";
   static const String detail = "detail";

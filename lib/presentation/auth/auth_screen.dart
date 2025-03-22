@@ -146,9 +146,23 @@ class AuthScreen extends StatelessWidget {
       print('Signed in: ${user.user?.displayName}');
       await _saveLoginState(true);
 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Signed in as ${user.user?.displayName}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        ),
+      );
+
       Navigator.pushNamed(context, HomeScreen.routeName);
     } else {
       print('Sign-in failed');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sign-in failed', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        ),
+      );
     }
   }
 
