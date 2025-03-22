@@ -16,6 +16,11 @@ class Constants {
   static const String home = "home";
   static const String detail = "detail";
   static const String auth = "auth";
+  static const String settings = "settings";
+
+  static const String isLoggedIn = "isLoggedIn";
+  static const String isDarkMode = "isDarkMode";
+  static const String canNoti = "canNoti";
 
   static const String male = "male";
   static const String female = "female";

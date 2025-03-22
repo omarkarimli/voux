@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../firebase_options.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
-import '../home/home_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -48,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<bool> _getLoginState() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('isLoggedIn') ?? false;
+    return prefs.getBool(Constants.isLoggedIn) ?? false;
   }
 
   @override
@@ -56,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: Text(
-          "Voux",
+          Constants.appName,
           style: GoogleFonts.aboreto(
             fontSize: 112,
             letterSpacing: 8,

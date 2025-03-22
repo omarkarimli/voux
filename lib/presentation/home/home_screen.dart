@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../settings/settings_screen.dart';
 import 'home_bloc.dart';
 import '../../utils/constants.dart';
 import '../anim/anim_transition_route.dart';
@@ -11,48 +12,6 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   static const routeName = '/${Constants.home}';
-
-  void _showImageSourceSheet(BuildContext parentContext) {
-    showModalBottomSheet(
-      context: parentContext,
-      builder: (BuildContext context) {
-        return Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.camera_alt_rounded),
-                  title: Text('Camera'),
-                  onTap: () async {
-                    Navigator.pop(context); // Close the bottom sheet first
-
-                    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
-                    if (pickedFile != null) {
-                      BlocProvider.of<HomeBloc>(parentContext).add(AnalyzeImageEvent(pickedFile.path));
-                    }
-                  },
-                ),
-                Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.outline.withAlpha(50)),
-                ListTile(
-                  leading: Icon(Icons.photo_rounded),
-                  title: Text('Photos'),
-                  onTap: () async {
-                    Navigator.pop(context);
-
-                    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-                    if (pickedFile != null) {
-                      BlocProvider.of<HomeBloc>(parentContext).add(AnalyzeImageEvent(pickedFile.path));
-                    }
-                  },
-                ),
-                SizedBox(height: 16)
-              ],
-            )
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
                                   icon: Icon(Icons.settings_rounded, color: Theme.of(context).colorScheme.onSurface),
-                                  onPressed: () => Navigator.pop(context),
+                                  onPressed: () => Navigator.pushNamed(context, SettingsScreen.routeName),
                                 ),
                               ),
                             ),
@@ -160,7 +119,6 @@ class HomeScreen extends StatelessWidget {
                                     Material(
                                       elevation: 1,
                                       shape: const CircleBorder(),
-                                      color: Colors.transparent,
                                       child: CircleAvatar(
                                         radius: 24,
                                         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -188,10 +146,11 @@ class HomeScreen extends StatelessWidget {
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                                          backgroundColor: Theme.of(context).colorScheme.surface,
                                         ),
                                         child: RichText(
                                           text: TextSpan(
-                                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
+                                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                                             children: [
                                               TextSpan(
                                                 text: "🚀 Unlock ",
@@ -208,13 +167,14 @@ class HomeScreen extends StatelessWidget {
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                                          backgroundColor: Theme.of(context).colorScheme.surface,
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             RichText(
                                               text: TextSpan(
-                                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
+                                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                                                 children: [
                                                   TextSpan(text: "🏆  "),
                                                   TextSpan(text: "Remaining tasks "),
@@ -297,6 +257,48 @@ class HomeScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  void _showImageSourceSheet(BuildContext parentContext) {
+    showModalBottomSheet(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.camera_alt_rounded),
+                  title: Text('Camera'),
+                  onTap: () async {
+                    Navigator.pop(context); // Close the bottom sheet first
+
+                    final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+                    if (pickedFile != null) {
+                      BlocProvider.of<HomeBloc>(parentContext).add(AnalyzeImageEvent(pickedFile.path));
+                    }
+                  },
+                ),
+                Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                ListTile(
+                  leading: Icon(Icons.photo_rounded),
+                  title: Text('Photos'),
+                  onTap: () async {
+                    Navigator.pop(context);
+
+                    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                    if (pickedFile != null) {
+                      BlocProvider.of<HomeBloc>(parentContext).add(AnalyzeImageEvent(pickedFile.path));
+                    }
+                  },
+                ),
+                SizedBox(height: 16)
+              ],
+            )
+        );
+      },
     );
   }
 }

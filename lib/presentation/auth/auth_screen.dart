@@ -169,6 +169,10 @@ class AuthScreen extends StatelessWidget {
   // Function to save the login state in SharedPreferences
   Future<void> _saveLoginState(bool isLoggedIn) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', isLoggedIn);
+    await Future.wait([
+      prefs.setBool(Constants.isLoggedIn, isLoggedIn),
+      prefs.setBool(Constants.isDarkMode, false),
+      prefs.setBool(Constants.canNoti, false),
+    ]);
   }
 }
