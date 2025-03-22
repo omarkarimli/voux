@@ -27,7 +27,8 @@ android {
         applicationId = "com.omarkarimli.voux"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // minSdk = flutter.minSdkVersion
+        minSdk = project.findProperty("flutter.minSdkVersion")?.toString()?.toIntOrNull() ?: 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

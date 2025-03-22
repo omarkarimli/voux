@@ -12,7 +12,12 @@
           "package_name": "com.omarkarimli.voux"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "81666312420-hfhftlnc5s7g8kle60fujorb64mpnt1s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAm8lAGHS_Yb-Vz5c85GjXjKxZm98ya6Js"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "81666312420-hfhftlnc5s7g8kle60fujorb64mpnt1s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "81666312420-m69mmsiahbcv71pceq4e8eeeem9gl05u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.omarkarimli.voux"
+              }
+            }
+          ]
         }
       }
     }

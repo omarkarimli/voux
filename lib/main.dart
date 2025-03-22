@@ -8,6 +8,7 @@ import 'presentation/onboarding/onboarding_screen.dart';
 import 'presentation/home/home_screen.dart';
 import 'presentation/home/home_bloc.dart';
 import 'presentation/anim/anim_transition_route.dart';
+import 'presentation/auth/auth_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: Constants.appName,
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      home: OnboardingScreen(),
+      home: AuthScreen(),
       onGenerateRoute: (settings) {
         print('Navigating to: ${settings.name}');
         switch (settings.name) {
@@ -36,6 +37,10 @@ class MyApp extends StatelessWidget {
                 create: (context) => HomeBloc(),
                 child: HomeScreen(),
               ),
+            );
+          case OnboardingScreen.routeName:
+            return animTransitionRoute(
+              OnboardingScreen(),
             );
           default:
             print('No route found for: ${settings.name}');

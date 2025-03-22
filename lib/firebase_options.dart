@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '81666312420',
     projectId: 'voux39',
     storageBucket: 'voux39.firebasestorage.app',
+    iosClientId: '81666312420-m69mmsiahbcv71pceq4e8eeeem9gl05u.apps.googleusercontent.com',
     iosBundleId: 'com.omarkarimli.voux',
   );
 
@@ -73,6 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '81666312420',
     projectId: 'voux39',
     storageBucket: 'voux39.firebasestorage.app',
+    iosClientId: '81666312420-m69mmsiahbcv71pceq4e8eeeem9gl05u.apps.googleusercontent.com',
     iosBundleId: 'com.omarkarimli.voux',
   );
 
@@ -85,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'voux39.firebasestorage.app',
     measurementId: 'G-MYHZ233CK5',
   );
+
 }

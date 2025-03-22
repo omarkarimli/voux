@@ -7,7 +7,7 @@ extension StringExtensions on String {
 
 extension TextFormatter on String {
   String chunkText(int length) {
-    List<String> words = this.trim().split(RegExp(r'\s+')); // Split by spaces
+    List<String> words = trim().split(RegExp(r'\s+'));
     List<String> lines = [];
     String currentLine = "";
 

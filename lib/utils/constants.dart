@@ -14,6 +14,7 @@ class Constants {
   static const String onboarding = "onboarding";
   static const String home = "home";
   static const String detail = "detail";
+  static const String auth = "auth";
 
   static const String male = "male";
   static const String female = "female";
