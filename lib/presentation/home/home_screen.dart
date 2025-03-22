@@ -6,7 +6,7 @@ import 'home_bloc.dart';
 import '../../utils/constants.dart';
 import '../anim/anim_transition_route.dart';
 import '../detail/detail_screen.dart';
-import '../detail/stacked_avatar_badge.dart';
+import '../stacked_avatar_badge.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -146,7 +146,6 @@ class HomeScreen extends StatelessWidget {
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
                                         ),
                                         child: RichText(
                                           text: TextSpan(
@@ -167,7 +166,6 @@ class HomeScreen extends StatelessWidget {
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,

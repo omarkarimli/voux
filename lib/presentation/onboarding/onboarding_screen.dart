@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:voux/presentation/auth/auth_screen.dart';
 import '../../utils/constants.dart';
-import '../detail/stacked_avatar_badge.dart';
+import '../stacked_avatar_badge.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});

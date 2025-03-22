@@ -4,7 +4,7 @@ import 'package:voux/models/clothing_item_model.dart';
 import 'package:voux/utils/extensions.dart';
 import 'dart:io';
 import '../../utils/constants.dart';
-import 'stacked_avatar_badge.dart';
+import '../stacked_avatar_badge.dart';
 
 class DetailScreen extends StatelessWidget {
   final String imagePath;

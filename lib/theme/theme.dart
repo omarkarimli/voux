@@ -176,8 +176,8 @@ class MaterialTheme {
       primary: Color(0xffb1d18a),
       surfaceTint: Color(0xffb1d18a),
       onPrimary: Color(0xff1f3701),
-      primaryContainer: Color(0xff354e16),
-      onPrimaryContainer: Color(0xffcdeda3),
+      primaryContainer: Color(0xffc4f18e),//0xff192705
+      onPrimaryContainer: Color(0xff152200),//0xffcdeda3
       secondary: Color(0xffbfcbad),
       onSecondary: Color(0xff2a331e),
       secondaryContainer: Color(0xff404a33),
@@ -190,7 +190,7 @@ class MaterialTheme {
       onError: Color(0xff690005),
       errorContainer: Color(0xff93000a),
       onErrorContainer: Color(0xffffdad6),
-      surface: Color(0xff12140e),
+      surface: Color(0xff0e0e0e),//0xff12140e
       onSurface: Color(0xffe2e3d8),
       onSurfaceVariant: Color(0xffc5c8ba),
       outline: Color(0xff8f9285),
@@ -334,7 +334,6 @@ class MaterialTheme {
   ThemeData darkHighContrast() {
     return theme(darkHighContrastScheme());
   }
-
 
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
      useMaterial3: true,

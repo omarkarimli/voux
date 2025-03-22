@@ -67,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Text('Notification', style: Theme.of(context).textTheme.bodyLarge),
                       CupertinoSwitch(
                         value: _isNotificationEnabled!,
-                        activeTrackColor: Theme.of(context).colorScheme.tertiary,
+                        activeTrackColor: CupertinoColors.activeBlue,
                         onChanged: (bool? value) {
                           setState(() {
                             _isNotificationEnabled = value ?? false;
@@ -86,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Text('Dark mode', style: Theme.of(context).textTheme.bodyLarge),
                       CupertinoSwitch(
                         value: _isDarkModeEnabled!,
-                        activeTrackColor: Theme.of(context).colorScheme.tertiary,
+                        activeTrackColor: CupertinoColors.activeBlue,
                         onChanged: (bool? value) {
                           setState(() {
                             _isDarkModeEnabled = value ?? false;
@@ -152,8 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                       ),
                     ],
-                  ),
-                  Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                  )
                 ],
               ),
             ),
