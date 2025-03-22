@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart' as apple;
+import 'package:voux/presentation/home/home_screen.dart';
 import 'dart:io';
 import '../../utils/constants.dart';
 
@@ -48,7 +50,7 @@ class AuthScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () async {
                       final user = await signInWithGoogle();
-                      if (user != null) print('Signed in: ${user.user?.displayName}');
+                      _checkLoginState(context, user);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -75,7 +77,7 @@ class AuthScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () async {
                       final user = await signInWithApple();
-                      if (user != null) print('Signed in: ${user.user?.displayName}');
+                      _checkLoginState(context, user);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.onSurface,
@@ -137,5 +139,22 @@ class AuthScreen extends StatelessWidget {
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future<void> _checkLoginState(BuildContext context, UserCredential? user) async {
+    if (user != null) {
+      print('Signed in: ${user.user?.displayName}');
+      await _saveLoginState(true);
+
+      Navigator.pushNamed(context, HomeScreen.routeName);
+    } else {
+      print('Sign-in failed');
+    }
+  }
+
+  // Function to save the login state in SharedPreferences
+  Future<void> _saveLoginState(bool isLoggedIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 }
