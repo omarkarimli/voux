@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "81666312420-lo0rc1c67erkuv177ttpivfu6fj502u9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.omarkarimli.voux",
+            "certificate_hash": "77130bfb41d6c7f3c2cd720d7d7857757c784cee"
+          }
+        },
+        {
           "client_id": "81666312420-hfhftlnc5s7g8kle60fujorb64mpnt1s.apps.googleusercontent.com",
           "client_type": 3
         }

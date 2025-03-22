@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart' as apple;
+import 'dart:io';
 import '../../utils/constants.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -9,34 +14,128 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                ElevatedButton(
-                    onPressed: () {},
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/bg.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
+              child: Text(
+                "Voux",
+                style: GoogleFonts.aboreto(
+                  fontSize: 112,
+                  letterSpacing: 8,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.surface,
+                ),
+              ),
+            )
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final user = await signInWithGoogle();
+                      if (user != null) print('Signed in: ${user.user?.displayName}');
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.surface,
+                      padding: EdgeInsets.symmetric(vertical: 12.0)
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text("Continue with Google", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
-                    )
-                ),
-                ElevatedButton(
-                    onPressed: () {},
+                    icon: Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: Image.asset(
+                        'assets/images/google.png',
+                        width: 18,
+                        height: 18,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    label: Text(
+                      "Continue with Google",
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    iconAlignment: IconAlignment.start,
+                  ),
+                  SizedBox(height: 12.0),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final user = await signInWithApple();
+                      if (user != null) print('Signed in: ${user.user?.displayName}');
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.onSurface,
+                      padding: EdgeInsets.symmetric(vertical: 12.0),
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text("Continue with Apple", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
-                    )
-                )
-              ],
-            )
-          ],
-        )
+                    icon: Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: Image.asset(
+                        'assets/images/apple.png',
+                        width: 18,
+                        height: 18,
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                    ),
+                    label: Text(
+                      "Continue with Apple",
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                    ),
+                    iconAlignment: IconAlignment.start,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  Future<UserCredential?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return null; // User canceled sign-in
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future<UserCredential?> signInWithApple() async {
+    if (!Platform.isIOS) return null;
+
+    final credential = await apple.SignInWithApple.getAppleIDCredential(
+      scopes: [apple.AppleIDAuthorizationScopes.email, apple.AppleIDAuthorizationScopes.fullName],
+    );
+
+    final oauthCredential = OAuthProvider("apple.com").credential(
+      idToken: credential.identityToken,
+      accessToken: credential.authorizationCode,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+  }
+
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 }
