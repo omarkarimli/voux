@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import '../settings/settings_screen.dart';
+import '../upgrade/upgrade_screen.dart';
 import 'home_bloc.dart';
 import '../../utils/constants.dart';
 import '../anim/anim_transition_route.dart';
 import '../detail/detail_screen.dart';
-import '../stacked_avatar_badge.dart';
+import '../reusables/stacked_avatar_badge.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -142,7 +143,7 @@ class HomeScreen extends StatelessWidget {
                                     children: [
                                       ElevatedButton(
                                         onPressed: () {
-                                          // Define what happens when the button is pressed
+                                          Navigator.pushNamed(context, UpgradeScreen.routeName);
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voux/presentation/settings/settings_screen.dart';
 import 'package:voux/presentation/splash/splash_screen.dart';
+import 'package:voux/presentation/upgrade/upgrade_screen.dart';
 import 'package:voux/theme/theme_util.dart';
 import 'theme/theme.dart';
 import 'utils/constants.dart';
@@ -61,6 +62,8 @@ class MyApp extends StatelessWidget {
         return animTransitionRoute(const AuthScreen());
       case SettingsScreen.routeName:
         return animTransitionRoute(SettingsScreen());
+      case UpgradeScreen.routeName:
+        return animTransitionRoute(UpgradeScreen());
       default:
         return null;
     }

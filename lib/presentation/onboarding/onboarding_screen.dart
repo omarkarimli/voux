@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:voux/presentation/auth/auth_screen.dart';
 import '../../utils/constants.dart';
-import '../stacked_avatar_badge.dart';
+import '../reusables/stacked_avatar_badge.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -35,7 +35,6 @@ class OnboardingScreen extends StatelessWidget {
                       style: GoogleFonts.aboreto(
                         fontSize: 112,
                         letterSpacing: 8,
-                        fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.surface,
                       ),
                     ),

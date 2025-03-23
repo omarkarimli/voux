@@ -17,10 +17,18 @@ class Constants {
   static const String detail = "detail";
   static const String auth = "auth";
   static const String settings = "settings";
+  static const String upgrade = "upgrade";
 
+  // Shared Preferences
   static const String isLoggedIn = "isLoggedIn";
   static const String isDarkMode = "isDarkMode";
   static const String canNoti = "canNoti";
+  static const String currentPlan = "currentPlan";
+  static const String freePlan = "freePlan";
+  static const String plusPlan = "plusPlan";
+  static const String proPlan = "proPlan";
+
+  static const String plan = "Plan";
 
   static const String male = "male";
   static const String female = "female";
