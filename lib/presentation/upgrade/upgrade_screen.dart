@@ -119,12 +119,19 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
               plan.name.replaceAll(Constants.plan, "").trim().capitalizeFirst(),
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Text(
-              "\$${plan.price.toStringAsFixed(2)} / month",
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            SizedBox(height: 4),
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                children: [
+                  TextSpan(
+                    text: "\$${plan.price.toStringAsFixed(2)}",
+                  ),
+                  TextSpan(text: " / month", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+                ],
+              ),
             ),
             const SizedBox(height: 12),
-
             // Features
             ...plan.features.map((feature) => Text(
               "✓  $feature",
