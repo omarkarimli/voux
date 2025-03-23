@@ -108,4 +108,11 @@ Ensure that the response contains only the JSON object without any additional te
   static const String endTime = "endTime";
   static const String createdAt = "createdAt";
   static const String subscriptions = "subscriptions";
+  static const String analysisLimit = "analysisLimit";
+  static const String currentAnalysisCount = "currentAnalysisCount";
+
+  // Plan
+  static const int analysisLimitCountFree = 10;
+  static const int analysisLimitCountPlus = 50;
+  static const int analysisLimitCountPro = 100;
 }

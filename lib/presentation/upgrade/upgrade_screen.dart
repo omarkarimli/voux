@@ -304,13 +304,21 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       // Add the new subscription to the existing subscriptions list
       existingSubscriptions.add(newSubscription);
 
+      int newAnalysisLimit = (plan.name == Constants.proPlan)
+          ? Constants.analysisLimitCountPro
+          : (plan.name == Constants.plusPlan)
+          ? Constants.analysisLimitCountPlus
+          : Constants.analysisLimitCountFree;
+
       // Create an updated user object with the modified subscriptions list
       UserModel updatedUser = UserModel(
         uid: user.uid,
         name: user.displayName ?? Constants.unknown,
         email: user.email ?? '',
-        currentSubscriptionStatus: plan.name,
         createdAt: docSnapshot.data()?[Constants.createdAt] ?? Timestamp.now(),
+        currentSubscriptionStatus: plan.name,
+        analysisLimit: newAnalysisLimit,
+        currentAnalysisCount: 0,
         subscriptions: existingSubscriptions,
       );
 

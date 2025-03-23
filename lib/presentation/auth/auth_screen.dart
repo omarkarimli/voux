@@ -206,8 +206,10 @@ class AuthScreen extends StatelessWidget {
         uid: user.uid,
         name: user.displayName ?? Constants.unknown,
         email: user.email ?? '',
-        currentSubscriptionStatus: Constants.freePlan,
         createdAt: now,
+        currentSubscriptionStatus: Constants.freePlan,
+        analysisLimit: Constants.analysisLimitCountFree,
+        currentAnalysisCount: 0,
         subscriptions: [initialSubscription],
       );
 

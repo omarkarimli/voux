@@ -6,16 +6,20 @@ class UserModel {
   final String uid;
   final String name;
   final String email;
-  final String currentSubscriptionStatus;
   final Timestamp createdAt;
+  final String currentSubscriptionStatus;
+  final int analysisLimit;
+  final int currentAnalysisCount;
   final List<SubscriptionPaymentModel> subscriptions;
 
   UserModel({
     required this.uid,
     required this.name,
     required this.email,
-    required this.currentSubscriptionStatus,
     required this.createdAt,
+    required this.currentSubscriptionStatus,
+    required this.analysisLimit,
+    required this.currentAnalysisCount,
     required this.subscriptions,
   });
 
@@ -25,8 +29,10 @@ class UserModel {
       uid: data[Constants.uid] ?? '',
       name: data[Constants.name] ?? '',
       email: data[Constants.email] ?? '',
-      currentSubscriptionStatus: data[Constants.currentSubscriptionStatus] ?? '',
       createdAt: data[Constants.createdAt] ?? Timestamp.now(),
+      currentSubscriptionStatus: data[Constants.currentSubscriptionStatus] ?? '',
+      analysisLimit: data[Constants.analysisLimit] ?? 0,
+      currentAnalysisCount: data[Constants.currentAnalysisCount] ?? 0,
       subscriptions: (data[Constants.subscriptions] as List<dynamic>? ?? [])
           .map((subscription) => SubscriptionPaymentModel.fromMap(subscription))
           .toList(),
@@ -39,8 +45,10 @@ class UserModel {
       Constants.uid: uid,
       Constants.name: name,
       Constants.email: email,
-      Constants.currentSubscriptionStatus: currentSubscriptionStatus,
       Constants.createdAt: createdAt,
+      Constants.currentSubscriptionStatus: currentSubscriptionStatus,
+      Constants.analysisLimit: analysisLimit,
+      Constants.currentAnalysisCount: currentAnalysisCount,
       Constants.subscriptions: subscriptions.map((sub) => sub.toMap()).toList(),
     };
   }
