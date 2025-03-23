@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart' as apple;
 import 'package:voux/presentation/home/home_screen.dart';
 import 'dart:io';
+import 'package:uuid/uuid.dart';
+import '../../models/subscription_payment_model.dart';
+import '../../models/user_model.dart';
 import '../../utils/constants.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -144,7 +148,11 @@ class AuthScreen extends StatelessWidget {
   Future<void> _checkLoginState(BuildContext context, UserCredential? user) async {
     if (user != null) {
       print('Signed in: ${user.user?.displayName}');
-      await _saveLoginState(true);
+
+      await Future.wait([
+        _saveUserToFirestore(user),
+        _saveLoginState(true),
+      ]);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -174,5 +182,36 @@ class AuthScreen extends StatelessWidget {
       prefs.setBool(Constants.isDarkMode, false),
       prefs.setBool(Constants.canNoti, false),
     ]);
+  }
+
+
+  Future<void> _saveUserToFirestore(UserCredential userCredential) async {
+    final user = userCredential.user;
+    if (user == null) return;
+
+    final userDoc = FirebaseFirestore.instance.collection(Constants.users).doc(user.uid);
+    final docSnapshot = await userDoc.get();
+
+    if (!docSnapshot.exists) {
+      // Create a new user with an initial subscription
+      Timestamp now = Timestamp.now();
+      SubscriptionPaymentModel initialSubscription = SubscriptionPaymentModel(
+        id: Uuid().v4(),
+        name: Constants.freePlan,
+        purchaseTime: now,
+        endTime: Timestamp.fromDate(now.toDate().add(Duration(days: 30))),
+      );
+
+      UserModel newUser = UserModel(
+        uid: user.uid,
+        name: user.displayName ?? Constants.unknown,
+        email: user.email ?? '',
+        currentSubscriptionStatus: Constants.freePlan,
+        createdAt: now,
+        subscriptions: [initialSubscription],
+      );
+
+      await userDoc.set(newUser.toMap());
+    }
   }
 }

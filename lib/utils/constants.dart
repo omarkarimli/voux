@@ -30,9 +30,11 @@ class Constants {
 
   static const String plan = "Plan";
 
+  // Gender
   static const String male = "male";
   static const String female = "female";
 
+  // Analyze
   static const String unknown = "unknown";
   static const String forChildOrNot = "forChildOrNot";
   static const String gender = "gender";
@@ -95,4 +97,15 @@ Return the result strictly in the following JSON format:
 
 Ensure that the response contains only the JSON object without any additional text.
 """;
+
+  // Firestore
+  static const String users = "users";
+  static const String id = "id";
+  static const String uid = "uid";
+  static const String email = "email";
+  static const String currentSubscriptionStatus = "currentSubscriptionStatus";
+  static const String purchaseTime = "purchaseTime";
+  static const String endTime = "endTime";
+  static const String createdAt = "createdAt";
+  static const String subscriptions = "subscriptions";
 }
