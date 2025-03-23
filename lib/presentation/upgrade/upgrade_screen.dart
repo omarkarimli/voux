@@ -53,29 +53,43 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 32),
-            Text(
-              'Upgrade to access',
-              style: Theme.of(context).textTheme.headlineLarge,
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: MediaQuery.of(context).padding.top + 72,
             ),
-            const SizedBox(height: 32),
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: plans.length,
-                itemBuilder: (context, index) {
-                  return _buildPlanCard(plans[index]);
-                },
-              )
-            )
-          ],
-        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Upgrade to access',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: plans.length,
+                      itemBuilder: (context, index) {
+                        return _buildPlanCard(plans[index]);
+                      },
+                    )
+                )
+              ],
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top,
+            left: 0,
+            child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)
+            ),
+          )
+        ],
       ),
     );
   }
@@ -87,7 +101,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
   Widget _buildPlanCard(PlanModel plan) {
     return Card(
-      margin: const EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(vertical: 16),
       color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         side: plan.name == _selectedPlan?.name

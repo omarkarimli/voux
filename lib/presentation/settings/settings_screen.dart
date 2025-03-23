@@ -44,120 +44,134 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 32),
-            Text(
-              'Settings',
-              style: Theme.of(context).textTheme.headlineLarge,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: MediaQuery.of(context).padding.top + 72,
             ),
-            const SizedBox(height: 32),
-
-            Expanded(
-              child: ListView(
-                children: [
-                  // Notification
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Settings',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: ListView(
                     children: [
-                      Text('Notification', style: Theme.of(context).textTheme.bodyLarge),
-                      CupertinoSwitch(
-                        value: _isNotificationEnabled!,
-                        activeTrackColor: CupertinoColors.activeBlue,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isNotificationEnabled = value ?? false;
-                          });
-                          _saveNotificationPreference(_isNotificationEnabled!);
-                        },
+                      // Notification
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Notification', style: Theme.of(context).textTheme.bodyLarge),
+                          CupertinoSwitch(
+                            value: _isNotificationEnabled!,
+                            activeTrackColor: CupertinoColors.activeBlue,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isNotificationEnabled = value ?? false;
+                              });
+                              _saveNotificationPreference(_isNotificationEnabled!);
+                            },
+                          )
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+
+                      // Dark Mode
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Dark mode', style: Theme.of(context).textTheme.bodyLarge),
+                          CupertinoSwitch(
+                            value: _isDarkModeEnabled!,
+                            activeTrackColor: CupertinoColors.activeBlue,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isDarkModeEnabled = value ?? false;
+                              });
+
+                              // Save dark mode preference
+                              _saveDarkModePreference(_isDarkModeEnabled!);
+
+                              // Update global theme mode
+                              themeNotifier.value = _isDarkModeEnabled! ? ThemeMode.dark : ThemeMode.light;
+                            },
+                          )
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+
+                      // Language
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Language', style: Theme.of(context).textTheme.bodyLarge),
+                          IconButton(
+                            onPressed: () => _showLangSheet(context),
+                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          ),
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+
+                      // Account
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Account', style: Theme.of(context).textTheme.bodyLarge),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          ),
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+
+                      // Privacy Policy
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Privacy Policy', style: Theme.of(context).textTheme.bodyLarge),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          ),
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+
+                      // About app
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('About app', style: Theme.of(context).textTheme.bodyLarge),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          ),
+                        ],
                       )
                     ],
                   ),
-                  Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
-
-                  // Dark Mode
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Dark mode', style: Theme.of(context).textTheme.bodyLarge),
-                      CupertinoSwitch(
-                        value: _isDarkModeEnabled!,
-                        activeTrackColor: CupertinoColors.activeBlue,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isDarkModeEnabled = value ?? false;
-                          });
-
-                          // Save dark mode preference
-                          _saveDarkModePreference(_isDarkModeEnabled!);
-
-                          // Update global theme mode
-                          themeNotifier.value = _isDarkModeEnabled! ? ThemeMode.dark : ThemeMode.light;
-                        },
-                      )
-                    ],
-                  ),
-                  Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
-
-                  // Language
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Language', style: Theme.of(context).textTheme.bodyLarge),
-                      IconButton(
-                        onPressed: () => _showLangSheet(context),
-                        icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                      ),
-                    ],
-                  ),
-                  Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
-
-                  // Account
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Account', style: Theme.of(context).textTheme.bodyLarge),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                      ),
-                    ],
-                  ),
-                  Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
-
-                  // Privacy Policy
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Privacy Policy', style: Theme.of(context).textTheme.bodyLarge),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                      ),
-                    ],
-                  ),
-                  Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
-
-                  // About app
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('About app', style: Theme.of(context).textTheme.bodyLarge),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top,
+            left: 0,
+            child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)
+            ),
+          )
+        ],
       ),
     );
   }
