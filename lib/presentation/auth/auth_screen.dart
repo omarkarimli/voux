@@ -184,7 +184,6 @@ class AuthScreen extends StatelessWidget {
     ]);
   }
 
-
   Future<void> _saveUserToFirestore(UserCredential userCredential) async {
     final user = userCredential.user;
     if (user == null) return;

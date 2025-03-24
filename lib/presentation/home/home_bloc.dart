@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../models/clothing_item_model.dart';
+import '../../models/user_model.dart';
 import '../../utils/constants.dart';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,11 +38,43 @@ class HomeFailureState extends HomeState {
   HomeFailureState(this.errorMessage);
 }
 
+class FetchUserEvent extends HomeEvent {
+  final String userId;
+
+  FetchUserEvent(this.userId);
+}
+
+class HomeUserSuccessState extends HomeState {
+  final UserModel user;
+
+  HomeUserSuccessState(this.user);
+}
+
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final String apiKey = Constants.geminiApiKey;
 
   HomeBloc() : super(HomeInitialState()) {
     on<AnalyzeImageEvent>(_onAnalyzeImage);
+    on<FetchUserEvent>(_onFetchUser);
+  }
+
+  Future<void> _onFetchUser(FetchUserEvent event, Emitter<HomeState> emit) async {
+    emit(HomeLoadingState());
+
+    try {
+      final userDoc = FirebaseFirestore.instance.collection(Constants.users).doc(event.userId);
+      final docSnapshot = await userDoc.get();
+
+      if (docSnapshot.exists && docSnapshot.data() != null) {
+        UserModel user = UserModel.fromFirestore(docSnapshot.data()!);
+        emit(HomeUserSuccessState(user));
+      } else {
+        emit(HomeFailureState("User not found"));
+      }
+    } catch (e) {
+      print("❌ Error fetching user: $e");
+      emit(HomeFailureState("Failed to fetch user: $e"));
+    }
   }
 
   Future<void> _onAnalyzeImage(AnalyzeImageEvent event, Emitter<HomeState> emit) async {

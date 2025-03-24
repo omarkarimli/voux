@@ -77,7 +77,7 @@ class HomeScreenWithBloc extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => HomeBloc(),
-      child: const HomeScreen(),
+      child: HomeScreen(),
     );
   }
 }

@@ -23,10 +23,6 @@ class Constants {
   static const String isLoggedIn = "isLoggedIn";
   static const String isDarkMode = "isDarkMode";
   static const String canNoti = "canNoti";
-  static const String currentPlan = "currentPlan";
-  static const String freePlan = "freePlan";
-  static const String plusPlan = "plusPlan";
-  static const String proPlan = "proPlan";
 
   static const String plan = "Plan";
 
@@ -111,7 +107,13 @@ Ensure that the response contains only the JSON object without any additional te
   static const String analysisLimit = "analysisLimit";
   static const String currentAnalysisCount = "currentAnalysisCount";
 
-  // Plan
+  // Plans
+  static const String currentPlan = "currentPlan";
+  static const String freePlan = "freePlan";
+  static const String plusPlan = "plusPlan";
+  static const String proPlan = "proPlan";
+
+  // Plan Numbers
   static const int analysisLimitCountFree = 10;
   static const int analysisLimitCountPlus = 50;
   static const int analysisLimitCountPro = 100;

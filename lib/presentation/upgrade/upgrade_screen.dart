@@ -42,7 +42,10 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   @override
   Widget build(BuildContext context) {
     if (_currentPlanName == null) {
-      return const Center(child: CircularProgressIndicator());
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: Center(child: CircularProgressIndicator())
+      );
     }
 
     return Scaffold(
@@ -179,23 +182,21 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
   void _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    final user = await _getUserFromFirestore();
+
+    if (!mounted) return; // Prevents setState() being called on disposed widget
+
     setState(() {
-      _currentPlanName = prefs.getString(Constants.currentPlan) ?? Constants.freePlan;
+      _currentPlanName = user?.currentSubscriptionStatus ?? Constants.freePlan;
       _selectedPlan = plans.firstWhere((plan) => plan.name == _currentPlanName, orElse: () => plans[0]);
 
-      // Set the isCurrentPlan flag for the selected plan
       plans = plans.map((plan) {
         return plan.copyWith(isCurrentPlan: plan.name == _currentPlanName);
       }).toList();
-
-      print("Current Plan Name: $_currentPlanName");
-      print("Selected Plan: ${_selectedPlan?.name} ${_selectedPlan?.price}");
     });
-  }
 
-  Future<void> _savePlanPreference(String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(Constants.currentPlan, value);
+    print("Current Plan Name: $_currentPlanName");
+    print("Selected Plan: ${_selectedPlan?.name} ${_selectedPlan?.price}");
   }
 
   void _showConfirmationDialog(PlanModel plan) {
@@ -325,7 +326,6 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       // Update the user document in Firestore with the updated subscriptions list
       await Future.wait([
         userDoc.update(updatedUser.toMap()),
-        _savePlanPreference(plan.name)
       ]);
 
       setState(() {
@@ -336,5 +336,19 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
       print("User subscriptions updated successfully.");
     }
+  }
+
+  Future<UserModel?> _getUserFromFirestore() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return null; // Return null if no user is signed in
+
+    final userDoc = FirebaseFirestore.instance.collection(Constants.users).doc(user.uid);
+    final docSnapshot = await userDoc.get();
+
+    if (docSnapshot.exists && docSnapshot.data() != null) {
+      return UserModel.fromFirestore(docSnapshot.data()!);
+    }
+
+    return null; // Return null if the document doesn't exist
   }
 }
