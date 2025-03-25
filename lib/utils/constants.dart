@@ -117,4 +117,15 @@ Ensure that the response contains only the JSON object without any additional te
   static const int analysisLimitCountFree = 10;
   static const int analysisLimitCountPlus = 50;
   static const int analysisLimitCountPro = 100;
+
+  // Report
+  static const String reports = "reports";
+  static const String reportText = "reportText";
+  static const String userId = "userId";
+  static const String timestamp = "timestamp";
+
+  // Report Numbers
+  static const int maxReportLength = 500;
+  static const int minReportLength = 10;
+  static const int maxReportLine = 5;
 }

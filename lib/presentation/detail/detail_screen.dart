@@ -4,6 +4,7 @@ import 'package:voux/models/clothing_item_model.dart';
 import 'package:voux/utils/extensions.dart';
 import 'dart:io';
 import '../../utils/constants.dart';
+import '../reusables/report_bottom_sheet.dart';
 import '../reusables/stacked_avatar_badge.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -111,7 +112,17 @@ class DetailScreen extends StatelessWidget {
                               ]
                           ),
                           ElevatedButton(
-                              onPressed: (){},
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                  ),
+                                  builder: (context) {
+                                    return ReportBottomSheet();
+                                  },
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Theme.of(context).colorScheme.errorContainer,
                               ),

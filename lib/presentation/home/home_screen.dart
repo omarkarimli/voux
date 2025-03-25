@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:voux/models/user_model.dart';
+import '../../models/user_model.dart';
 import '../settings/settings_screen.dart';
 import '../upgrade/upgrade_screen.dart';
 import '../../utils/constants.dart';
@@ -88,8 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           } else if (state is HomeFailureState) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to analyze image: ${state.errorMessage}")),
+              SnackBar(content: Text("Failed to analyze image.")),
             );
+            print("Error: ${state.errorMessage}");
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(
@@ -237,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           text: TextSpan(
                                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                                             children: [
-                                              TextSpan(text: "🏆  Completed ", style: const TextStyle(fontWeight: FontWeight.bold)),
+                                              TextSpan(text: "🏆  Explored ", style: const TextStyle(fontWeight: FontWeight.bold)),
                                               TextSpan(
                                                 text: "${userModel?.currentAnalysisCount}/${userModel?.analysisLimit}"
                                               ),
@@ -295,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           children: [
                                             Text("Total explored", style: Theme.of(context).textTheme.bodyLarge),
                                             SizedBox(height: 4),
-                                            Text("23 images", style: Theme.of(context).textTheme.headlineMedium),
+                                            Text("${userModel?.currentAnalysisCount} images", style: Theme.of(context).textTheme.headlineMedium),
                                           ],
                                         ),
                                       ),
@@ -324,15 +325,26 @@ class _HomeScreenState extends State<HomeScreen> {
       context: parentContext,
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.only(
+            top: 8,
+            left: 8,
+            right: 8,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.onSurface),
                 title: Text('Camera', style: Theme.of(context).textTheme.bodyLarge),
-                onTap: () {
-                  // Launch Camera
+                onTap: () async {
+                  Navigator.pop(context);
+
+                  // Source camera
+                  final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+                  if (pickedFile != null) {
+                    BlocProvider.of<HomeBloc>(parentContext).add(AnalyzeImageEvent(pickedFile.path));
+                  }
                 },
               ),
               ListTile(
@@ -341,6 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () async {
                   Navigator.pop(context);
 
+                  // Source gallery
                   final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
                   if (pickedFile != null) {
                     BlocProvider.of<HomeBloc>(parentContext).add(AnalyzeImageEvent(pickedFile.path));

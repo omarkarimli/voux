@@ -37,6 +37,9 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
     // Initialize in-app purchase
     _inAppPurchase = InAppPurchase.instance;
+
+    // Listen to purchases globally
+    _inAppPurchase.purchaseStream.listen(_handlePurchaseUpdate);
   }
 
   @override
@@ -232,8 +235,12 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       return;
     }
 
-    // Replace with your actual subscription product IDs from Google Play
-    final Set<String> kProductIds = { Constants.freePlan, Constants.plusPlan, Constants.proPlan};
+    // Replace with your actual subscription product IDs from Google Play and App Store
+    final Set<String> kProductIds = {
+      Constants.freePlan,
+      Constants.plusPlan,
+      Constants.proPlan
+    };
 
     final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(kProductIds);
 
@@ -276,6 +283,19 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
         }
       }
     });
+  }
+
+  void _handlePurchaseUpdate(List<PurchaseDetails> purchaseDetailsList) async {
+    for (var purchaseDetails in purchaseDetailsList) {
+      if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
+        await _inAppPurchase.completePurchase(purchaseDetails);
+        PlanModel? purchasedPlan = plans.firstWhereOrNull((plan) => plan.name == purchaseDetails.productID);
+        if (purchasedPlan != null) {
+          await _updateUserInFirestore(purchasedPlan);
+          Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
+        }
+      }
+    }
   }
 
   Future<void> _updateUserInFirestore(PlanModel plan) async {
@@ -351,4 +371,5 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
     return null; // Return null if the document doesn't exist
   }
+
 }
