@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late User? user;
-  late UserModel userModel;  // Declare this variable
+  UserModel? userModel;
 
   @override
   void initState() {
@@ -62,12 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (state is HomeSuccessState) {
             // Update user in Firestore if analysis is successful
-            FirebaseFirestore.instance
-                .collection(Constants.users)
-                .doc(user!.uid)
-                .update({
-              Constants.currentAnalysisCount: userModel.currentAnalysisCount + 1,
-            });
+            if (userModel != null) {
+              FirebaseFirestore.instance
+                  .collection(Constants.users)
+                  .doc(user!.uid)
+                  .update({
+                Constants.currentAnalysisCount: userModel!.currentAnalysisCount + 1,
+              });
+            }
 
             // Navigate to DetailScreen
             Navigator.push(
@@ -177,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                                       child: IconButton(
                                         onPressed: () {
-                                          if (userModel.currentAnalysisCount < userModel.analysisLimit) {
+                                          if (userModel != null && userModel!.currentAnalysisCount < userModel!.analysisLimit) {
                                             _showImageSourceSheet(context);
                                           } else {
                                             ScaffoldMessenger.of(context).showSnackBar(
@@ -237,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             children: [
                                               TextSpan(text: "🏆  Completed ", style: const TextStyle(fontWeight: FontWeight.bold)),
                                               TextSpan(
-                                                text: "${userModel.currentAnalysisCount}/${userModel.analysisLimit}"
+                                                text: "${userModel?.currentAnalysisCount}/${userModel?.analysisLimit}"
                                               ),
                                             ],
                                           ),

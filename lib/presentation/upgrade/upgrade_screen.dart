@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:uuid/uuid.dart';
+import '../home/home_screen.dart';
 import '../../models/subscription_payment_model.dart';
 import '../../models/user_model.dart';
 import '../../utils/extensions.dart';
@@ -27,7 +27,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   List<PlanModel> plans = [
     PlanModel(name: Constants.proPlan, price: 29.99, features: ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5"], isCurrentPlan: false),
     PlanModel(name: Constants.plusPlan, price: 19.99, features: ["Feature 1", "Feature 2", "Feature 3", "Feature 4"], isCurrentPlan: false),
-    PlanModel(name: Constants.freePlan, price: 9.99, features: ["Feature 1", "Feature 2", "Feature 3"], isCurrentPlan: false)
+    PlanModel(name: Constants.freePlan, price: 0.00, features: ["Feature 1", "Feature 2", "Feature 3"], isCurrentPlan: false)
   ];
 
   @override
@@ -181,7 +181,6 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   }
 
   void _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
     final user = await _getUserFromFirestore();
 
     if (!mounted) return; // Prevents setState() being called on disposed widget
@@ -213,9 +212,6 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
             ),
             TextButton(
               onPressed: () {
-                // Close dialog
-                Navigator.of(context).pop();
-
                 _purchasePlan(plan);
               },
               child: const Text("Yes"),
@@ -237,9 +233,9 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     }
 
     // Replace with your actual subscription product IDs from Google Play
-    final Set<String> _kProductIds = { Constants.freePlan, Constants.plusPlan, Constants.proPlan};
+    final Set<String> kProductIds = { Constants.freePlan, Constants.plusPlan, Constants.proPlan};
 
-    final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(_kProductIds);
+    final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(kProductIds);
 
     if (response.notFoundIDs.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -268,11 +264,15 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
             purchaseDetails.status == PurchaseStatus.restored) {
 
           // Successful purchase
+          await _inAppPurchase.completePurchase(purchaseDetails); // Complete the purchase
           await _updateUserInFirestore(plan);
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Successfully subscribed to ${plan.name}.")),
           );
+
+          // Go Home and remove UpgradeScreen from the stack
+          Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
         }
       }
     });
