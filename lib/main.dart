@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, themeMode, child) {
-        TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
+        TextTheme textTheme = createTextTheme(context);
         MaterialTheme theme = MaterialTheme(textTheme);
 
         return MaterialApp(

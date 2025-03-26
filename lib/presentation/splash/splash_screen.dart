@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../firebase_options.dart';
 import '../../main.dart';
@@ -56,11 +55,12 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Text(
           Constants.appName,
-          style: GoogleFonts.aboreto(
-            fontSize: 112,
+          style: TextStyle(
             letterSpacing: 8,
+            fontFamily: "Aboreto",
+            fontSize: 112,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
       ),

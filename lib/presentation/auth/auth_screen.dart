@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,10 +32,11 @@ class AuthScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
               child: Text(
-                "Voux",
-                style: GoogleFonts.aboreto(
-                  fontSize: 112,
+                Constants.appName,
+                style: TextStyle(
                   letterSpacing: 8,
+                  fontFamily: "Aboreto",
+                  fontSize: 112,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.surface,
                 ),

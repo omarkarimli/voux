@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 TextSpan(text: "I hope you are\n"),
                                 TextSpan(
                                     text: "doing well",
-                                    style: TextStyle(fontWeight: FontWeight.bold)
+                                    style: TextStyle(fontWeight: FontWeight.w600)
                                 ),
                               ],
                             ),
@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: Theme.of(context).textTheme.bodyLarge,
                                       children: const [
                                         TextSpan(text: "Let's find "),
-                                        TextSpan(text: "new style", style: TextStyle(fontWeight: FontWeight.bold)),
+                                        TextSpan(text: "new style", style: TextStyle(fontWeight: FontWeight.w600)),
                                       ],
                                     ),
                                   ),
@@ -217,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         children: [
                                           TextSpan(
                                             text: "🚀 Unlock ",
-                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                            style: const TextStyle(fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(text: "Premium"),
                                         ],
@@ -238,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           text: TextSpan(
                                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                                             children: [
-                                              TextSpan(text: "🏆  Explored ", style: const TextStyle(fontWeight: FontWeight.bold)),
+                                              TextSpan(text: "🏆  Explored ", style: const TextStyle(fontWeight: FontWeight.w600)),
                                               TextSpan(
                                                 text: "${userModel?.currentAnalysisCount}/${userModel?.analysisLimit}"
                                               ),

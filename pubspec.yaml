@@ -41,7 +41,6 @@ dependencies:
   share_plus: ^10.1.4
   url_launcher: ^6.3.1
   image_picker: ^1.1.2
-  google_fonts: ^6.2.1
   page_indicator_plus: ^1.0.4
   firebase_auth: ^5.5.1
   google_sign_in: ^6.3.0
@@ -122,3 +121,17 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/poppins_regular.ttf
+        - asset: assets/fonts/poppins_medium.ttf
+          weight: 500
+        - asset: assets/fonts/poppins_semibold.ttf
+          weight: 600
+        - asset: assets/fonts/poppins_bold.ttf
+          weight: 700
+    - family: Aboreto
+      fonts:
+        - asset: assets/fonts/aboreto_regular.ttf

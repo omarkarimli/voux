@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:voux/presentation/auth/auth_screen.dart';
 import '../../utils/constants.dart';
 import '../reusables/stacked_avatar_badge.dart';
@@ -25,10 +24,11 @@ class OnboardingScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
                 child: Text(
-                  "Voux",
-                  style: GoogleFonts.aboreto(
-                    fontSize: 112,
+                  Constants.appName,
+                  style: TextStyle(
                     letterSpacing: 8,
+                    fontFamily: "Aboreto",
+                    fontSize: 112,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.surface,
                   ),
@@ -87,7 +87,7 @@ class OnboardingScreen extends StatelessWidget {
                                 children: [
                                   Text("AI-Powered", style: Theme.of(context).textTheme.bodyLarge),
                                   SizedBox(height: 4),
-                                  Text("Discover fashion\ninsights from your\nwardrobe", style: Theme.of(context).textTheme.headlineMedium),
+                                  Text("Discover fashion\ninsights from your\nwardrobe", style: Theme.of(context).textTheme.headlineMedium?.copyWith(height: 1.4)),
                                 ],
                               )
                           ),
