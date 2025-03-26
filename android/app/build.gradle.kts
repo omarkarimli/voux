@@ -11,7 +11,8 @@ plugins {
 android {
     namespace = "com.omarkarimli.voux"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
+    ndkVersion = project.findProperty("flutter.ndkVersion")?.toString() ?: "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
