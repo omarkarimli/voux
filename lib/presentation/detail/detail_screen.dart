@@ -221,6 +221,10 @@ class DetailScreen extends StatelessWidget {
                           onPressed: () async {
                             if (await canLaunchUrl(searchUrl)) {
                               await launchUrl(searchUrl, mode: LaunchMode.externalApplication);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Failed to launch Google Search")),
+                              );
                             }
                           },
                           icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),

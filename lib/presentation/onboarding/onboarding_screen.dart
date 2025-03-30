@@ -23,14 +23,16 @@ class OnboardingScreen extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
-                child: Text(
-                  Constants.appName,
-                  style: TextStyle(
-                    letterSpacing: 8,
-                    fontFamily: "Aboreto",
-                    fontSize: 112,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.surface,
+                child: FittedBox(
+                  child: Text(
+                    Constants.appName,
+                    style: TextStyle(
+                      letterSpacing: 8,
+                      fontFamily: "Aboreto",
+                      fontSize: 112,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
                   ),
                 ),
               )

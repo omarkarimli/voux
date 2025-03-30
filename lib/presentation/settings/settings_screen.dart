@@ -49,8 +49,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           Padding(
             padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
+              left: 24,
+              right: 24,
               top: MediaQuery.of(context).padding.top + 72,
             ),
             child: Column(

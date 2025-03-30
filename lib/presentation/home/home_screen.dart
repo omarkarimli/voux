@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -88,7 +89,11 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           } else if (state is HomeFailureState) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to analyze image.")),
+              SnackBar(
+                  content: Text("Failed to analyze image."),
+                  showCloseIcon: true,
+                  behavior: SnackBarBehavior.floating
+              ),
             );
             print("Error: ${state.errorMessage}");
           }
@@ -121,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Settings
                           Align(
                             alignment: Alignment.topRight,
                             child: Container(
@@ -138,20 +144,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           SizedBox(height: 72),
-                          RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(height: 1.4),
-                              children: const [
-                                TextSpan(text: "Hello 👋 dear\n"),
-                                TextSpan(text: "I hope you are\n"),
-                                TextSpan(
-                                    text: "doing well",
-                                    style: TextStyle(fontWeight: FontWeight.w600)
-                                ),
-                              ],
+                          // Hello 👋 dear
+                          FittedBox(
+                            child: RichText(
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(height: 1.4),
+                                children: const [
+                                  TextSpan(text: "Hello 👋 dear\n"),
+                                  TextSpan(text: "I hope you are\n"),
+                                  TextSpan(
+                                      text: "doing well",
+                                      style: TextStyle(fontWeight: FontWeight.w600)
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
+                          // Let's find new style
                           Card(
                             color: Theme.of(context).colorScheme.surface,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
@@ -197,6 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
+                          // Unlock Premium & Explored
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: SingleChildScrollView(
@@ -282,7 +293,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             radius: 24,
                                             backgroundColor: Theme.of(context).colorScheme.surface,
                                             child: IconButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.pushNamed(context, UpgradeScreen.routeName);
+                                              },
                                               icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
                                             ),
                                           )
@@ -310,7 +323,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  if (state is HomeLoadingState) Center(child: const CircularProgressIndicator()),
+                  if (state is HomeLoadingState)
+                    Center(
+                      child: CupertinoActivityIndicator(
+                          radius: 20.0,
+                          color: Theme.of(context).colorScheme.primary
+                      )
+                    ),
                 ],
               ),
             );

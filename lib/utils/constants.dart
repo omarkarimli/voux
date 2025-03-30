@@ -18,6 +18,7 @@ class Constants {
   static const String auth = "auth";
   static const String settings = "settings";
   static const String upgrade = "upgrade";
+  static const String success = "success";
 
   // Shared Preferences
   static const String isLoggedIn = "isLoggedIn";

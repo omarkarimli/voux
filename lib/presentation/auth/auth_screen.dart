@@ -31,14 +31,16 @@ class AuthScreen extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: Padding(
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
-              child: Text(
-                Constants.appName,
-                style: TextStyle(
-                  letterSpacing: 8,
-                  fontFamily: "Aboreto",
-                  fontSize: 112,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.surface,
+              child: FittedBox(
+                child: Text(
+                  Constants.appName,
+                  style: TextStyle(
+                    letterSpacing: 8,
+                    fontFamily: "Aboreto",
+                    fontSize: 112,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
                 ),
               ),
             )
@@ -158,6 +160,9 @@ class AuthScreen extends StatelessWidget {
         SnackBar(
           content: Text('Signed in as ${user.user?.displayName}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          closeIconColor: Theme.of(context).colorScheme.onPrimaryContainer,
+          showCloseIcon: true,
+          behavior: SnackBarBehavior.floating
         ),
       );
 
@@ -167,8 +172,9 @@ class AuthScreen extends StatelessWidget {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Sign-in failed', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          content: Text('Sign-in failed'),
+          showCloseIcon: true,
+          behavior: SnackBarBehavior.floating
         ),
       );
     }

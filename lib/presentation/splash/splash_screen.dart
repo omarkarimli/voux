@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
             fontFamily: "Aboreto",
             fontSize: 112,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),

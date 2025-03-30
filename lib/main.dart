@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voux/presentation/settings/settings_screen.dart';
 import 'package:voux/presentation/splash/splash_screen.dart';
+import 'package:voux/presentation/success/success_screen.dart';
 import 'package:voux/presentation/upgrade/upgrade_screen.dart';
 import 'package:voux/theme/theme_util.dart';
 import 'theme/theme.dart';
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
           theme: theme.light(),
           darkTheme: theme.dark(),
           themeMode: themeMode, // Dynamic theme
-          home: const SplashScreen(),
+          home: SplashScreen(),
           onGenerateRoute: (settings) => _onGenerateRoute(settings),
         );
       },
