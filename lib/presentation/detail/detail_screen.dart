@@ -186,7 +186,14 @@ class DetailScreen extends StatelessWidget {
       details += " ${item.model}";
     }
 
-    Uri searchUrl = Uri.parse("https://www.google.com/search?q=${Uri.encodeComponent(details)}");
+    details = details.trim();
+    print(details);
+
+    // onPressed calls using this URL are not gated on a 'canLaunch' check
+    // because the assumption is that every device can launch a web URL.
+    final Uri toLaunch = Uri.https('www.google.com', '/search', {'q': details});
+
+    print(toLaunch);
 
     // Return a single card for each item containing all the details
     return Card(
@@ -218,15 +225,7 @@ class DetailScreen extends StatelessWidget {
                         radius: 24,
                         backgroundColor: Theme.of(context).colorScheme.surface,
                         child: IconButton(
-                          onPressed: () async {
-                            if (await canLaunchUrl(searchUrl)) {
-                              await launchUrl(searchUrl, mode: LaunchMode.externalApplication);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Failed to launch Google Search")),
-                              );
-                            }
-                          },
+                          onPressed: () => _launchInBrowser(context, toLaunch),
                           icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
                         ),
                       )
@@ -250,5 +249,17 @@ class DetailScreen extends StatelessWidget {
           ],
         )
     );
+  }
+
+  Future<void> _launchInBrowser(BuildContext context, Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch $url')),
+      );
+      throw Exception('Could not launch $url');
+    }
   }
 }
