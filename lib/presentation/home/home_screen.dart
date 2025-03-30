@@ -298,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               },
                                               icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
                                             ),
-                                          )
+                                          ),
                                         ],
                                       ),
                                       SizedBox(height: 22),

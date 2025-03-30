@@ -1,11 +1,15 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:voux/models/clothing_item_model.dart';
-import 'package:voux/utils/extensions.dart';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import '../../utils/constants.dart';
 import '../reusables/report_bottom_sheet.dart';
 import '../reusables/stacked_avatar_badge.dart';
+import '../../models/clothing_item_model.dart';
+import '../../utils/extensions.dart';
 
 class DetailScreen extends StatelessWidget {
   final String imagePath;
@@ -186,7 +190,7 @@ class DetailScreen extends StatelessWidget {
       details += " ${item.model}";
     }
 
-    details = details.trim();
+    details = gender + details;
     print(details);
 
     // onPressed calls using this URL are not gated on a 'canLaunch' check
@@ -221,17 +225,82 @@ class DetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgeSize: 24),
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Theme.of(context).colorScheme.surface,
-                        child: IconButton(
-                          onPressed: () => _launchInBrowser(context, toLaunch),
-                          icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
-                        ),
+                      Row(
+                        spacing: 4,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                width: 3,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              radius: 22,
+                              child: ClipOval(
+                                child: Image.asset(
+                                  "assets/images/ai_search.png",
+                                  width: 32,
+                                  height: 32,
+                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                            ),
+                          ),
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundColor: Theme.of(context).colorScheme.onSurface,
+                            child: IconButton(
+                              onPressed: () => _launchInBrowser(context, toLaunch),
+                              icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.surface),
+                            ),
+                          )
+                        ],
                       )
                     ],
                   ),
-                  SizedBox(height: 22),
+                  SizedBox(height: 8),
+                  FutureBuilder<List<String>>(
+                    future: fetchGoogleImages(details), // Fetch images
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                            child: CupertinoActivityIndicator(
+                                radius: 20.0,
+                                color: Theme.of(context).colorScheme.primary
+                            )
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        final imageUrls = snapshot.data!;
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal, // Make it horizontally scrollable
+                          child: Row(
+                            children: imageUrls.map((url) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16), // Adjust the radius as needed
+                                  child: Image.network(
+                                    url,
+                                    width: 128,
+                                    height: 96,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      } else {
+                        return Text('No images found');
+                      }
+                    },
+                  ),
+                  SizedBox(height: 16),
                   Padding(
                       padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                       child: Column(
@@ -260,6 +329,29 @@ class DetailScreen extends StatelessWidget {
         SnackBar(content: Text('Could not launch $url')),
       );
       throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<List<String>> fetchGoogleImages(String query) async {
+    const String apiKey = Constants.cseApiKey;
+    const String cx = Constants.cseId;
+
+    final Uri url = Uri.parse(
+        'https://www.googleapis.com/customsearch/v1?q=$query&cx=$cx&searchType=image&key=$apiKey');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List<String> imageUrls = [];
+
+      for (var item in data['items']) {
+        imageUrls.add(item['link']); // Extract image URL
+      }
+
+      return imageUrls;
+    } else {
+      throw Exception('Failed to load images');
     }
   }
 }
