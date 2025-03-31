@@ -33,6 +33,7 @@ class DetailScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
+          // Abstract
           Positioned(
             top: 0,
             left: 0,
@@ -46,7 +47,7 @@ class DetailScreen extends StatelessWidget {
           ),
           SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, top: MediaQuery.of(context).padding.top + 16, bottom: 64),
+                padding: EdgeInsets.only(left: 4, right: 4, top: MediaQuery.of(context).padding.top + 8, bottom: MediaQuery.of(context).padding.bottom + 48),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,11 +56,10 @@ class DetailScreen extends StatelessWidget {
                       children: [
                         Center(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(32),
+                            borderRadius: BorderRadius.circular(24),
                             child: Image.file(
                               File(imagePath),
                               width: MediaQuery.of(context).size.width,
-                              height: 332,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Image.asset('assets/placeholder.png', width: 128, height: 128, fit: BoxFit.cover);
@@ -99,57 +99,64 @@ class DetailScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 22),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Column(
                         children: [
                           Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/hanger.png", badgeSize: 32),
-                                SizedBox(width: 16),
-                                Container(
-                                  width: 1,
-                                  height: 54,
-                                  color: Theme.of(context).colorScheme.outline,
+                                Row(
+                                    children: [
+                                      StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/hanger.png", badgeSize: 32),
+                                      SizedBox(width: 16),
+                                      Container(
+                                        width: 1,
+                                        height: 54,
+                                        color: Theme.of(context).colorScheme.outline,
+                                      ),
+                                      SizedBox(width: 16),
+                                      Text("${clothingItems.length} items", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+                                    ]
                                 ),
-                                SizedBox(width: 16),
-                                Text("${clothingItems.length} items", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                        ),
+                                        builder: (context) {
+                                          return ReportBottomSheet();
+                                        },
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                                    ),
+                                    child: Text("Report", style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer))
+                                )
                               ]
                           ),
-                          ElevatedButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                  ),
-                                  builder: (context) {
-                                    return ReportBottomSheet();
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.errorContainer,
-                              ),
-                              child: Text("Report", style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer))
+                          SizedBox(height: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Existing UI elements
+                              SizedBox(height: 12),
+                              ...clothingItems.map((item) => _buildItemWidget(context, item)),
+                            ],
                           )
-                        ]
-                    ),
-                    SizedBox(height: 22),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Existing UI elements
-                        SizedBox(height: 12),
-                        ...clothingItems.map((item) => _buildItemWidget(context, item)),
-                      ],
+                        ],
+                      )
                     )
                   ],
                 ),
               )
           ),
           Positioned(
-            top: MediaQuery.of(context).padding.top + 32,
-            left: 32,
+            top: MediaQuery.of(context).padding.top + 18,
+            left: 14,
             child: Container(
               width: 42,
               height: 42,
@@ -193,12 +200,6 @@ class DetailScreen extends StatelessWidget {
     details = gender + details;
     print(details);
 
-    // onPressed calls using this URL are not gated on a 'canLaunch' check
-    // because the assumption is that every device can launch a web URL.
-    final Uri toLaunch = Uri.https('www.google.com', '/search', {'q': details});
-
-    print(toLaunch);
-
     // Return a single card for each item containing all the details
     return Card(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -225,45 +226,19 @@ class DetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgeSize: 24),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                width: 3,
-                              ),
-                            ),
-                            child: CircleAvatar(
-                              backgroundColor: Theme.of(context).colorScheme.surface,
-                              radius: 22,
-                              child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/ai_search.png",
-                                  width: 32,
-                                  height: 32,
-                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                ),
-                              ),
-                            ),
-                          ),
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Theme.of(context).colorScheme.onSurface,
-                            child: IconButton(
-                              onPressed: () => _launchInBrowser(context, toLaunch),
-                              icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.surface),
-                            ),
-                          )
-                        ],
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        child: IconButton(
+                          onPressed: () => _searchInBrowser(context, details),
+                          icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
+                        ),
                       )
                     ],
                   ),
                   SizedBox(height: 8),
-                  FutureBuilder<List<String>>(
-                    future: fetchGoogleImages(details), // Fetch images
+                  FutureBuilder<List<Map<String, String>>>(
+                    future: fetchGoogleImages(details), // Fetch images with links
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -273,22 +248,26 @@ class DetailScreen extends StatelessWidget {
                             )
                         );
                       } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
+                        print('Error: ${snapshot.error}');
+                        return SizedBox.shrink();
                       } else if (snapshot.hasData) {
-                        final imageUrls = snapshot.data!;
+                        final results = snapshot.data!;
                         return SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: imageUrls.map((url) {
+                            children: results.map((result) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Image.network(
-                                    url,
-                                    width: 128,
-                                    height: 96,
-                                    fit: BoxFit.cover,
+                                child: GestureDetector(
+                                  onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Image.network(
+                                      result['imageUrl']!,
+                                      width: 128,
+                                      height: 96,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               );
@@ -296,7 +275,8 @@ class DetailScreen extends StatelessWidget {
                           ),
                         );
                       } else {
-                        return Text('No images found');
+                        print('No images found');
+                        return SizedBox.shrink();
                       }
                     },
                   ),
@@ -308,7 +288,7 @@ class DetailScreen extends StatelessWidget {
                         children: [
                           if (item.size != Constants.unknown)
                             Text(item.size, style: Theme.of(context).textTheme.bodyLarge),
-                          Text(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge),
+                          Text(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)),
                         ],
                       )
                   )
@@ -320,19 +300,30 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _launchInBrowser(BuildContext context, Uri url) async {
+  Future<void> _searchInBrowser(BuildContext context, String query) async {
+    // onPressed calls using this URL are not gated on a 'canLaunch' check
+    // because the assumption is that every device can launch a web URL.
+    final Uri url = Uri.https('www.google.com', '/search', {'q': query});
+
+    print(url);
+
     if (!await launchUrl(
       url,
       mode: LaunchMode.externalApplication,
     )) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch $url')),
-      );
+      context.showCustomSnackBar(Constants.error, "Could not launch $url");
       throw Exception('Could not launch $url');
     }
   }
 
-  Future<List<String>> fetchGoogleImages(String query) async {
+  Future<void> _goToProductWebPageInBrowser(BuildContext context, String url) async {
+    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      context.showCustomSnackBar(Constants.error, "Could not launch $url");
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<List<Map<String, String>>> fetchGoogleImages(String query) async {
     const String apiKey = Constants.cseApiKey;
     const String cx = Constants.cseId;
 
@@ -340,16 +331,20 @@ class DetailScreen extends StatelessWidget {
         'https://www.googleapis.com/customsearch/v1?q=$query&cx=$cx&searchType=image&key=$apiKey');
 
     final response = await http.get(url);
+    print("Response: ${response.body}");
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      final List<String> imageUrls = [];
+      final List<Map<String, String>> results = [];
 
       for (var item in data['items']) {
-        imageUrls.add(item['link']); // Extract image URL
+        results.add({
+          'imageUrl': item['link'], // Extract image URL
+          'productUrl': item['image']['contextLink'], // Extract product page link
+        });
       }
 
-      return imageUrls;
+      return results;
     } else {
       throw Exception('Failed to load images');
     }

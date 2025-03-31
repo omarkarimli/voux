@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:voux/models/report_model.dart';
+import 'package:voux/utils/extensions.dart';
 import '../../utils/constants.dart';
 
 class ReportBottomSheet extends StatefulWidget {
@@ -16,7 +17,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
   String? errorMessage;
 
   // Send report to Firestore
-  Future<void> _sendReport(String reportText) async {
+  Future<void> _sendReport(String reportText, {Function? onSuccess, Function? onError}) async {
     try {
       final user = FirebaseAuth.instance.currentUser; // Get current user
       final report = ReportModel(
@@ -28,9 +29,18 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
       // Add the report to Firestore
       await FirebaseFirestore.instance.collection(Constants.reports).add(report.toMap());
 
-      print("Report sent successfully: $reportText");
+      // Call the onSuccess callback if it's provided
+      if (onSuccess != null) {
+        onSuccess();
+      }
+
     } catch (e) {
-      print("Error sending report: $e");
+      // Call the onError callback if it's provided
+      if (onError != null) {
+        onError(e);
+      }
+    } finally {
+      Navigator.pop(context);
     }
   }
 
@@ -75,10 +85,16 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
 
               if (reportText.isNotEmpty) {
                 if (reportText.length < Constants.maxReportLength && reportText.length > Constants.minReportLength) {
-                  _sendReport(reportText);
-                  Navigator.pop(context); // Close the bottom sheet
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Report submitted successfully")),
+                  _sendReport(
+                    reportText,
+                    onSuccess: () {
+                      // Handle success
+                      context.showCustomSnackBar(Constants.success, "Report submitted successfully");
+                    },
+                    onError: (e) {
+                      // Handle error
+                      context.showCustomSnackBar(Constants.error, "Error sending report");
+                    },
                   );
                 } else {
                   setState(() {

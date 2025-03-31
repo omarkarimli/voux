@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:voux/utils/extensions.dart';
 import '../../models/user_model.dart';
 import '../settings/settings_screen.dart';
 import '../upgrade/upgrade_screen.dart';
@@ -88,14 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               context.read<HomeBloc>().add(FetchUserEvent(user!.uid));
             });
           } else if (state is HomeFailureState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text("Failed to analyze image."),
-                  showCloseIcon: true,
-                  behavior: SnackBarBehavior.floating
-              ),
-            );
-            print("Error: ${state.errorMessage}");
+            context.showCustomSnackBar(Constants.error, "Error: ${state.errorMessage}");
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(

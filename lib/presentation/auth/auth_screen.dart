@@ -7,6 +7,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart' as apple;
 import 'package:voux/presentation/home/home_screen.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart';
+import 'package:voux/utils/extensions.dart';
 import '../../models/subscription_payment_model.dart';
 import '../../models/user_model.dart';
 import '../../utils/constants.dart';
@@ -149,34 +150,16 @@ class AuthScreen extends StatelessWidget {
 
   Future<void> _checkLoginState(BuildContext context, UserCredential? user) async {
     if (user != null) {
-      print('Signed in: ${user.user?.displayName}');
-
       await Future.wait([
         _saveUserToFirestore(user),
         _saveLoginState(true),
       ]);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Signed in as ${user.user?.displayName}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          closeIconColor: Theme.of(context).colorScheme.onPrimaryContainer,
-          showCloseIcon: true,
-          behavior: SnackBarBehavior.floating
-        ),
-      );
+      context.showCustomSnackBar(Constants.success, 'Signed in as ${user.user?.displayName}');
 
       Navigator.pushNamed(context, HomeScreen.routeName);
     } else {
-      print('Sign-in failed');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Sign-in failed'),
-          showCloseIcon: true,
-          behavior: SnackBarBehavior.floating
-        ),
-      );
+      context.showCustomSnackBar(Constants.error, 'Sign-in failed');
     }
   }
 

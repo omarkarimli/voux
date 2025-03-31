@@ -20,6 +20,9 @@ class Constants {
   static const String upgrade = "upgrade";
   static const String success = "success";
 
+  // Error Messages
+  static const String error = "error";
+
   // Shared Preferences
   static const String isLoggedIn = "isLoggedIn";
   static const String isDarkMode = "isDarkMode";

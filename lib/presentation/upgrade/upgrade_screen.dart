@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:uuid/uuid.dart';
@@ -48,7 +49,12 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     if (_currentPlanName == null) {
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        body: Center(child: CircularProgressIndicator())
+        body: Center(
+            child: CupertinoActivityIndicator(
+                radius: 20.0,
+                color: Theme.of(context).colorScheme.primary
+            )
+        )
       );
     }
 
@@ -230,9 +236,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     final bool available = await _inAppPurchase.isAvailable();
 
     if (!available) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("In-app purchases are not available.")),
-      );
+      context.showCustomSnackBar(Constants.error, "In-app purchases are not available.");
       return;
     }
 
@@ -246,14 +250,14 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(kProductIds);
 
     if (response.notFoundIDs.isNotEmpty) {
-      showFailSnackBar("Subscription product not found.");
+      context.showCustomSnackBar(Constants.error, "Subscription product not found.");
       return;
     }
 
     final ProductDetails? productDetails = response.productDetails.firstWhereOrNull((p) => p.id == plan.name);
 
     if (productDetails == null) {
-      showFailSnackBar("Subscription plan ${plan.name} not found.");
+      context.showCustomSnackBar(Constants.error, "Subscription plan ${plan.name} not found.");
       return;
     }
 
@@ -346,16 +350,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
         plans = plans.map((p) => p.copyWith(isCurrentPlan: p.name == plan.name)).toList();
       });
 
-      print("User subscriptions updated successfully.");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text("Successfully subscribed to ${plan.name}.", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer)),
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            showCloseIcon: true,
-            behavior: SnackBarBehavior.floating
-        ),
-      );
+      context.showCustomSnackBar(Constants.success, "Successfully subscribed to ${plan.name}.");
 
       // Go Success and remove UpgradeScreen from the stack
       Navigator.pushNamedAndRemoveUntil(context, SuccessScreen.routeName, (route) => false);
@@ -374,18 +369,5 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     }
 
     return null; // Return null if the document doesn't exist
-  }
-
-  void showFailSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        showCloseIcon: true,
-        behavior: SnackBarBehavior.floating
-      ),
-    );
-    print(message);
-
-    Navigator.pop(context);
   }
 }

@@ -40,7 +40,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isDarkModeEnabled == null || _isNotificationEnabled == null) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+          child: CupertinoActivityIndicator(
+              radius: 20.0,
+              color: Theme.of(context).colorScheme.primary
+          )
+      );
     }
 
     return Scaffold(
@@ -113,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           Text('Language', style: Theme.of(context).textTheme.bodyLarge),
                           IconButton(
-                            onPressed: () => _showLangSheet(context),
+                            onPressed: () => _showLangPicker(context),
                             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                           ),
                         ],
@@ -177,45 +182,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Show language selection sheet
-  void _showLangSheet(BuildContext parentContext) {
+  void _showLangPicker(BuildContext context) {
+    final List<String> languages = ['English', 'Azerbaijani', 'Spanish', 'French'];
+
     showModalBottomSheet(
-      context: parentContext,
+      context: context,
       builder: (BuildContext context) {
+        int selectedIndex = 0;
+
         return Padding(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.only(
+            left: 18,
+            right: 18,
+            top: 24,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ListTile(
-                leading: CountryFlag.fromLanguageCode(
-                  'en',
-                  width: 24,
-                  height: 18,
+              SizedBox(
+                height: 96,
+                child: CupertinoPicker(
+                  itemExtent: 40.0,
+                  scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+                  onSelectedItemChanged: (int index) {
+                    selectedIndex = index;
+                  },
+                  children: languages.map((lang) {
+                    return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
+                  }).toList(),
                 ),
-                title: const Text('English'),
-                trailing: CupertinoCheckbox(
-                  checkColor: Theme.of(context).colorScheme.surface,
-                  value: true,
-                  onChanged: (bool? value) {},
-                ),
-                onTap: () {},
               ),
-              const Divider(height: 1, thickness: 1),
-              ListTile(
-                leading: CountryFlag.fromLanguageCode(
-                  'az',
-                  width: 24,
-                  height: 18,
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  elevation: 3,
+                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                  backgroundColor: Theme.of(context).colorScheme.onSurface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
-                title: const Text('Azerbaijani'),
-                trailing: CupertinoCheckbox(
-                  checkColor: Theme.of(context).colorScheme.surface,
-                  value: false,
-                  onChanged: (bool? value) {},
-                ),
-                onTap: () {},
+                child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
               ),
-              const SizedBox(height: 16),
             ],
           ),
         );
