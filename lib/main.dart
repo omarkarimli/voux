@@ -65,6 +65,8 @@ class MyApp extends StatelessWidget {
         return animTransitionRoute(SettingsScreen());
       case UpgradeScreen.routeName:
         return animTransitionRoute(UpgradeScreen());
+      case SuccessScreen.routeName:
+        return animTransitionRoute(SuccessScreen());
       default:
         return null;
     }

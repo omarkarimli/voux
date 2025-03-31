@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:voux/presentation/auth/auth_screen.dart';
-import 'package:voux/presentation/home/home_screen.dart';
+import '../../presentation/home/home_screen.dart';
 import '../../utils/constants.dart';
 
 class SuccessScreen extends StatelessWidget {

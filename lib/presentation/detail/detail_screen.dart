@@ -277,13 +277,13 @@ class DetailScreen extends StatelessWidget {
                       } else if (snapshot.hasData) {
                         final imageUrls = snapshot.data!;
                         return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal, // Make it horizontally scrollable
+                          scrollDirection: Axis.horizontal,
                           child: Row(
                             children: imageUrls.map((url) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16), // Adjust the radius as needed
+                                  borderRadius: BorderRadius.circular(16),
                                   child: Image.network(
                                     url,
                                     width: 128,
