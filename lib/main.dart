@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voux/presentation/settings/settings_screen.dart';
-import 'package:voux/presentation/splash/splash_screen.dart';
-import 'package:voux/presentation/success/success_screen.dart';
-import 'package:voux/presentation/upgrade/upgrade_screen.dart';
-import 'package:voux/theme/theme_util.dart';
-import 'theme/theme.dart';
-import 'utils/constants.dart';
+import 'package:voux/presentation/privacyPolicy/privacy_policy_screen.dart';
+import 'presentation/agreement/agreement_screen.dart';
+import 'presentation/settings/settings_screen.dart';
+import 'presentation/splash/splash_screen.dart';
+import 'presentation/success/success_screen.dart';
+import 'presentation/upgrade/upgrade_screen.dart';
 import 'presentation/onboarding/onboarding_screen.dart';
 import 'presentation/home/home_screen.dart';
 import 'presentation/home/home_bloc.dart';
 import 'presentation/anim/anim_transition_route.dart';
 import 'presentation/auth/auth_screen.dart';
+import 'theme/theme_util.dart';
+import 'theme/theme.dart';
+import 'utils/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,12 +57,18 @@ class MyApp extends StatelessWidget {
 
   PageRouteBuilder? _onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case SplashScreen.routeName:
+        return animTransitionRoute(const SplashScreen());
       case HomeScreen.routeName:
         return animTransitionRoute(const HomeScreenWithBloc());
       case OnboardingScreen.routeName:
         return animTransitionRoute(const OnboardingScreen());
       case AuthScreen.routeName:
         return animTransitionRoute(const AuthScreen());
+      case PrivacyPolicyScreen.routeName:
+        return animTransitionRoute(const PrivacyPolicyScreen());
+      case AgreementScreen.routeName:
+        return animTransitionRoute(const AgreementScreen());
       case SettingsScreen.routeName:
         return animTransitionRoute(SettingsScreen());
       case UpgradeScreen.routeName:

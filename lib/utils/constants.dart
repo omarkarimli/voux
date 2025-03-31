@@ -16,6 +16,8 @@ class Constants {
   static const String home = "home";
   static const String detail = "detail";
   static const String auth = "auth";
+  static const String privacyPolicy = "privacyPolicy";
+  static const String agreement = "agreement";
   static const String settings = "settings";
   static const String upgrade = "upgrade";
   static const String success = "success";
@@ -132,4 +134,85 @@ Ensure that the response contains only the JSON object without any additional te
   static const int maxReportLength = 500;
   static const int minReportLength = 10;
   static const int maxReportLine = 5;
+
+  static const String agreementText = '''
+Voux App Agreement
+
+Effective Date: [Insert Date]
+
+1. Introduction
+Welcome to Voux! This Agreement outlines the terms and conditions governing your use of the Voux mobile application ("App"). By using the App, you agree to be bound by these terms. If you do not agree, please refrain from using the App.
+
+2. User Responsibilities
+- You must be at least 13 years old to use Voux.
+- You agree not to misuse the App, including but not limited to unauthorized access, data scraping, or distributing harmful content.
+- You are responsible for maintaining the confidentiality of your account information.
+
+3. AI-Based Recommendations
+Voux provides clothing recommendations using AI and image recognition technology. While we strive for accuracy, we do not guarantee the exact match or availability of suggested items.
+
+4. Third-Party Links and Stores
+The App may provide links to third-party websites and stores. We do not endorse or take responsibility for external sites, their content, or transactions.
+
+5. Privacy & Data Collection
+- Voux collects and processes personal data in accordance with our Privacy Policy.
+- Images uploaded for analysis are processed for AI-based recommendations but are not stored permanently.
+
+6. Intellectual Property
+All content, trademarks, and services within Voux are owned by the App developers or licensors. You may not copy, distribute, or use the App’s content for commercial purposes without permission.
+
+7. Limitation of Liability
+Voux is provided "as is" without warranties of any kind. We are not liable for any direct, indirect, or consequential damages arising from your use of the App.
+
+8. Changes to the Agreement
+We may update this Agreement from time to time. Continued use of the App after updates constitutes acceptance of the revised terms.
+
+9. Contact Information
+For any questions regarding this Agreement, please contact us at [Insert Contact Email].
+
+By using Voux, you acknowledge that you have read, understood, and agree to this Agreement.
+''';
+
+  static const String privacyPolicyText = '''
+Voux App Privacy Policy
+
+Effective Date: [Insert Date]
+
+1. Introduction
+Welcome to Voux! Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your personal data when you use our mobile application ("App").
+
+2. Information We Collect
+- **Personal Information:** When you create an account, we collect your name, email address, and other necessary details.
+- **Image Data:** Uploaded images are used for AI-based analysis but are not stored permanently.
+- **Usage Data:** We collect information about how you interact with the App, including features accessed and time spent.
+- **Device Information:** We may collect information about your device, including model, operating system, and IP address.
+
+3. How We Use Your Information
+- To provide AI-powered clothing recommendations.
+- To improve App functionality and user experience.
+- To analyze trends and enhance security.
+- To send important notifications related to your account and App updates.
+
+4. Data Sharing & Third Parties
+- We do **not** sell your personal data to third parties.
+- We may share data with trusted service providers who assist in running the App (e.g., cloud storage, AI processing services).
+- External links and third-party stores may have their own privacy policies. We are not responsible for their practices.
+
+5. Data Security
+We implement industry-standard security measures to protect your data. However, no method of transmission over the internet is 100% secure.
+
+6. User Rights
+- You have the right to access, update, or delete your personal data.
+- You can opt out of certain data collection features in the settings.
+
+7. Children’s Privacy
+Voux is not intended for children under 13. We do not knowingly collect data from minors.
+
+8. Changes to Privacy Policy
+We may update this Privacy Policy periodically. Continued use of the App after changes signifies your acceptance of the revised terms.
+
+9. Contact Information
+For any questions about this Privacy Policy, please contact us at [Insert Contact Email].
+
+By using Voux, you agree to this Privacy Policy.''';
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:country_flags/country_flags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
+import '../agreement/agreement_screen.dart';
+import '../privacyPolicy/privacy_policy_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -144,7 +145,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           Text('Privacy Policy', style: Theme.of(context).textTheme.bodyLarge),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.pushNamed(context, PrivacyPolicyScreen.routeName),
+                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          ),
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+
+                      // Agreement
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Agreement', style: Theme.of(context).textTheme.bodyLarge),
+                          IconButton(
+                            onPressed: () => Navigator.pushNamed(context, AgreementScreen.routeName),
                             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                           ),
                         ],
