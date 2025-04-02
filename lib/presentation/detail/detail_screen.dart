@@ -4,7 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:voux/models/clothing_item_floor_model.dart';
+import 'package:voux/presentation/reusables/more_bottom_sheet.dart';
 import 'dart:io';
+import '../../db/database.dart';
 import '../../utils/constants.dart';
 import '../reusables/report_bottom_sheet.dart';
 import '../reusables/stacked_avatar_badge.dart';
@@ -20,12 +23,6 @@ class DetailScreen extends StatelessWidget {
   const DetailScreen({super.key, required this.imagePath, required this.clothingItems, required this.gender, required this.isChildOrNot});
 
   static const routeName = '/${Constants.detail}';
-  static const listImg = [
-    "assets/images/d1.png",
-    "assets/images/d2.png",
-    "assets/images/d3.png",
-    "assets/images/d4.png"
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -181,6 +178,9 @@ class DetailScreen extends StatelessWidget {
     if (item.name != Constants.unknown) {
       details += " ${item.name}";
     }
+    if (item.size != Constants.unknown) {
+      details += " ${item.size}";
+    }
     if (item.color != Constants.unknown) {
       details += " ${item.color}";
     }
@@ -209,14 +209,6 @@ class DetailScreen extends StatelessWidget {
         elevation: 3,
         child: Stack(
           children: [
-            Positioned(
-                bottom: -32,
-                right: -58,
-                child: Image.asset(
-                  listImg[clothingItems.indexOf(item) % listImg.length],
-                  width: 192,
-                )
-            ),
             Padding(
               padding: const EdgeInsets.all(8),
               child: Column(
@@ -230,8 +222,18 @@ class DetailScreen extends StatelessWidget {
                         radius: 24,
                         backgroundColor: Theme.of(context).colorScheme.surface,
                         child: IconButton(
-                          onPressed: () => _searchInBrowser(context, details),
-                          icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                              ),
+                              builder: (context) {
+                                return MoreBottomSheet(details: details, imagePath: imagePath);
+                              },
+                            );
+                          },
+                          icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface),
                         ),
                       )
                     ],
@@ -283,37 +285,14 @@ class DetailScreen extends StatelessWidget {
                   SizedBox(height: 16),
                   Padding(
                       padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (item.size != Constants.unknown)
-                            Text(item.size, style: Theme.of(context).textTheme.bodyLarge),
-                          Text(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)),
-                        ],
-                      )
+                      child: Text(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal))
                   )
                 ],
               ),
-            )
+            ),
           ],
         )
     );
-  }
-
-  Future<void> _searchInBrowser(BuildContext context, String query) async {
-    // onPressed calls using this URL are not gated on a 'canLaunch' check
-    // because the assumption is that every device can launch a web URL.
-    final Uri url = Uri.https('www.google.com', '/search', {'q': query});
-
-    print(url);
-
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      context.showCustomSnackBar(Constants.error, "Could not launch $url");
-      throw Exception('Could not launch $url');
-    }
   }
 
   Future<void> _goToProductWebPageInBrowser(BuildContext context, String url) async {

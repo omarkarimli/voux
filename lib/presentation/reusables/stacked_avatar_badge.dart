@@ -51,13 +51,11 @@ class StackedAvatarBadge extends StatelessWidget {
             child: CircleAvatar(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               radius: 24,
-              child: ClipOval(
-                child: Image.asset(
-                  badgeImage,
-                  width: badgeSize,
-                  height: badgeSize,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
+              child: Image.asset(
+                badgeImage,
+                width: badgeSize,
+                height: badgeSize,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
           )

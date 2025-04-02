@@ -21,6 +21,7 @@ class Constants {
   static const String settings = "settings";
   static const String upgrade = "upgrade";
   static const String success = "success";
+  static const String wishlist = "wishlist";
 
   // Error Messages
   static const String error = "error";

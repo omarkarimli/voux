@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voux/presentation/privacyPolicy/privacy_policy_screen.dart';
+import 'package:voux/presentation/wishlist/wishlist_screen.dart';
 import 'presentation/agreement/agreement_screen.dart';
 import 'presentation/settings/settings_screen.dart';
 import 'presentation/splash/splash_screen.dart';
@@ -75,6 +76,8 @@ class MyApp extends StatelessWidget {
         return animTransitionRoute(UpgradeScreen());
       case SuccessScreen.routeName:
         return animTransitionRoute(SuccessScreen());
+      case WishlistScreen.routeName:
+        return animTransitionRoute(WishlistScreen());
       default:
         return null;
     }

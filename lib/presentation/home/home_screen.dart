@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:voux/presentation/wishlist/wishlist_screen.dart';
 import 'package:voux/utils/extensions.dart';
+import '../../db/database.dart';
 import '../../models/user_model.dart';
 import '../settings/settings_screen.dart';
 import '../upgrade/upgrade_screen.dart';
@@ -265,13 +267,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             clipBehavior: Clip.antiAlias,
                             elevation: 3,
                             child: Stack(
+                              alignment: Alignment.center,
                               children: [
                                 Positioned(
-                                  bottom: -12,
-                                  right: 0,
+                                  bottom: -16,
+                                  right: -90,
                                   child: Image.asset(
-                                    'assets/images/abstract_2.png',
-                                    width: 192,
+                                    'assets/images/eye_ball.png',
+                                    width: 272,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                                 Padding(
@@ -283,16 +287,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/ai_search.png", badgeSize: 32),
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context).colorScheme.surface,
-                                            child: IconButton(
-                                              onPressed: () {
-                                                Navigator.pushNamed(context, UpgradeScreen.routeName);
-                                              },
-                                              icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
-                                            ),
-                                          ),
                                         ],
                                       ),
                                       SizedBox(height: 22),
@@ -310,9 +304,87 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ],
                                   ),
                                 ),
+                                Positioned(
+                                  right: 19,
+                                  top: 20,
+                                  child: CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(context, UpgradeScreen.routeName);
+                                      },
+                                      icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onPrimary),
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ),
+                          FutureBuilder<int>(
+                            future: _getWishlistSize(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Center(
+                                    child: CupertinoActivityIndicator(
+                                        radius: 20.0,
+                                        color: Theme.of(context).colorScheme.primary
+                                    )
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                return Text("Error", style: Theme.of(context).textTheme.bodyLarge);
+                              }
+                              return GestureDetector(
+                                  onTap: () => Navigator.pushNamed(context, WishlistScreen.routeName),
+                                  child: Card(
+                                    margin: const EdgeInsets.symmetric(vertical: 8),
+                                    color: Theme.of(context).colorScheme.surface,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                                    clipBehavior: Clip.antiAlias,
+                                    elevation: 3,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 8,
+                                            bottom: 8,
+                                            right: 8,
+                                            left: 24,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      style: Theme.of(context).textTheme.headlineSmall,
+                                                      children: [
+                                                        TextSpan(
+                                                            text: "Saved "
+                                                        ),
+                                                        TextSpan(
+                                                          text: "${snapshot.data} items",
+                                                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.normal),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/wishlist.png", badgeSize: 28),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                              );
+                            },
+                          )
                         ],
                       ),
                     ),
@@ -348,7 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.onSurface),
+                leading: Icon(Icons.camera_alt_outlined, color: Theme.of(context).colorScheme.onSurface),
                 title: Text('Camera', style: Theme.of(context).textTheme.bodyLarge),
                 onTap: () async {
                   Navigator.pop(context);
@@ -361,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo, color: Theme.of(context).colorScheme.onSurface),
+                leading: Icon(Icons.photo_outlined, color: Theme.of(context).colorScheme.onSurface),
                 title: Text('Gallery', style: Theme.of(context).textTheme.bodyLarge),
                 onTap: () async {
                   Navigator.pop(context);
@@ -378,6 +450,13 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  Future<int> _getWishlistSize() async {
+    final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+    final clothingItemDao = database.clothingItemDao;
+    final items = await clothingItemDao.getAllClothingItemFloorModels();
+    return items.length;
   }
 }
 
