@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/clothing_item_model.dart';
+import '../../models/optional_analysis_result_model.dart';
 import '../../models/user_model.dart';
 import '../../utils/constants.dart';
 import 'dart:io';
@@ -24,10 +25,9 @@ class HomeLoadingState extends HomeState {}
 class HomeSuccessState extends HomeState {
   final String imagePath;
   final List<ClothingItemModel> clothingItems;
-  final String gender;
-  final bool isChildOrNot;
+  final OptionalAnalysisResult optionalAnalysisResult;
 
-  HomeSuccessState(this.imagePath, this.clothingItems, this.gender, this.isChildOrNot);
+  HomeSuccessState(this.imagePath, this.clothingItems, this.optionalAnalysisResult);
 }
 
 class HomeFailureState extends HomeState {
@@ -80,16 +80,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final responses = await Future.wait([
         _analyzeImage(event.imagePath),
-        _analyzeGender(event.imagePath),
-        _analyzeIsChildOrNot(event.imagePath),
+        _analyzeOptional(event.imagePath)
       ]);
 
       final List<ClothingItemModel>? clothingItems = responses[0] as List<ClothingItemModel>?;
-      final genderAnalysis = responses[1] as String;
-      final isChildOrNot = responses[2] as bool;
+      final optionalAnalysisResult = responses[1] as OptionalAnalysisResult;
 
       if (clothingItems != null && clothingItems.isNotEmpty) {
-        emit(HomeSuccessState(event.imagePath, clothingItems, genderAnalysis, isChildOrNot));
+        emit(HomeSuccessState(event.imagePath, clothingItems, optionalAnalysisResult));
         print("✅ API Response: $clothingItems"); // Debugging log -> Success
       } else {
         emit(HomeFailureState("API response was empty or null"));
@@ -126,114 +124,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Future<String> _analyzeGender(String imagePath) async {
-    try {
-      final model = GenerativeModel(
-        model: Constants.geminiModel,
-        apiKey: apiKey,
-      );
-
-      final imageBytes = await File(imagePath).readAsBytes();
-
-      final content = [
-        Content.multi([
-          TextPart(Constants.geminiGenderPrompt),
-          DataPart('image/jpeg', imageBytes),
-        ])
-      ];
-
-      final response = await model.generateContent(content);
-
-      return _parseGender(response.text);
-    } catch (e) {
-      print("❌ API Call Error: $e");
-      return '"${Constants.unknown}"';
-    }
-  }
-
-  Future<bool> _analyzeIsChildOrNot(String imagePath) async {
-    try {
-      final model = GenerativeModel(
-        model: Constants.geminiModel,
-        apiKey: apiKey,
-      );
-
-      final imageBytes = await File(imagePath).readAsBytes();
-
-      final content = [
-        Content.multi([
-          TextPart(Constants.geminiIsChildOrNotPrompt),
-          DataPart('image/jpeg', imageBytes),
-        ])
-      ];
-
-      final response = await model.generateContent(content);
-
-      return _parseIsChildOrNot(response.text);
-    } catch (e) {
-      print("❌ API Call Error: $e");
-      return false;
-    }
-  }
-
-  bool _parseIsChildOrNot(String? responseText) {
-    print("📝 Raw API Response: $responseText");
-
-    if (responseText == null || responseText.trim().isEmpty) {
-      print("❌ Empty or null response from Gemini API");
-      return false;
-    }
-
-    try {
-      // Remove code block markers (` ```json ` or ` ``` `) if present
-      final String jsonString = responseText.replaceAll(RegExp(r'```(json)?'), '').trim();
-      print("📝 Cleared JSON: $jsonString");
-
-      // Parse JSON
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
-
-      // Extract boolean value safely
-      if (jsonData.containsKey("is_child") && jsonData["is_child"] is bool) {
-        return jsonData["is_child"] as bool;
-      }
-
-      print("❌ 'is_child' key missing or not a boolean");
-      return false; // Default if the key is missing or incorrectly formatted
-    } catch (e) {
-      print("❌ JSON Parsing Error: $e");
-      return false;
-    }
-  }
-
-  String _parseGender(String? responseText) {
-    print("📝 Raw API Response: $responseText");
-
-    if (responseText == null || responseText.trim().isEmpty) {
-      print("❌ Empty or null response from Gemini API");
-      return Constants.unknown;
-    }
-
-    try {
-      // Remove code block markers (` ```json ` or ` ``` `) if present
-      final String jsonString = responseText.replaceAll(RegExp(r'```(json)?'), '').trim();
-      print("📝 Cleared JSON: $jsonString");
-
-      // Parse JSON
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
-
-      // Extract gender value safely
-      if (jsonData.containsKey("gender") && jsonData["gender"] is String) {
-        return jsonData["gender"] as String;
-      }
-
-      print("❌ 'gender' key missing or not a string");
-      return Constants.unknown; // Default if key is missing or incorrectly formatted
-    } catch (e) {
-      print("❌ JSON Parsing Error: $e");
-      return Constants.unknown;
-    }
-  }
-
   List<ClothingItemModel> _parseResponse(String? responseText) {
     print("📝 Raw API Response: $responseText");
 
@@ -256,6 +146,83 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       print("❌ JSON Parsing Error: $e");
       return [];
+    }
+  }
+
+  Future<OptionalAnalysisResult> _analyzeOptional(String imagePath) async {
+    try {
+      final model = GenerativeModel(
+        model: Constants.geminiModel,
+        apiKey: apiKey,
+      );
+
+      final imageBytes = await File(imagePath).readAsBytes();
+
+      final content = [
+        Content.multi([
+          TextPart(Constants.geminiOptionalPrompt),
+          DataPart('image/jpeg', imageBytes),
+        ])
+      ];
+
+      final response = await model.generateContent(content);
+
+      return _parseOptional(response.text);
+    } catch (e) {
+      print("❌ API Call Error: $e");
+      return OptionalAnalysisResult(
+        gender: Constants.unknown,
+        isChild: false,
+      );
+    }
+  }
+
+  OptionalAnalysisResult _parseOptional(String? responseText) {
+    print("📝 Raw API Response: $responseText");
+
+    if (responseText == null || responseText.trim().isEmpty) {
+      print("❌ Empty or null response from Gemini API");
+      return OptionalAnalysisResult(
+        gender: Constants.unknown,
+        isChild: false,
+      );
+    }
+
+    try {
+      // Clean code block wrappers
+      String cleaned = responseText
+          .replaceAll(RegExp(r'```(json)?'), '')
+          .replaceAll('```', '')
+          .trim();
+
+      // Extract JSON
+      final jsonMatch = RegExp(r'\{[\s\S]*?\}').firstMatch(cleaned);
+      if (jsonMatch == null) {
+        print("❌ No valid JSON object found in response");
+        return OptionalAnalysisResult(
+          gender: Constants.unknown,
+          isChild: false,
+        );
+      }
+
+      final jsonString = jsonMatch.group(0)!;
+      print("📝 Extracted JSON: $jsonString");
+
+      final Map<String, dynamic> jsonData = json.decode(jsonString);
+
+      final gender = (jsonData["gender"] is String) ? jsonData["gender"] as String : Constants.unknown;
+      final isChild = (jsonData["is_child"] is bool) ? jsonData["is_child"] as bool : false;
+
+      return OptionalAnalysisResult(
+        gender: gender,
+        isChild: isChild,
+      );
+    } catch (e) {
+      print("❌ JSON Parsing Error: $e");
+      return OptionalAnalysisResult(
+        gender: Constants.unknown,
+        isChild: false,
+      );
     }
   }
 }

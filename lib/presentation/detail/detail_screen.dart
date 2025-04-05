@@ -1,13 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:voux/models/clothing_item_floor_model.dart';
-import 'package:voux/presentation/reusables/more_bottom_sheet.dart';
 import 'dart:io';
-import '../../db/database.dart';
+import '../reusables/more_bottom_sheet.dart';
+import '../../models/optional_analysis_result_model.dart';
 import '../../utils/constants.dart';
 import '../reusables/report_bottom_sheet.dart';
 import '../reusables/stacked_avatar_badge.dart';
@@ -17,10 +15,9 @@ import '../../utils/extensions.dart';
 class DetailScreen extends StatelessWidget {
   final String imagePath;
   final List<ClothingItemModel> clothingItems;
-  final String gender;
-  final bool isChildOrNot;
+  final OptionalAnalysisResult optionalAnalysisResult;
 
-  const DetailScreen({super.key, required this.imagePath, required this.clothingItems, required this.gender, required this.isChildOrNot});
+  const DetailScreen({super.key, required this.imagePath, required this.clothingItems, required this.optionalAnalysisResult});
 
   static const routeName = '/${Constants.detail}';
 
@@ -70,7 +67,7 @@ class DetailScreen extends StatelessWidget {
                             child: Row(
                                 spacing: 8,
                                 children: [
-                                  if (isChildOrNot)
+                                  if (optionalAnalysisResult.isChild)
                                     CircleAvatar(
                                       radius: 24,
                                       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -81,12 +78,12 @@ class DetailScreen extends StatelessWidget {
                                         },
                                       ),
                                     ),
-                                  if (gender != Constants.unknown)
+                                  if (optionalAnalysisResult.gender != Constants.unknown)
                                     CircleAvatar(
                                         radius: 24,
                                         backgroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
                                         child: Icon(
-                                            gender == Constants.male ? Icons.male_rounded : Icons.female_rounded,
+                                            optionalAnalysisResult.gender == Constants.male ? Icons.male_rounded : Icons.female_rounded,
                                             color: Theme.of(context).colorScheme.secondaryContainer
                                         )
                                     ),
@@ -197,7 +194,7 @@ class DetailScreen extends StatelessWidget {
       details += " ${item.model}";
     }
 
-    details = gender + details;
+    details = optionalAnalysisResult.gender + details;
     print(details);
 
     // Return a single card for each item containing all the details

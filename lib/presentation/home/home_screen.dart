@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:voux/presentation/wishlist/wishlist_screen.dart';
-import 'package:voux/utils/extensions.dart';
+import '../wishlist/wishlist_screen.dart';
+import '../../utils/extensions.dart';
 import '../../db/database.dart';
 import '../../models/user_model.dart';
 import '../settings/settings_screen.dart';
@@ -82,8 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 DetailScreen(
                   imagePath: state.imagePath,
                   clothingItems: state.clothingItems,
-                  gender: state.gender,
-                  isChildOrNot: state.isChildOrNot,
+                  optionalAnalysisResult: state.optionalAnalysisResult,
                 ),
               ),
             ).then((_) {

@@ -77,24 +77,11 @@ Analyze the given image and generate a list of clothing items based on the detec
 Ensure that the clothing attributes are accurately inferred from the image, including color, size (if possible), type, material, brand (if recognizable), and model. The response should only contain the JSON array without additional text.
 """;
 
-  static const String geminiGenderPrompt = """
-Analyze the given image and determine the gender of the person in the image. 
-
-Return the result strictly in the following JSON format:
+  static const String geminiOptionalPrompt = """
+Analyze the given image. Return the result strictly in the following JSON format:
 
 {
   "gender": "male" // or "female"
-}
-
-Ensure that the response contains only the JSON object without any additional text.
-""";
-
-  static const String geminiIsChildOrNotPrompt = """
-Analyze the given image and determine if the person in the image is a child or an adult.
-
-Return the result strictly in the following JSON format:
-
-{
   "is_child": true // or false
 }
 
@@ -216,4 +203,5 @@ We may update this Privacy Policy periodically. Continued use of the App after c
 For any questions about this Privacy Policy, please contact us at [Insert Contact Email].
 
 By using Voux, you agree to this Privacy Policy.''';
+
 }
