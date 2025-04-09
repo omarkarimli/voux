@@ -10,11 +10,13 @@ class ClothingItemFloorModel {
 
   final String imagePath;
   final String price;
+  final String colorHexCode;
 
   ClothingItemFloorModel(
       this.id,
       this.details,
       this.imagePath,
       this.price,
+      this.colorHexCode,
   );
 }

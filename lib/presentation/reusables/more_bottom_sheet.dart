@@ -10,12 +10,14 @@ class MoreBottomSheet extends StatefulWidget {
   final String details;
   final String imagePath;
   final String price;
+  final String colorHexCode;
 
   const MoreBottomSheet({
     super.key,
     required this.details,
     required this.imagePath,
     required this.price,
+    required this.colorHexCode,
   });
 
   @override
@@ -102,7 +104,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
         await clothingItemDao.deleteClothingItemFloorModelByDetail(widget.details);
         context.showCustomSnackBar(Constants.success, "Removed from wishlist");
       } else {
-        final clothingItemFloorModel = ClothingItemFloorModel(null, widget.details, widget.imagePath, widget.price);
+        final clothingItemFloorModel = ClothingItemFloorModel(null, widget.details, widget.imagePath, widget.price, widget.colorHexCode);
         await clothingItemDao.insertClothingItemFloorModel(clothingItemFloorModel);
         context.showCustomSnackBar(Constants.success, "Added to wishlist");
       }

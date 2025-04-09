@@ -11,7 +11,7 @@ import '../reusables/report_bottom_sheet.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../../models/clothing_item_model.dart';
 import '../../utils/extensions.dart';
-import '../reusables/stacked_badged_text.dart';
+import '../reusables/stacked_text_badge.dart';
 
 class DetailScreen extends StatelessWidget {
   final String imagePath;
@@ -133,7 +133,7 @@ class DetailScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              StackedBadgedText(badgeImage: "assets/images/hanger.png", text: "${clothingItems.length}  🛍️"),
+                              StackedTextBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/hanger.png", title: "+${clothingItems.length}"),
                               SizedBox(width: 16),
                               if (totalPrice > 0)
                                 SelectableText(totalPrice.toStringAsFixed(2).toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)),
@@ -178,30 +178,17 @@ class DetailScreen extends StatelessWidget {
   }
 
   Widget _buildItemWidget(BuildContext context, ClothingItemModel item) {
-    String details = "";
-    if (item.name != Constants.unknown) {
-      details += " ${item.name}";
-    }
-    if (item.size != Constants.unknown) {
-      details += " ${item.size}";
-    }
-    if (item.color != Constants.unknown) {
-      details += " ${item.color}";
-    }
-    if (item.type != Constants.unknown) {
-      details += " ${item.type}";
-    }
-    if (item.material != Constants.unknown) {
-      details += " ${item.material}";
-    }
-    if (item.brand != Constants.unknown) {
-      details += " ${item.brand}";
-    }
-    if (item.model != Constants.unknown) {
-      details += " ${item.model}";
-    }
-
-    details = optionalAnalysisResult.gender + details;
+    final attributes = [
+      item.name,
+      item.size,
+      item.color,
+      item.type,
+      item.material,
+      item.brand,
+      item.model,
+    ].where((attr) => attr != Constants.unknown).join(' ');
+    final details = '${optionalAnalysisResult.gender} $attributes';
+    final detailsUi = attributes.capitalizeFirst();
     print(details);
 
     // Return a single card for each item containing all the details
@@ -228,7 +215,12 @@ class DetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                         ),
                         builder: (context) {
-                          return MoreBottomSheet(details: details, imagePath: imagePath, price: item.price);
+                          return MoreBottomSheet(
+                              details: details,
+                              imagePath: imagePath,
+                              price: item.price,
+                              colorHexCode: item.colorHexCode
+                          );
                         },
                       );
                     },
@@ -237,61 +229,86 @@ class DetailScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 8),
-              FutureBuilder<List<Map<String, String>>>(
-                future: fetchGoogleImages(details), // Fetch images with links
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: CupertinoActivityIndicator(
-                            radius: 20.0,
-                            color: Theme.of(context).colorScheme.primary
-                        )
-                    );
-                  } else if (snapshot.hasError) {
-                    print('Error: ${snapshot.error}');
-                    return SizedBox.shrink();
-                  } else if (snapshot.hasData) {
-                    final results = snapshot.data!;
-                    return Container(
-                      height: 96,
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      margin: EdgeInsets.symmetric(horizontal: 6),
-                      child: PageView.builder(
-                        controller: PageController(),
-                        itemCount: results.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          final result = results[index];
-                          return GestureDetector(
-                            onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
-                            child: Image.network(
-                              result['imageUrl']!,
-                              fit: BoxFit.cover,
+              Padding(
+                padding: EdgeInsets.only(
+                  left: 8,
+                  right: 8,
+                  bottom: 8,
+                ),
+                child: Column(
+                  children: [
+                    FutureBuilder<List<Map<String, String>>>(
+                      future: fetchGoogleImages(details), // Fetch images with links
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(
+                              child: CupertinoActivityIndicator(
+                                  radius: 20.0,
+                                  color: Theme.of(context).colorScheme.primary
+                              )
+                          );
+                        } else if (snapshot.hasError) {
+                          print('Error: ${snapshot.error}');
+                          return SizedBox.shrink();
+                        } else if (snapshot.hasData) {
+                          final results = snapshot.data!;
+                          return Container(
+                            height: 96,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: PageView.builder(
+                              controller: PageController(),
+                              itemCount: results.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final result = results[index];
+                                return GestureDetector(
+                                  onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
+                                  child: Image.network(
+                                    result['imageUrl']!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
                             ),
                           );
-                        },
-                      ),
-                    );
-                  } else {
-                    print('No images found');
-                    return SizedBox.shrink();
-                  }
-                },
-              ),
-              SizedBox(height: 16),
-              Padding(
-                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SelectableText(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)),
-                      SelectableText(item.price.toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer))
-                    ],
-                  )
+                        } else {
+                          print('No images found');
+                          return SizedBox.shrink();
+                        }
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: SelectableText(detailsUi, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)),
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      children: [
+                        SizedBox(width: 6),
+                        Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                                color: item.colorHexCode.toColor(),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                                  width: Constants.borderWidth,
+                                )
+                            )
+                        ),
+                        SizedBox(width: 8),
+                        SelectableText(item.color, style: Theme.of(context).textTheme.bodyMedium),
+                        Spacer(),
+                        SelectableText(item.price.toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer))
+                      ],
+                    ),
+                  ],
+                )
               )
             ],
           ),

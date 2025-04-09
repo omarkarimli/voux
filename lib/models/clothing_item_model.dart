@@ -1,6 +1,7 @@
 class ClothingItemModel {
   final String name;
   final String color;
+  final String colorHexCode;
   final String size;
   final String type;
   final String material;
@@ -11,6 +12,7 @@ class ClothingItemModel {
   ClothingItemModel({
     required this.name,
     required this.color,
+    required this.colorHexCode,
     required this.size,
     required this.type,
     required this.material,
@@ -24,6 +26,7 @@ class ClothingItemModel {
     return ClothingItemModel(
       name: json['name'],
       color: json['color'],
+      colorHexCode: json['colorHexCode'],
       size: json['size'],
       type: json['type'],
       material: json['material'],

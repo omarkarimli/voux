@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `details` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `price` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `details` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `price` TEXT NOT NULL, `colorHexCode` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -123,7 +123,8 @@ class _$ClothingItemDao extends ClothingItemDao {
                   'id': item.id,
                   'details': item.details,
                   'imagePath': item.imagePath,
-                  'price': item.price
+                  'price': item.price,
+                  'colorHexCode': item.colorHexCode
                 },
             changeListener),
         _clothingItemFloorModelUpdateAdapter = UpdateAdapter(
@@ -134,7 +135,8 @@ class _$ClothingItemDao extends ClothingItemDao {
                   'id': item.id,
                   'details': item.details,
                   'imagePath': item.imagePath,
-                  'price': item.price
+                  'price': item.price,
+                  'colorHexCode': item.colorHexCode
                 },
             changeListener);
 
@@ -157,7 +159,8 @@ class _$ClothingItemDao extends ClothingItemDao {
             row['id'] as int?,
             row['details'] as String,
             row['imagePath'] as String,
-            row['price'] as String));
+            row['price'] as String,
+            row['colorHexCode'] as String));
   }
 
   @override
@@ -168,7 +171,8 @@ class _$ClothingItemDao extends ClothingItemDao {
             row['id'] as int?,
             row['details'] as String,
             row['imagePath'] as String,
-            row['price'] as String),
+            row['price'] as String,
+            row['colorHexCode'] as String),
         arguments: [id],
         queryableName: 'ClothingItemFloorModel',
         isView: false);
@@ -183,7 +187,8 @@ class _$ClothingItemDao extends ClothingItemDao {
             row['id'] as int?,
             row['details'] as String,
             row['imagePath'] as String,
-            row['price'] as String),
+            row['price'] as String,
+            row['colorHexCode'] as String),
         arguments: [details],
         queryableName: 'ClothingItemFloorModel',
         isView: false);

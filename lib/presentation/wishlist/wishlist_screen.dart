@@ -71,7 +71,12 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                       borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadiusMedium)),
                                     ),
                                     builder: (context) {
-                                      return MoreBottomSheet(imagePath: item.imagePath, details: item.details, price: item.price);
+                                      return MoreBottomSheet(
+                                          imagePath: item.imagePath,
+                                          details: item.details,
+                                          price: item.price,
+                                          colorHexCode: item.colorHexCode
+                                      );
                                     },
                                   ).then((_) {
                                     _loadWishlist(); // Refresh wishlist after closing bottom sheet

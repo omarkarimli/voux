@@ -8,6 +8,9 @@ class Constants {
   static const cornerRadiusMedium = 24.0;
   static const cornerRadiusSmall = 16.0;
 
+  // Border width
+  static const borderWidth = 3.0;
+
   // ❗ Don't hardcode API keys! Use environment variables or secure storage instead.
   static const String geminiApiKey = "AIzaSyBT3sZF3rFCY2HoIsQAfCN3SYaUs6rqCtY";
   static const String geminiModel = "gemini-1.5-flash";
@@ -67,6 +70,7 @@ Analyze the given image and generate a list of clothing items based on the detec
   {
     "name": "Casual T-Shirt",
     "color": "Blue",
+    "colorHexCode": "#0000FF",
     "size": "M",
     "type": "T-Shirt",
     "material": "Cotton",
@@ -77,6 +81,7 @@ Analyze the given image and generate a list of clothing items based on the detec
   {
     "name": "Denim Jeans",
     "color": "Black",
+    "colorHexCode": "#000000",
     "size": "32",
     "type": "Jeans",
     "material": "Denim",
@@ -87,7 +92,8 @@ Analyze the given image and generate a list of clothing items based on the detec
 ]
 
 Price should be in USD and should be approximately price.
-Ensure that the clothing attributes are accurately inferred from the image, including color, size (if possible), type, material, brand (if recognizable), and model. The response should only contain the JSON array without additional text.
+If property is unknown, use "unknown".
+The response should only contain the JSON array without additional text.
 """;
 
   static const String geminiOptionalPrompt = """
