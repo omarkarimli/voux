@@ -1,4 +1,13 @@
+import 'dart:ui';
+
 class Constants {
+  static const clipBehaviour = Clip.hardEdge;
+
+  // Corner Radius
+  static const cornerRadiusLarge = 32.0;
+  static const cornerRadiusMedium = 24.0;
+  static const cornerRadiusSmall = 16.0;
+
   // ❗ Don't hardcode API keys! Use environment variables or secure storage instead.
   static const String geminiApiKey = "AIzaSyBT3sZF3rFCY2HoIsQAfCN3SYaUs6rqCtY";
   static const String geminiModel = "gemini-1.5-flash";
@@ -49,6 +58,7 @@ class Constants {
   static const String model = "model";
   static const String type = "type";
   static const String name = "name";
+  static const String price = "price";
 
   static const String geminiPrompt = """
 Analyze the given image and generate a list of clothing items based on the detected apparel. For each clothing item, provide structured details in JSON format as follows:
@@ -61,7 +71,8 @@ Analyze the given image and generate a list of clothing items based on the detec
     "type": "T-Shirt",
     "material": "Cotton",
     "brand": "Nike",
-    "model": "AirMax Tee"
+    "model": "AirMax Tee",
+    "price": "29.99"
   },
   {
     "name": "Denim Jeans",
@@ -70,10 +81,12 @@ Analyze the given image and generate a list of clothing items based on the detec
     "type": "Jeans",
     "material": "Denim",
     "brand": "Levi's",
-    "model": "511 Slim Fit"
+    "model": "511 Slim Fit",
+    "price": "79.99"
   }
 ]
 
+Price should be in USD and should be approximately price.
 Ensure that the clothing attributes are accurately inferred from the image, including color, size (if possible), type, material, brand (if recognizable), and model. The response should only contain the JSON array without additional text.
 """;
 
@@ -111,6 +124,11 @@ Ensure that the response contains only the JSON object without any additional te
   static const int analysisLimitCountFree = 10;
   static const int analysisLimitCountPlus = 50;
   static const int analysisLimitCountPro = 100;
+
+  // Number of Images for Google Search
+  static const int numOfImgsFree = 1;
+  static const int numOfImgsPlus = 2;
+  static const int numOfImgsPro = 3;
 
   // Report
   static const String reports = "reports";

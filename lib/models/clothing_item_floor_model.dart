@@ -9,10 +9,12 @@ class ClothingItemFloorModel {
   final String details;
 
   final String imagePath;
+  final String price;
 
   ClothingItemFloorModel(
       this.id,
       this.details,
-      this.imagePath
+      this.imagePath,
+      this.price,
   );
 }

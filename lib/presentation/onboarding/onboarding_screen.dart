@@ -58,7 +58,7 @@ class OnboardingScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/sparkle.png", badgeSize: 32),
+                              StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/sparkle.png"),
                               CircleAvatar(
                                 radius: 24,
                                 backgroundColor: Theme.of(context).colorScheme.surface,

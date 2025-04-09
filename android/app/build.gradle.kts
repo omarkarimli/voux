@@ -12,7 +12,7 @@ android {
     namespace = "com.omarkarimli.voux"
     compileSdk = flutter.compileSdkVersion
     //ndkVersion = flutter.ndkVersion
-    ndkVersion = project.findProperty("flutter.ndkVersion")?.toString() ?: "27.0.12077973"
+    ndkVersion = project.findProperty("flutter.ndkVersion")?.toString() ?: "29.0.13113456"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

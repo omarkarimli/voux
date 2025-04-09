@@ -6,6 +6,7 @@ class ClothingItemModel {
   final String material;
   final String brand;
   final String model;
+  final String price;
 
   ClothingItemModel({
     required this.name,
@@ -15,6 +16,7 @@ class ClothingItemModel {
     required this.material,
     required this.brand,
     required this.model,
+    required this.price,
   });
 
   // Optionally, add a method to convert JSON response from the API
@@ -27,6 +29,7 @@ class ClothingItemModel {
       material: json['material'],
       brand: json['brand'],
       model: json['model'],
+      price: json['price'],
     );
   }
 }

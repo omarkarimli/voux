@@ -1,3 +1,9 @@
+// declare JAVA_HOME in System Enviroument Variables
+// C:\Program Files\Android\Android Studio\jbr
+// cd C:\Users\Omar\Documents\FlutterProjects\Voux\android
+// gradlew signingReport
+// C:\Users\user\.android\debug.keystore
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';

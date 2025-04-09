@@ -50,14 +50,23 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
       padding: EdgeInsets.only(
         left: 18,
         right: 18,
-        top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 36,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text("Report Issue", style: Theme.of(context).textTheme.titleLarge),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Report Issue", style: Theme.of(context).textTheme.titleLarge),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close),
+              )
+            ]
+          ),
           SizedBox(height: 24),
           TextField(
             controller: reportController,
@@ -69,7 +78,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
               errorText: errorMessage,
               border: OutlineInputBorder(
                   borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                  borderRadius: BorderRadius.circular(12)
+                  borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall)
               ),
             ),
           ),
@@ -112,24 +121,11 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
               padding: EdgeInsets.symmetric(vertical: 12.0),
               backgroundColor: Theme.of(context).colorScheme.onSurface,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall),
               ),
             ),
             child: Text("Submit", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
-          ),
-          SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              elevation: 3,
-              padding: EdgeInsets.symmetric(vertical: 12.0),
-              side: BorderSide(width: 2, color: Theme.of(context).colorScheme.onSurface),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: Text("Cancel", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
-          ),
+          )
         ],
       ),
     );

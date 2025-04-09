@@ -285,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/ai_search.png", badgeSize: 32),
+                                          StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/ai_search.png"),
                                         ],
                                       ),
                                       SizedBox(height: 22),
@@ -372,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ],
                                                     ),
                                                   ),
-                                                  StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/wishlist.png", badgeSize: 28),
+                                                  StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/wishlist.png", badgePadding: 10),
                                                 ],
                                               )
                                             ],

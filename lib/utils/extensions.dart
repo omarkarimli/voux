@@ -70,3 +70,16 @@ extension SnackBarHelper on BuildContext {
     );
   }
 }
+
+extension PriceFormatting on String {
+  String toFormattedPrice() {
+    // Check if the string contains a decimal point
+    if (this.contains('.') && this.split('.')[1] == '00') {
+      // If the decimal part is .00, remove it
+      return "\$${this.split('.')[0]}";
+    } else {
+      // Otherwise, keep the original string
+      return "\$${this}";
+    }
+  }
+}

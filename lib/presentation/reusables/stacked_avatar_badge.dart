@@ -1,64 +1,59 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/constants.dart';
+
 class StackedAvatarBadge extends StatelessWidget {
   final String profileImage;
   final String badgeImage;
-  final double badgeSize;
+  final double badgePadding;
 
   const StackedAvatarBadge({
     super.key,
     required this.profileImage,
     required this.badgeImage,
-    required this.badgeSize,
+    this.badgePadding = 6
   });
 
   @override
   Widget build(BuildContext context) {
     return Stack(
+        alignment: Alignment.centerLeft,
         children: [
           Padding(
             padding: EdgeInsets.only(left: 32),
             child: Container(
+              width: 49,
+              height: 49,
+              clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.surface,
-                  width: 3,
-                ),
+                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                color: Theme.of(context).colorScheme.primaryContainer
               ),
-              child: CircleAvatar(
-                radius: 24, // Circle size
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                child: ClipOval(
-                  child: Image.asset(
-                    profileImage,
-                    fit: BoxFit.cover,
-                    width: 60,
-                    height: 60,
-                  ),
-                ),
+              child: Image.asset(
+                profileImage,
+                fit: BoxFit.cover,
               ),
             ),
           ),
+
           Container(
+            width: 56,
+            height: 56,
+            padding: EdgeInsets.all(badgePadding),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
+              color: Theme.of(context).colorScheme.primaryContainer,
               border: Border.all(
                 color: Theme.of(context).colorScheme.surface,
                 width: 3,
               ),
             ),
-            child: CircleAvatar(
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              radius: 24,
-              child: Image.asset(
-                badgeImage,
-                width: badgeSize,
-                height: badgeSize,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
+            child: Image.asset(
+              badgeImage,
+              fit: BoxFit.cover,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
-          )
+          ),
         ],
       );
   }

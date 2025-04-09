@@ -117,9 +117,9 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         side: plan.name == _selectedPlan?.name
-            ? BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)
+            ? BorderSide(color: Theme.of(context).colorScheme.outline.withAlpha(50), width: 3)
             : BorderSide.none,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
@@ -163,7 +163,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.onSurface,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall),
                   ),
                 ),
                 child: plan.name == _selectedPlan?.name

@@ -11,18 +11,25 @@ import '../reusables/report_bottom_sheet.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../../models/clothing_item_model.dart';
 import '../../utils/extensions.dart';
+import '../reusables/stacked_badged_text.dart';
 
 class DetailScreen extends StatelessWidget {
   final String imagePath;
   final List<ClothingItemModel> clothingItems;
   final OptionalAnalysisResult optionalAnalysisResult;
 
-  const DetailScreen({super.key, required this.imagePath, required this.clothingItems, required this.optionalAnalysisResult});
+  DetailScreen({super.key, required this.imagePath, required this.clothingItems, required this.optionalAnalysisResult});
 
   static const routeName = '/${Constants.detail}';
 
+  double calculateTotalPrice() {
+    return clothingItems.fold(0.0, (sum, item) => sum + (double.tryParse(item.price) ?? 0.0));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final totalPrice = calculateTotalPrice();
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
@@ -40,97 +47,97 @@ class DetailScreen extends StatelessWidget {
             ),
           ),
           SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.only(left: 4, right: 4, top: MediaQuery.of(context).padding.top + 8, bottom: MediaQuery.of(context).padding.bottom + 48),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Display Image
-                    Stack(
-                      children: [
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(24),
-                            child: Image.file(
-                              File(imagePath),
-                              width: MediaQuery.of(context).size.width,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.asset('assets/placeholder.png', width: 128, height: 128, fit: BoxFit.cover);
-                              },
-                            ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Display Image
+                  Stack(
+                    children: [
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(Constants.cornerRadiusMedium),
+                            bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                          ),
+                          child: Image.file(
+                            File(imagePath),
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset('assets/placeholder.png', width: 128, height: 128, fit: BoxFit.cover);
+                            },
                           ),
                         ),
-                        Positioned(
-                            bottom: 24,
-                            right: 24,
-                            child: Row(
-                                spacing: 8,
-                                children: [
-                                  if (optionalAnalysisResult.isChild)
-                                    CircleAvatar(
-                                      radius: 24,
-                                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                                      child: IconButton(
-                                        icon: Icon(Icons.child_care_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                                        onPressed: () {
-                                          // Your action
-                                        },
-                                      ),
+                      ),
+                      Positioned(
+                          bottom: 24,
+                          right: 24,
+                          child: Row(
+                              spacing: 8,
+                              children: [
+                                if (optionalAnalysisResult.isChild)
+                                  CircleAvatar(
+                                    radius: Constants.cornerRadiusMedium,
+                                    backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                    child: IconButton(
+                                      icon: Icon(Icons.child_care_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                                      onPressed: () {
+                                        // Your action
+                                      },
                                     ),
-                                  if (optionalAnalysisResult.gender != Constants.unknown)
-                                    CircleAvatar(
-                                        radius: 24,
-                                        backgroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-                                        child: Icon(
-                                            optionalAnalysisResult.gender == Constants.male ? Icons.male_rounded : Icons.female_rounded,
-                                            color: Theme.of(context).colorScheme.secondaryContainer
-                                        )
+                                  ),
+                                if (optionalAnalysisResult.gender != Constants.unknown)
+                                  CircleAvatar(
+                                      radius: Constants.cornerRadiusMedium,
+                                      backgroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                                      child: Icon(
+                                          optionalAnalysisResult.gender == Constants.male ? Icons.male_rounded : Icons.female_rounded,
+                                          color: Theme.of(context).colorScheme.secondaryContainer
+                                      )
+                                  ),
+                              ]
+                          )
+                      ),
+                      Positioned(
+                          bottom: 24,
+                          left: 24,
+                          child: CircleAvatar(
+                              radius: Constants.cornerRadiusMedium,
+                              backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                              child: IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadiusMedium)),
                                     ),
-                                ]
-                            )
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 22),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
+                                    builder: (context) {
+                                      return ReportBottomSheet();
+                                    },
+                                  );
+                                },
+                                icon: Icon(
+                                    Icons.error_outline_rounded,
+                                    color: Theme.of(context).colorScheme.onErrorContainer
+                                )
+                              )
+                          ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 22),
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 18),
                       child: Column(
                         children: [
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                    children: [
-                                      StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/hanger.png", badgeSize: 32),
-                                      SizedBox(width: 16),
-                                      Container(
-                                        width: 1,
-                                        height: 54,
-                                        color: Theme.of(context).colorScheme.outline,
-                                      ),
-                                      SizedBox(width: 16),
-                                      Text("${clothingItems.length} items", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
-                                    ]
-                                ),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                        ),
-                                        builder: (context) {
-                                          return ReportBottomSheet();
-                                        },
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Theme.of(context).colorScheme.errorContainer,
-                                    ),
-                                    child: Text("Report", style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer))
-                                )
-                              ]
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              StackedBadgedText(badgeImage: "assets/images/hanger.png", text: "${clothingItems.length}  🛍️"),
+                              SizedBox(width: 16),
+                              if (totalPrice > 0)
+                                SelectableText(totalPrice.toStringAsFixed(2).toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                            ]
                           ),
                           SizedBox(height: 8),
                           Column(
@@ -143,9 +150,9 @@ class DetailScreen extends StatelessWidget {
                           )
                         ],
                       )
-                    )
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 72)
+                ],
               )
           ),
           Positioned(
@@ -201,93 +208,93 @@ class DetailScreen extends StatelessWidget {
     return Card(
         margin: const EdgeInsets.symmetric(vertical: 8),
         color: Theme.of(context).colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
         clipBehavior: Clip.antiAlias,
         elevation: 3,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgeSize: 24),
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Theme.of(context).colorScheme.surface,
-                        child: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                              ),
-                              builder: (context) {
-                                return MoreBottomSheet(details: details, imagePath: imagePath);
-                              },
-                            );
-                          },
-                          icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface),
+                  StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgePadding: 10),
+                  IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  FutureBuilder<List<Map<String, String>>>(
-                    future: fetchGoogleImages(details), // Fetch images with links
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                            child: CupertinoActivityIndicator(
-                                radius: 20.0,
-                                color: Theme.of(context).colorScheme.primary
-                            )
-                        );
-                      } else if (snapshot.hasError) {
-                        print('Error: ${snapshot.error}');
-                        return SizedBox.shrink();
-                      } else if (snapshot.hasData) {
-                        final results = snapshot.data!;
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: results.map((result) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Image.network(
-                                      result['imageUrl']!,
-                                      width: 128,
-                                      height: 96,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        );
-                      } else {
-                        print('No images found');
-                        return SizedBox.shrink();
-                      }
+                        builder: (context) {
+                          return MoreBottomSheet(details: details, imagePath: imagePath, price: item.price);
+                        },
+                      );
                     },
-                  ),
-                  SizedBox(height: 16),
-                  Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                      child: Text(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal))
+                    icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface),
                   )
                 ],
               ),
-            ),
-          ],
+              SizedBox(height: 8),
+              FutureBuilder<List<Map<String, String>>>(
+                future: fetchGoogleImages(details), // Fetch images with links
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                        child: CupertinoActivityIndicator(
+                            radius: 20.0,
+                            color: Theme.of(context).colorScheme.primary
+                        )
+                    );
+                  } else if (snapshot.hasError) {
+                    print('Error: ${snapshot.error}');
+                    return SizedBox.shrink();
+                  } else if (snapshot.hasData) {
+                    final results = snapshot.data!;
+                    return Container(
+                      height: 96,
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      margin: EdgeInsets.symmetric(horizontal: 6),
+                      child: PageView.builder(
+                        controller: PageController(),
+                        itemCount: results.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final result = results[index];
+                          return GestureDetector(
+                            onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
+                            child: Image.network(
+                              result['imageUrl']!,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  } else {
+                    print('No images found');
+                    return SizedBox.shrink();
+                  }
+                },
+              ),
+              SizedBox(height: 16),
+              Padding(
+                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SelectableText(details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)),
+                      SelectableText(item.price.toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer))
+                    ],
+                  )
+              )
+            ],
+          ),
         )
     );
   }
@@ -302,9 +309,11 @@ class DetailScreen extends StatelessWidget {
   Future<List<Map<String, String>>> fetchGoogleImages(String query) async {
     const String apiKey = Constants.cseApiKey;
     const String cx = Constants.cseId;
+    const int numOfImgs = Constants.numOfImgsPlus;
 
     final Uri url = Uri.parse(
-        'https://www.googleapis.com/customsearch/v1?q=$query&cx=$cx&searchType=image&key=$apiKey');
+      'https://www.googleapis.com/customsearch/v1?q=$query&cx=$cx&searchType=image&num=$numOfImgs&key=$apiKey',
+    );
 
     final response = await http.get(url);
     print("Response: ${response.body}");

@@ -9,8 +9,14 @@ import '../../utils/constants.dart';
 class MoreBottomSheet extends StatefulWidget {
   final String details;
   final String imagePath;
+  final String price;
 
-  const MoreBottomSheet({super.key, required this.details, required this.imagePath});
+  const MoreBottomSheet({
+    super.key,
+    required this.details,
+    required this.imagePath,
+    required this.price,
+  });
 
   @override
   _MoreBottomSheetState createState() => _MoreBottomSheetState();
@@ -96,7 +102,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
         await clothingItemDao.deleteClothingItemFloorModelByDetail(widget.details);
         context.showCustomSnackBar(Constants.success, "Removed from wishlist");
       } else {
-        final clothingItemFloorModel = ClothingItemFloorModel(null, widget.details, widget.imagePath);
+        final clothingItemFloorModel = ClothingItemFloorModel(null, widget.details, widget.imagePath, widget.price);
         await clothingItemDao.insertClothingItemFloorModel(clothingItemFloorModel);
         context.showCustomSnackBar(Constants.success, "Added to wishlist");
       }

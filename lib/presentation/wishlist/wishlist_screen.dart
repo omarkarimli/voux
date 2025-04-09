@@ -48,65 +48,65 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 child: Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   color: Theme.of(context).colorScheme.surface,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-                  clipBehavior: Clip.none,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
+                  clipBehavior: Constants.clipBehaviour,
                   elevation: 3,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgeSize: 24),
-                                CircleAvatar(
-                                  radius: 24,
-                                  backgroundColor: Theme.of(context).colorScheme.surface,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                        ),
-                                        builder: (context) {
-                                          return MoreBottomSheet(imagePath: item.imagePath, details: item.details);
-                                        },
-                                      ).then((_) {
-                                        _loadWishlist(); // Refresh wishlist after closing bottom sheet
-                                      });
+                            StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgePadding: 10),
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              child: IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadiusMedium)),
+                                    ),
+                                    builder: (context) {
+                                      return MoreBottomSheet(imagePath: item.imagePath, details: item.details, price: item.price);
                                     },
-                                    icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.file(
-                                File(item.imagePath),
-                                width: double.infinity,
-                                height: 96,
-                                fit: BoxFit.cover,
+                                  ).then((_) {
+                                    _loadWishlist(); // Refresh wishlist after closing bottom sheet
+                                  });
+                                },
+                                icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface),
                               ),
-                            ),
-                            SizedBox(height: 16),
-                            Padding(
-                              padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                              child: Text(
-                                item.details.chunkText(16).capitalizeFirst(),
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal),
-                              ),
-                            ),
+                            )
                           ],
                         ),
-                      ),
-                    ],
-                  ),
+                        SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall),
+                          child: Image.file(
+                            File(item.imagePath),
+                            width: double.infinity,
+                            height: 96,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Padding(
+                          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SelectableText(item.details.chunkText(16).capitalizeFirst(), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)),
+                                SelectableText(item.price.toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer))
+                              ],
+                            )
+                        ),
+                      ],
+                    ),
+                  )
                 )
               );
             },
