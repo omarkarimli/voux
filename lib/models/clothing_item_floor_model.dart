@@ -1,22 +1,22 @@
 import 'package:floor/floor.dart';
+import '../models/clothing_item_model.dart';
+import '../models/optional_analysis_result_model.dart';
 
 @Entity(tableName: 'ClothingItemFloorModel')
 class ClothingItemFloorModel {
   @PrimaryKey(autoGenerate: true)
   final int? id;
 
-  @ColumnInfo(name: "details")  // Ensure this matches DB column name
-  final String details;
-
   final String imagePath;
-  final String price;
-  final String colorHexCode;
+  final List<Map<String, String>> googleResults;
+  final ClothingItemModel clothingItemModel;
+  final OptionalAnalysisResult optionalAnalysisResult;
 
   ClothingItemFloorModel(
       this.id,
-      this.details,
       this.imagePath,
-      this.price,
-      this.colorHexCode,
+      this.googleResults,
+      this.clothingItemModel,
+      this.optionalAnalysisResult
   );
 }

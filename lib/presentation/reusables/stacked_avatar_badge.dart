@@ -22,16 +22,21 @@ class StackedAvatarBadge extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 32),
             child: Container(
-              width: 49,
-              height: 49,
-              clipBehavior: Clip.hardEdge,
+              width: 56,
+              height: 56,
+              clipBehavior: Constants.clipBehaviour,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                color: Theme.of(context).colorScheme.primaryContainer
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.surface,
+                    width: 3,
+                  )
               ),
-              child: Image.asset(
-                profileImage,
-                fit: BoxFit.cover,
+              child: ClipOval(
+                child: Image.asset(
+                  profileImage,
+                  fit: BoxFit.cover,
+                )
               ),
             ),
           ),

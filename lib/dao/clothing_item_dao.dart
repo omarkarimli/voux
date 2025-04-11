@@ -1,5 +1,6 @@
 import 'package:floor/floor.dart';
-import 'package:voux/models/clothing_item_floor_model.dart';
+import 'package:voux/models/clothing_item_model.dart';
+import '../models/clothing_item_floor_model.dart';
 
 @dao
 abstract class ClothingItemDao {
@@ -9,11 +10,14 @@ abstract class ClothingItemDao {
   @Query('SELECT * FROM ClothingItemFloorModel WHERE id = :id')
   Stream<ClothingItemFloorModel?> getClothingItemFloorModelById(int id);
 
-  @Query('SELECT * FROM ClothingItemFloorModel WHERE details = :details')
-  Stream<ClothingItemFloorModel?> getClothingItemFloorModelByDetail(String details);
+  @Query('SELECT * FROM ClothingItemFloorModel WHERE clothingItemModel = :clothingItemModel')
+  Stream<ClothingItemFloorModel?> getClothingItemFloorModelByClothingItemModel(ClothingItemModel clothingItemModel);
 
-  @Query('DELETE FROM ClothingItemFloorModel WHERE details = :details')
-  Future<void> deleteClothingItemFloorModelByDetail(String details);
+  @Query('DELETE FROM ClothingItemFloorModel WHERE id = :id')
+  Future<void> deleteClothingItemFloorModelById(int id);
+
+  @Query('DELETE FROM ClothingItemFloorModel WHERE clothingItemModel = :clothingItemModel')
+  Future<void> deleteClothingItemFloorModelByClothingItemModel(ClothingItemModel clothingItemModel);
 
   @Query('DELETE FROM ClothingItemFloorModel')
   Future<void> deleteAllClothingItemFloorModels();

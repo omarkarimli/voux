@@ -90,3 +90,10 @@ extension HexColor on String {
     return Color(int.parse('FF$hex', radix: 16));
   }
 }
+
+extension ColorExtension on Color {
+  bool get isDark {
+    // Use luminance to determine brightness
+    return computeLuminance() < 0.5;
+  }
+}

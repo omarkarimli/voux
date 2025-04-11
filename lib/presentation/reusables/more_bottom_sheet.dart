@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:voux/utils/extensions.dart';
+import '../../utils/extensions.dart';
 import '../../dao/clothing_item_dao.dart';
 import '../../db/database.dart';
 import '../../models/clothing_item_floor_model.dart';
+import '../../models/clothing_item_model.dart';
+import '../../models/optional_analysis_result_model.dart';
 import '../../utils/constants.dart';
 
 class MoreBottomSheet extends StatefulWidget {
-  final String details;
   final String imagePath;
-  final String price;
-  final String colorHexCode;
+  final List<Map<String, String>> googleResults;
+  final ClothingItemModel clothingItemModel;
+  final OptionalAnalysisResult optionalAnalysisResult;
 
   const MoreBottomSheet({
     super.key,
-    required this.details,
     required this.imagePath,
-    required this.price,
-    required this.colorHexCode,
+    required this.googleResults,
+    required this.clothingItemModel,
+    required this.optionalAnalysisResult
   });
 
   @override
@@ -44,7 +46,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
 
   Future<void> _checkWishlist() async {
     clothingItemDao
-        .getClothingItemFloorModelByDetail(widget.details)
+        .getClothingItemFloorModelByClothingItemModel(widget.clothingItemModel)
         .listen((item) {
       setState(() {
         isInWishlist = item != null;
@@ -81,7 +83,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
             title: Text('Search in Web', style: Theme.of(context).textTheme.bodyLarge),
             onTap: () {
               Navigator.pop(context);
-              _searchInBrowser(widget.details);
+              _searchInBrowser(widget.clothingItemModel.toDetailString(widget.optionalAnalysisResult));
             },
           ),
         ],
@@ -101,10 +103,16 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
     print("Toggled wishlist");
     try {
       if (isInWishlist) {
-        await clothingItemDao.deleteClothingItemFloorModelByDetail(widget.details);
+        await clothingItemDao.deleteClothingItemFloorModelByClothingItemModel(widget.clothingItemModel);
         context.showCustomSnackBar(Constants.success, "Removed from wishlist");
       } else {
-        final clothingItemFloorModel = ClothingItemFloorModel(null, widget.details, widget.imagePath, widget.price, widget.colorHexCode);
+        final clothingItemFloorModel = ClothingItemFloorModel(
+            null,
+            widget.imagePath,
+            widget.googleResults,
+            widget.clothingItemModel,
+            widget.optionalAnalysisResult
+        );
         await clothingItemDao.insertClothingItemFloorModel(clothingItemFloorModel);
         context.showCustomSnackBar(Constants.success, "Added to wishlist");
       }

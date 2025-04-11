@@ -21,57 +21,64 @@ class StackedTextBadge extends StatelessWidget {
     return Stack(
       alignment: Alignment.centerLeft,
       children: [
-        Padding(
-          padding: EdgeInsets.only(left: 64),
-          child: Container(
-            width: 49,
-            height: 49,
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                color: Theme.of(context).colorScheme.primary
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
-            ),
-          ),
-        ),
-
-        Padding(
-          padding: EdgeInsets.only(left: 32),
-          child: Container(
-            width: 49,
-            height: 49,
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                color: Theme.of(context).colorScheme.primaryContainer
-            ),
-            child: Image.asset(
-              profileImage,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-
         Container(
           width: 56,
           height: 56,
           padding: EdgeInsets.all(badgePadding),
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: Theme.of(context).colorScheme.onSurface,
             border: Border.all(
               color: Theme.of(context).colorScheme.surface,
               width: 3,
             ),
+            borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
           ),
           child: Image.asset(
             badgeImage,
             fit: BoxFit.cover,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            color: Theme.of(context).colorScheme.surface,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 42),
+          child: Container(
+            width: 56,
+            height: 56,
+            clipBehavior: Constants.clipBehaviour,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.surface,
+                  width: 3,
+                )
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                profileImage,
+                fit: BoxFit.cover,
+              )
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 74),
+          child: Container(
+            width: 56,
+            height: 56,
+            clipBehavior: Constants.clipBehaviour,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.surface,
+                  width: 3,
+                ),
+                color: Theme.of(context).colorScheme.secondaryContainer
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
+            ),
           ),
         ),
       ],

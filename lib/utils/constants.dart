@@ -5,8 +5,8 @@ class Constants {
 
   // Corner Radius
   static const cornerRadiusLarge = 32.0;
-  static const cornerRadiusMedium = 24.0;
-  static const cornerRadiusSmall = 16.0;
+  static const cornerRadiusMedium = 18.0;
+  static const cornerRadiusSmall = 6.0;
 
   // Border width
   static const borderWidth = 3.0;

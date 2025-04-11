@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `details` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `price` TEXT NOT NULL, `colorHexCode` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `imagePath` TEXT NOT NULL, `googleResults` TEXT NOT NULL, `clothingItemModel` TEXT NOT NULL, `optionalAnalysisResult` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -121,10 +121,13 @@ class _$ClothingItemDao extends ClothingItemDao {
             'ClothingItemFloorModel',
             (ClothingItemFloorModel item) => <String, Object?>{
                   'id': item.id,
-                  'details': item.details,
                   'imagePath': item.imagePath,
-                  'price': item.price,
-                  'colorHexCode': item.colorHexCode
+                  'googleResults':
+                      _googleResultsConverter.encode(item.googleResults),
+                  'clothingItemModel': _clothingItemModelConverter
+                      .encode(item.clothingItemModel),
+                  'optionalAnalysisResult': _optionalAnalysisResultConverter
+                      .encode(item.optionalAnalysisResult)
                 },
             changeListener),
         _clothingItemFloorModelUpdateAdapter = UpdateAdapter(
@@ -133,10 +136,13 @@ class _$ClothingItemDao extends ClothingItemDao {
             ['id'],
             (ClothingItemFloorModel item) => <String, Object?>{
                   'id': item.id,
-                  'details': item.details,
                   'imagePath': item.imagePath,
-                  'price': item.price,
-                  'colorHexCode': item.colorHexCode
+                  'googleResults':
+                      _googleResultsConverter.encode(item.googleResults),
+                  'clothingItemModel': _clothingItemModelConverter
+                      .encode(item.clothingItemModel),
+                  'optionalAnalysisResult': _optionalAnalysisResultConverter
+                      .encode(item.optionalAnalysisResult)
                 },
             changeListener);
 
@@ -157,10 +163,12 @@ class _$ClothingItemDao extends ClothingItemDao {
     return _queryAdapter.queryList('SELECT * FROM ClothingItemFloorModel',
         mapper: (Map<String, Object?> row) => ClothingItemFloorModel(
             row['id'] as int?,
-            row['details'] as String,
             row['imagePath'] as String,
-            row['price'] as String,
-            row['colorHexCode'] as String));
+            _googleResultsConverter.decode(row['googleResults'] as String),
+            _clothingItemModelConverter
+                .decode(row['clothingItemModel'] as String),
+            _optionalAnalysisResultConverter
+                .decode(row['optionalAnalysisResult'] as String)));
   }
 
   @override
@@ -169,36 +177,48 @@ class _$ClothingItemDao extends ClothingItemDao {
         'SELECT * FROM ClothingItemFloorModel WHERE id = ?1',
         mapper: (Map<String, Object?> row) => ClothingItemFloorModel(
             row['id'] as int?,
-            row['details'] as String,
             row['imagePath'] as String,
-            row['price'] as String,
-            row['colorHexCode'] as String),
+            _googleResultsConverter.decode(row['googleResults'] as String),
+            _clothingItemModelConverter
+                .decode(row['clothingItemModel'] as String),
+            _optionalAnalysisResultConverter
+                .decode(row['optionalAnalysisResult'] as String)),
         arguments: [id],
         queryableName: 'ClothingItemFloorModel',
         isView: false);
   }
 
   @override
-  Stream<ClothingItemFloorModel?> getClothingItemFloorModelByDetail(
-      String details) {
+  Stream<ClothingItemFloorModel?> getClothingItemFloorModelByClothingItemModel(
+      ClothingItemModel clothingItemModel) {
     return _queryAdapter.queryStream(
-        'SELECT * FROM ClothingItemFloorModel WHERE details = ?1',
+        'SELECT * FROM ClothingItemFloorModel WHERE clothingItemModel = ?1',
         mapper: (Map<String, Object?> row) => ClothingItemFloorModel(
             row['id'] as int?,
-            row['details'] as String,
             row['imagePath'] as String,
-            row['price'] as String,
-            row['colorHexCode'] as String),
-        arguments: [details],
+            _googleResultsConverter.decode(row['googleResults'] as String),
+            _clothingItemModelConverter
+                .decode(row['clothingItemModel'] as String),
+            _optionalAnalysisResultConverter
+                .decode(row['optionalAnalysisResult'] as String)),
+        arguments: [_clothingItemModelConverter.encode(clothingItemModel)],
         queryableName: 'ClothingItemFloorModel',
         isView: false);
   }
 
   @override
-  Future<void> deleteClothingItemFloorModelByDetail(String details) async {
+  Future<void> deleteClothingItemFloorModelById(int id) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE FROM ClothingItemFloorModel WHERE details = ?1',
-        arguments: [details]);
+        'DELETE FROM ClothingItemFloorModel WHERE id = ?1',
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteClothingItemFloorModelByClothingItemModel(
+      ClothingItemModel clothingItemModel) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM ClothingItemFloorModel WHERE clothingItemModel = ?1',
+        arguments: [_clothingItemModelConverter.encode(clothingItemModel)]);
   }
 
   @override
@@ -220,3 +240,8 @@ class _$ClothingItemDao extends ClothingItemDao {
         clothingItemModel, OnConflictStrategy.abort);
   }
 }
+
+// ignore_for_file: unused_element
+final _clothingItemModelConverter = ClothingItemModelConverter();
+final _optionalAnalysisResultConverter = OptionalAnalysisResultConverter();
+final _googleResultsConverter = GoogleResultsConverter();
