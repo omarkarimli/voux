@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'di/locator.dart';
 import 'theme/theme_util.dart';
 import 'theme/theme.dart';
 import 'utils/constants.dart';
@@ -21,8 +22,13 @@ import 'presentation/auth/auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Setup DI before using locator
+  await setupLocator();
+
   final ThemeMode initialTheme = await _loadThemeMode();
   themeNotifier.value = initialTheme; // Set the initial theme
+
   runApp(MyApp());
 }
 
@@ -48,7 +54,7 @@ class MyApp extends StatelessWidget {
 
         return MultiProvider(
           providers: [
-            ChangeNotifierProvider(create: (_) => HomeViewModel()),
+            ChangeNotifierProvider(create: (_) => locator<HomeViewModel>()),
             ChangeNotifierProvider(create: (_) => DetailViewModel()),
             ChangeNotifierProvider(create: (_) => WishlistViewModel()),
             // Add more providers here if necessary

@@ -213,176 +213,200 @@ class _DetailScreenState extends State<DetailScreen> {
     final details = item.toDetailString(widget.optionalAnalysisResult);
     print(details);
 
-    return Card(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        color: Theme.of(context).colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
-        clipBehavior: Clip.antiAlias,
-        elevation: 3,
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgePadding: 10),
-                  IconButton(
-                    onPressed: () async {
-                      final googleResults = await vm.fetchGoogleImages(details);
-                      showModalBottomSheet(
-                        context: context,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                        ),
-                        builder: (context) {
-                          return MoreBottomSheet(
-                              imagePath: widget.imagePath,
-                              googleResults: googleResults,
-                              clothingItemModel: item,
-                              optionalAnalysisResult: widget.optionalAnalysisResult
+    return GestureDetector(
+      onLongPress: () async {
+          final googleResults = await vm.fetchGoogleImages(details);
+          showModalBottomSheet(
+            context: context,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            builder: (context) {
+              return MoreBottomSheet(
+                  imagePath: widget.imagePath,
+                  googleResults: googleResults,
+                  clothingItemModel: item,
+                  optionalAnalysisResult: widget.optionalAnalysisResult
+              );
+            },
+          );
+        },
+      child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          color: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
+          clipBehavior: Clip.antiAlias,
+          elevation: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/stack.png", badgePadding: 10),
+                    IconButton(
+                        onPressed: () async {
+                          final googleResults = await vm.fetchGoogleImages(details);
+                          showModalBottomSheet(
+                            context: context,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                            ),
+                            builder: (context) {
+                              return MoreBottomSheet(
+                                  imagePath: widget.imagePath,
+                                  googleResults: googleResults,
+                                  clothingItemModel: item,
+                                  optionalAnalysisResult: widget.optionalAnalysisResult
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                    icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface),
-                  )
-                ],
-              ),
-              SizedBox(height: 8),
-              Padding(
-                  padding: EdgeInsets.only(
-                    left: 8,
-                    right: 8,
-                    bottom: 8,
-                  ),
-                  child: Column(
-                    children: [
-                      FutureBuilder<List<Map<String, String>>>(
-                        future: vm.fetchGoogleImages(details), // Fetch images with links
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(
-                                child: CupertinoActivityIndicator(
-                                    radius: 20.0,
-                                    color: Theme.of(context).colorScheme.primary
-                                )
-                            );
-                          } else if (snapshot.hasError) {
-                            print('Error: ${snapshot.error}');
-                            return SizedBox.shrink();
-                          } else if (snapshot.hasData) {
-                            final results = snapshot.data!;
-                            return results.isNotEmpty ? Container(
-                              height: 96,
-                              clipBehavior: Constants.clipBehaviour,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                              ),
-                              child: PageView.builder(
-                                controller: PageController(),
-                                itemCount: results.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  final result = results[index];
-                                  return GestureDetector(
-                                    onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
-                                    child: Stack(
-                                      children: [
-                                        Image.network(
-                                          result['imageUrl']!,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Positioned(
-                                            bottom: 0,
-                                            right: 0,
-                                            child: Container(
-                                              width: 36,
-                                              height: 36,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                                  bottomRight: Radius.circular(Constants.cornerRadiusMedium),
-                                                ),
-                                                color: Theme.of(context).colorScheme.surface,
-                                              ),
-                                              child: IconButton(
-                                                  onPressed: () => _showFullScreenImage(context, result['imageUrl']!),
-                                                  padding: EdgeInsets.all(12),
-                                                  icon: Icon(Icons.open_in_full_rounded, color: Theme.of(context).colorScheme.primary)
-                                              ),
-                                            )
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ) : SizedBox.shrink();
-                          } else {
-                            print('No images found');
-                            return SizedBox.shrink();
-                          }
-                        },
-                      ),
-                      SizedBox(height: 16),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                        icon: Image.asset(
+                          "assets/images/menu.png",
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 24,
+                          height: 24,
+                        )
+                    )
+                  ],
+                ),
+                SizedBox(height: 8),
+                Padding(
+                    padding: EdgeInsets.only(
+                      left: 8,
+                      right: 8,
+                      bottom: 8,
+                    ),
+                    child: Column(
+                      children: [
+                        FutureBuilder<List<Map<String, String>>>(
+                          future: vm.fetchGoogleImages(details), // Fetch images with links
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(
+                                  child: CupertinoActivityIndicator(
+                                      radius: 20.0,
+                                      color: Theme.of(context).colorScheme.primary
+                                  )
+                              );
+                            } else if (snapshot.hasError) {
+                              print('Error: ${snapshot.error}');
+                              return SizedBox.shrink();
+                            } else if (snapshot.hasData) {
+                              final results = snapshot.data!;
+                              return results.isNotEmpty ? Container(
+                                height: 96,
+                                clipBehavior: Constants.clipBehaviour,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                                ),
+                                child: PageView.builder(
+                                  controller: PageController(),
+                                  itemCount: results.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    final result = results[index];
+                                    return GestureDetector(
+                                      onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
+                                      child: Stack(
                                         children: [
-                                          SelectableText(
-                                              details,
-                                              style: Theme.of(context).textTheme.titleLarge
+                                          Image.network(
+                                            result['imageUrl']!,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
                                           ),
-                                          SizedBox(height: 16),
-                                          GestureDetector(
-                                              onTap: () => copyToClipboard(context, item.colorHexCode),
+                                          Positioned(
+                                              bottom: 0,
+                                              right: 0,
                                               child: Container(
-                                                  decoration: BoxDecoration(
-                                                      color: item.colorHexCode.toColor(),
-                                                      border: Border.all(
-                                                        color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
-                                                        width: Constants.borderWidth,
-                                                      ),
-                                                      borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                width: 36,
+                                                height: 36,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                                                    bottomRight: Radius.circular(Constants.cornerRadiusMedium),
                                                   ),
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 2
-                                                  ),
-                                                  child: Text(
-                                                    item.color,
-                                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                      color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
-                                                    ),
-                                                  )
+                                                  color: Theme.of(context).colorScheme.surface,
+                                                ),
+                                                child: IconButton(
+                                                    onPressed: () => _showFullScreenImage(context, result['imageUrl']!),
+                                                    padding: EdgeInsets.all(12),
+                                                    icon: Icon(Icons.open_in_full_rounded, color: Theme.of(context).colorScheme.primary)
+                                                ),
                                               )
                                           )
                                         ],
-                                      )
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(item.price.toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer))
-                                ]
-                            )
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ) : SizedBox.shrink();
+                            } else {
+                              print('No images found');
+                              return SizedBox.shrink();
+                            }
+                          },
                         ),
-                      )
-                    ],
-                  )
-              )
-            ],
-          ),
-        )
+                        SizedBox(height: 16),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            SelectableText(
+                                                details,
+                                                style: Theme.of(context).textTheme.titleLarge
+                                            ),
+                                            SizedBox(height: 16),
+                                            GestureDetector(
+                                                onTap: () => copyToClipboard(context, item.colorHexCode),
+                                                child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: item.colorHexCode.toColor(),
+                                                        border: Border.all(
+                                                          color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
+                                                          width: Constants.borderWidth,
+                                                        ),
+                                                        borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                    ),
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 2
+                                                    ),
+                                                    child: Text(
+                                                      item.color,
+                                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                        color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
+                                                      ),
+                                                    )
+                                                )
+                                            )
+                                          ],
+                                        )
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(item.price.toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer))
+                                  ]
+                              )
+                          ),
+                        )
+                      ],
+                    )
+                )
+              ],
+            ),
+          )
+      )
     );
   }
 

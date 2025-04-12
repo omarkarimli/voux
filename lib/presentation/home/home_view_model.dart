@@ -13,7 +13,17 @@ import '../../models/user_model.dart';
 import '../../utils/constants.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  final model = GenerativeModel(model: Constants.geminiModel, apiKey: Constants.geminiApiKey);
+  final GenerativeModel model;
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
+  final AppDatabase database;
+
+  HomeViewModel({
+    required this.model,
+    required this.auth,
+    required this.firestore,
+    required this.database,
+  });
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
