@@ -22,9 +22,9 @@ class UpgradeScreen extends StatefulWidget {
 }
 
 class _UpgradeScreenState extends State<UpgradeScreen> {
-  String? _currentPlanName;
-  PlanModel? _selectedPlan;
-  late InAppPurchase _inAppPurchase;
+  String? currentPlanName;
+  PlanModel? selectedPlan;
+  late InAppPurchase inAppPurchase;
 
   List<PlanModel> plans = [
     PlanModel(name: Constants.proPlan, price: 29.99, features: ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5"], isCurrentPlan: false),
@@ -35,26 +35,26 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSettings();
+    loadSettings();
 
     // Initialize in-app purchase
-    _inAppPurchase = InAppPurchase.instance;
+    inAppPurchase = InAppPurchase.instance;
 
     // Listen to purchases globally
-    _inAppPurchase.purchaseStream.listen(_handlePurchaseUpdate);
+    inAppPurchase.purchaseStream.listen(handlePurchaseUpdate);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_currentPlanName == null) {
+    if (currentPlanName == null) {
       return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        body: Center(
-            child: CupertinoActivityIndicator(
-                radius: 20.0,
-                color: Theme.of(context).colorScheme.primary
-            )
-        )
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          body: Center(
+              child: CupertinoActivityIndicator(
+                  radius: 20.0,
+                  color: Theme.of(context).colorScheme.primary
+              )
+          )
       );
     }
 
@@ -77,21 +77,21 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          itemCount: plans.length,
-                          itemBuilder: (context, index) {
-                            return _buildPlanCard(plans[index]);
-                          },
-                        ),
-                        const SizedBox(height: 32)
-                      ],
-                    )
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            itemCount: plans.length,
+                            itemBuilder: (context, index) {
+                              return buildPlanCard(plans[index]);
+                            },
+                          ),
+                          const SizedBox(height: 32)
+                        ],
+                      )
                   )
                 ],
               ),
@@ -110,13 +110,13 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     );
   }
 
-  Widget _buildPlanCard(PlanModel plan) {
+  Widget buildPlanCard(PlanModel plan) {
     return Card(
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 16),
       color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
-        side: plan.name == _selectedPlan?.name
+        side: plan.name == selectedPlan?.name
             ? BorderSide(color: Theme.of(context).colorScheme.outline.withAlpha(50), width: 3)
             : BorderSide.none,
         borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
@@ -157,16 +157,16 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: plan.name == _selectedPlan?.name
+                onPressed: plan.name == selectedPlan?.name
                     ? null
-                    : () => _showConfirmationDialog(plan),
+                    : () => showConfirmationDialog(plan),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.onSurface,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall),
+                    borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
                   ),
                 ),
-                child: plan.name == _selectedPlan?.name
+                child: plan.name == selectedPlan?.name
                     ? Text(
                   "Current Plan",
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -190,25 +190,25 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     );
   }
 
-  void _loadSettings() async {
-    final user = await _getUserFromFirestore();
+  void loadSettings() async {
+    final user = await getUserFromFirestore();
 
     if (!mounted) return; // Prevents setState() being called on disposed widget
 
     setState(() {
-      _currentPlanName = user?.currentSubscriptionStatus ?? Constants.freePlan;
-      _selectedPlan = plans.firstWhere((plan) => plan.name == _currentPlanName, orElse: () => plans[0]);
+      currentPlanName = user?.currentSubscriptionStatus ?? Constants.freePlan;
+      selectedPlan = plans.firstWhere((plan) => plan.name == currentPlanName, orElse: () => plans[0]);
 
       plans = plans.map((plan) {
-        return plan.copyWith(isCurrentPlan: plan.name == _currentPlanName);
+        return plan.copyWith(isCurrentPlan: plan.name == currentPlanName);
       }).toList();
     });
 
-    print("Current Plan Name: $_currentPlanName");
-    print("Selected Plan: ${_selectedPlan?.name} ${_selectedPlan?.price}");
+    print("Current Plan Name: $currentPlanName");
+    print("Selected Plan: ${selectedPlan?.name} ${selectedPlan?.price}");
   }
 
-  void _showConfirmationDialog(PlanModel plan) {
+  void showConfirmationDialog(PlanModel plan) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -222,7 +222,9 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
             ),
             TextButton(
               onPressed: () {
-                _purchasePlan(plan);
+                purchasePlan(plan);
+
+                Navigator.pop(context);
               },
               child: const Text("Yes"),
             ),
@@ -232,8 +234,8 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     );
   }
 
-  void _purchasePlan(PlanModel plan) async {
-    final bool available = await _inAppPurchase.isAvailable();
+  void purchasePlan(PlanModel plan) async {
+    final bool available = await inAppPurchase.isAvailable();
 
     if (!available) {
       context.showCustomSnackBar(Constants.error, "In-app purchases are not available.");
@@ -247,7 +249,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       Constants.proPlan
     };
 
-    final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(kProductIds);
+    final ProductDetailsResponse response = await inAppPurchase.queryProductDetails(kProductIds);
 
     if (response.notFoundIDs.isNotEmpty) {
       context.showCustomSnackBar(Constants.error, "Subscription product not found.");
@@ -263,38 +265,38 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails);
 
-    _inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
+    inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
 
     // Listen to purchase updates
-    _inAppPurchase.purchaseStream.listen((purchaseDetailsList) async {
+    inAppPurchase.purchaseStream.listen((purchaseDetailsList) async {
       for (var purchaseDetails in purchaseDetailsList) {
         if (purchaseDetails.status == PurchaseStatus.purchased ||
             purchaseDetails.status == PurchaseStatus.restored) {
 
           // Successful purchase
           await Future.wait([
-            _inAppPurchase.completePurchase(purchaseDetails),
-            _updateUserInFirestore(plan)
+            inAppPurchase.completePurchase(purchaseDetails),
+            updateUserInFirestore(plan)
           ]);
         }
       }
     });
   }
 
-  void _handlePurchaseUpdate(List<PurchaseDetails> purchaseDetailsList) async {
+  void handlePurchaseUpdate(List<PurchaseDetails> purchaseDetailsList) async {
     for (var purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
-        await _inAppPurchase.completePurchase(purchaseDetails);
+        await inAppPurchase.completePurchase(purchaseDetails);
         PlanModel? purchasedPlan = plans.firstWhereOrNull((plan) => plan.name == purchaseDetails.productID);
         if (purchasedPlan != null) {
-          await _updateUserInFirestore(purchasedPlan);
+          await updateUserInFirestore(purchasedPlan);
           Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
         }
       }
     }
   }
 
-  Future<void> _updateUserInFirestore(PlanModel plan) async {
+  Future<void> updateUserInFirestore(PlanModel plan) async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) return;
@@ -345,8 +347,8 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       ]);
 
       setState(() {
-        _currentPlanName = plan.name;
-        _selectedPlan = plan;
+        currentPlanName = plan.name;
+        selectedPlan = plan;
         plans = plans.map((p) => p.copyWith(isCurrentPlan: p.name == plan.name)).toList();
       });
 
@@ -357,7 +359,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     }
   }
 
-  Future<UserModel?> _getUserFromFirestore() async {
+  Future<UserModel?> getUserFromFirestore() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return null; // Return null if no user is signed in
 

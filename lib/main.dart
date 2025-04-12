@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voux/presentation/privacyPolicy/privacy_policy_screen.dart';
-import 'package:voux/presentation/wishlist/wishlist_screen.dart';
+import 'theme/theme_util.dart';
+import 'theme/theme.dart';
+import 'utils/constants.dart';
+import 'presentation/wishlist/wishlist_view_model.dart';
+import 'presentation/detail/detail_view_model.dart';
+import 'presentation/home/home_view_model.dart';
+import 'presentation/privacyPolicy/privacy_policy_screen.dart';
+import 'presentation/wishlist/wishlist_screen.dart';
 import 'presentation/agreement/agreement_screen.dart';
 import 'presentation/settings/settings_screen.dart';
 import 'presentation/splash/splash_screen.dart';
@@ -10,12 +16,8 @@ import 'presentation/success/success_screen.dart';
 import 'presentation/upgrade/upgrade_screen.dart';
 import 'presentation/onboarding/onboarding_screen.dart';
 import 'presentation/home/home_screen.dart';
-import 'presentation/home/home_bloc.dart';
 import 'presentation/anim/anim_transition_route.dart';
 import 'presentation/auth/auth_screen.dart';
-import 'theme/theme_util.dart';
-import 'theme/theme.dart';
-import 'utils/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,24 +46,32 @@ class MyApp extends StatelessWidget {
         TextTheme textTheme = createTextTheme(context);
         MaterialTheme theme = MaterialTheme(textTheme);
 
-        return MaterialApp(
-          title: Constants.appName,
-          theme: theme.light(),
-          darkTheme: theme.dark(),
-          themeMode: themeMode, // Dynamic theme
-          home: SplashScreen(),
-          onGenerateRoute: (settings) => _onGenerateRoute(settings),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => HomeViewModel()),
+            ChangeNotifierProvider(create: (_) => DetailViewModel()),
+            ChangeNotifierProvider(create: (_) => WishlistViewModel()),
+            // Add more providers here if necessary
+          ],
+          child: MaterialApp(
+            title: Constants.appName,
+            theme: theme.light(),
+            darkTheme: theme.dark(),
+            themeMode: themeMode, // Dynamic theme
+            home: SplashScreen(),
+            onGenerateRoute: (settings) => onGenerateRoute(settings),
+          )
         );
       },
     );
   }
 
-  PageRouteBuilder? _onGenerateRoute(RouteSettings settings) {
+  PageRouteBuilder? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case SplashScreen.routeName:
         return animTransitionRoute(const SplashScreen());
       case HomeScreen.routeName:
-        return animTransitionRoute(const HomeScreenWithBloc());
+        return animTransitionRoute(HomeScreen());
       case OnboardingScreen.routeName:
         return animTransitionRoute(const OnboardingScreen());
       case AuthScreen.routeName:
@@ -81,17 +91,5 @@ class MyApp extends StatelessWidget {
       default:
         return null;
     }
-  }
-}
-
-class HomeScreenWithBloc extends StatelessWidget {
-  const HomeScreenWithBloc({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeBloc(),
-      child: HomeScreen(),
-    );
   }
 }

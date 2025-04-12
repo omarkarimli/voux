@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
 import '../agreement/agreement_screen.dart';
+import '../auth/auth_screen.dart';
 import '../privacyPolicy/privacy_policy_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -18,29 +20,29 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   ThemeMode? themeMode;
 
-  bool? _isDarkModeEnabled;
-  bool? _isNotificationEnabled;
+  bool? isDarkModeEnabled;
+  bool? isNotificationEnabled;
 
   @override
   void initState() {
     super.initState();
 
-    _loadSettings();
+    loadSettings();
   }
 
-  void _loadSettings() async {
+  void loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _isDarkModeEnabled = prefs.getBool(Constants.isDarkMode) ?? false;
-      _isNotificationEnabled = prefs.getBool(Constants.canNoti) ?? false;
+      isDarkModeEnabled = prefs.getBool(Constants.isDarkMode) ?? false;
+      isNotificationEnabled = prefs.getBool(Constants.canNoti) ?? false;
 
-      themeMode = _isDarkModeEnabled! ? ThemeMode.dark : ThemeMode.light;
+      themeMode = isDarkModeEnabled! ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isDarkModeEnabled == null || _isNotificationEnabled == null) {
+    if (isDarkModeEnabled == null || isNotificationEnabled == null) {
       return Center(
           child: CupertinoActivityIndicator(
               radius: 20.0,
@@ -68,115 +70,118 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      // Notification
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Notification', style: Theme.of(context).textTheme.bodyLarge),
-                          CupertinoSwitch(
-                            value: _isNotificationEnabled!,
-                            activeTrackColor: CupertinoColors.activeBlue,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isNotificationEnabled = value ?? false;
-                              });
-                              _saveNotificationPreference(_isNotificationEnabled!);
-                            },
-                          )
-                        ],
-                      ),
-                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    child: ListView(
+                      children: [
+                        // Notification
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Notification', style: Theme.of(context).textTheme.bodyLarge),
+                            CupertinoSwitch(
+                              value: isNotificationEnabled!,
+                              activeTrackColor: CupertinoColors.activeBlue,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isNotificationEnabled = value ?? false;
+                                });
+                                saveNotificationPreference(isNotificationEnabled!);
+                              },
+                            )
+                          ],
+                        ),
+                        Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
 
-                      // Dark Mode
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Dark mode', style: Theme.of(context).textTheme.bodyLarge),
-                          CupertinoSwitch(
-                            value: _isDarkModeEnabled!,
-                            activeTrackColor: CupertinoColors.activeBlue,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isDarkModeEnabled = value ?? false;
-                              });
+                        // Dark Mode
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Dark mode', style: Theme.of(context).textTheme.bodyLarge),
+                            CupertinoSwitch(
+                              value: isDarkModeEnabled!,
+                              activeTrackColor: CupertinoColors.activeBlue,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isDarkModeEnabled = value ?? false;
+                                });
 
-                              // Save dark mode preference
-                              _saveDarkModePreference(_isDarkModeEnabled!);
+                                // Save dark mode preference
+                                saveDarkModePreference(isDarkModeEnabled!);
 
-                              // Update global theme mode
-                              themeNotifier.value = _isDarkModeEnabled! ? ThemeMode.dark : ThemeMode.light;
-                            },
-                          )
-                        ],
-                      ),
-                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                                // Update global theme mode
+                                themeNotifier.value = isDarkModeEnabled! ? ThemeMode.dark : ThemeMode.light;
+                              },
+                            )
+                          ],
+                        ),
+                        Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
 
-                      // Language
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Language', style: Theme.of(context).textTheme.bodyLarge),
-                          IconButton(
-                            onPressed: () => _showLangPicker(context),
-                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                        // Language
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Language', style: Theme.of(context).textTheme.bodyLarge),
+                            IconButton(
+                              onPressed: () => showLangPicker(context),
+                              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                            ),
+                          ],
+                        ),
+                        Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
 
-                      // Account
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Account', style: Theme.of(context).textTheme.bodyLarge),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                        // Account
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Account', style: Theme.of(context).textTheme.bodyLarge),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                            ),
+                          ],
+                        ),
+                        Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
 
-                      // Privacy Policy
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Privacy Policy', style: Theme.of(context).textTheme.bodyLarge),
-                          IconButton(
-                            onPressed: () => Navigator.pushNamed(context, PrivacyPolicyScreen.routeName),
-                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                        // Privacy Policy
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Privacy Policy', style: Theme.of(context).textTheme.bodyLarge),
+                            IconButton(
+                              onPressed: () => Navigator.pushNamed(context, PrivacyPolicyScreen.routeName),
+                              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                            ),
+                          ],
+                        ),
+                        Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
 
-                      // Agreement
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Agreement', style: Theme.of(context).textTheme.bodyLarge),
-                          IconButton(
-                            onPressed: () => Navigator.pushNamed(context, AgreementScreen.routeName),
-                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+                        // Agreement
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Agreement', style: Theme.of(context).textTheme.bodyLarge),
+                            IconButton(
+                              onPressed: () => Navigator.pushNamed(context, AgreementScreen.routeName),
+                              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                            ),
+                          ],
+                        ),
+                        Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
 
-                      // About app
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('About app', style: Theme.of(context).textTheme.bodyLarge),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                          ),
-                        ],
-                      )
-                    ],
+                        // About app
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('About app', style: Theme.of(context).textTheme.bodyLarge),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                            ),
+                          ],
+                        )
+                      ],
+                    )
                   ),
                 )
               ],
@@ -189,6 +194,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface)
             ),
+          ),
+
+          // Sign out
+          Positioned(
+              bottom: 32,
+              left: 16,
+              right: 16,
+              child: GestureDetector(
+                onTap: () => showConfirmationDialog(),
+                child: Card(
+                    elevation: 3,
+                    clipBehavior: Constants.clipBehaviour,
+                    color: Theme.of(context).colorScheme.errorContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                    ),
+                    child: Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          right: 8,
+                          top: 4,
+                          bottom: 4,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Sign out', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer)),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.exit_to_app_rounded, size: 24, color: Theme.of(context).colorScheme.onErrorContainer),
+                            ),
+                          ],
+                        )
+                    )
+                )
+              )
           )
         ],
       ),
@@ -196,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Show language selection sheet
-  void _showLangPicker(BuildContext context) {
+  void showLangPicker(BuildContext context) {
     final List<String> languages = ['English', 'Azerbaijani', 'Spanish', 'French'];
 
     showModalBottomSheet(
@@ -249,14 +290,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Save notification setting to preferences
-  Future<void> _saveNotificationPreference(bool value) async {
+  Future<void> saveNotificationPreference(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(Constants.canNoti, value);
   }
 
   // Save dark mode preference to preferences
-  Future<void> _saveDarkModePreference(bool value) async {
+  Future<void> saveDarkModePreference(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(Constants.isDarkMode, value);
+  }
+
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+
+    Navigator.pushNamedAndRemoveUntil(context, AuthScreen.routeName, (route) => false);
+  }
+
+  void showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Sign out", style: Theme.of(context).textTheme.titleLarge),
+          content: Text("Are you sure you want to log out?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () => signOut(),
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -150,10 +150,6 @@ class AuthScreen extends StatelessWidget {
     return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   }
 
-  Future<void> signOut() async {
-    await FirebaseAuth.instance.signOut();
-  }
-
   Future<void> _checkLoginState(BuildContext context, UserCredential? user) async {
     if (user != null) {
       await Future.wait([

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../home/home_screen.dart';
+import '../wishlist/wishlist_view_model.dart';
 import '../../../models/clothing_item_floor_model.dart';
 import '../../../utils/extensions.dart';
-import '../../db/database.dart';
 import '../../utils/constants.dart';
 import '../reusables/more_bottom_sheet.dart';
 import '../reusables/stacked_avatar_badge.dart';
@@ -18,35 +20,113 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  List<ClothingItemFloorModel> wishlistItems = [];
+  late WishlistViewModel vm;
 
   @override
-  void initState() {
-    super.initState();
-    _loadWishlist();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    vm = Provider.of<WishlistViewModel>(context, listen: false);
+    vm.loadWishlist();
   }
 
-  Future<void> _loadWishlist() async {
-    final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-    final clothingItemDao = database.clothingItemDao;
-    final items = await clothingItemDao.getAllClothingItemFloorModels();
-
-    setState(() {
-      wishlistItems = items;
-    });
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<WishlistViewModel>(
+      builder: (context, vm, _) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 24, right: 24, top: MediaQuery.of(context).padding.top + 8, bottom: MediaQuery.of(context).padding.bottom + 48),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 72),
+                        Text(
+                          'Wishlist',
+                          style: Theme.of(context).textTheme.headlineLarge,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: _buildWishlistItemsList(),
+                        )
+                      ],
+                    ),
+                  )
+              ),
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 18,
+                left: 14,
+                child: Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
+                    onPressed: () {
+                      Future.microtask(() {
+                        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
+                      });
+                    },
+                  ),
+                ),
+              ),
+              Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.only(
+                      top: 20,
+                      bottom: MediaQuery.of(context).padding.bottom + 8,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.surface,
+                          Theme.of(context).colorScheme.primaryContainer
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "${vm.wishlistItems.length} items",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  )
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   // Function to build the list of wishlist items
   Widget _buildWishlistItemsList() {
-    return wishlistItems.isEmpty
+    return vm.wishlistItems.isEmpty
         ? Center(child: Text("No items in wishlist", style: Theme.of(context).textTheme.bodyLarge))
         : ListView.builder(
-            itemCount: wishlistItems.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: vm.wishlistItems.length,
             itemBuilder: (context, index) {
-              final item = wishlistItems[index];
+              final item = vm.wishlistItems[index];
               return buildItemWidget(context, item);
-            },
-          );
+            }
+        );
   }
 
   Widget buildItemWidget(BuildContext context, ClothingItemFloorModel item) {
@@ -57,7 +137,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
         margin: const EdgeInsets.symmetric(vertical: 8),
         color: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: Constants.clipBehaviour,
         elevation: 3,
         child: Padding(
           padding: const EdgeInsets.all(8),
@@ -84,7 +164,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                           );
                         },
                       ).then((_) {
-                        _loadWishlist(); // Refresh wishlist after closing bottom sheet
+                        vm.loadWishlist(); // Refresh wishlist after closing bottom sheet
                       });
                     },
                     icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface),
@@ -203,77 +283,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
             ],
           ),
         )
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, top: MediaQuery.of(context).padding.top + 8, bottom: MediaQuery.of(context).padding.bottom + 48),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 72),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        'Wishlist',
-                        style: Theme.of(context).textTheme.headlineLarge,
-                      ),
-                    ),
-                    // Wrap ListView with SizedBox with a fixed height
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height - 208,
-                      child: _buildWishlistItemsList(),
-                    )
-                  ],
-                ),
-              )
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top,
-            left: 0,
-            child: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.only(
-                top: 20,
-                bottom: MediaQuery.of(context).padding.bottom + 8,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.surface,
-                    Theme.of(context).colorScheme.primaryContainer
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  "${wishlistItems.length} items",
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-            )
-          )
-        ],
-      ),
     );
   }
 

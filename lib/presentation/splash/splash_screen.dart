@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voux/presentation/home/home_screen.dart';
 import '../../firebase_options.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
+import '../home/home_view_model.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -30,11 +32,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Navigate based on login state
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => isLoggedIn ? HomeScreenWithBloc() : const OnboardingScreen(),
-        ),
+      Navigator.pushReplacementNamed(
+          context,
+          isLoggedIn ? HomeScreen.routeName : OnboardingScreen.routeName
       );
     }
   }
