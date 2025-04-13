@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:voux/di/locator.dart';
 
 import '../../db/database.dart';
 import '../../models/clothing_item_model.dart';
@@ -40,7 +41,8 @@ class HomeViewModel extends ChangeNotifier {
   OptionalAnalysisResult? _optionalAnalysisResult;
   OptionalAnalysisResult? get optionalAnalysisResult => _optionalAnalysisResult;
 
-  User? user = FirebaseAuth.instance.currentUser;
+  User? _user;
+  User? get user => _user;
 
   UserModel? _userModel;
   UserModel? get userModel => _userModel;
@@ -72,7 +74,7 @@ class HomeViewModel extends ChangeNotifier {
     return _userModel!.currentAnalysisCount < _userModel!.analysisLimit;
   }
 
-  void _setLoading(bool value) {
+  void setLoading(bool value) {
     _isLoading = value;
 
     Future.microtask(() {
@@ -80,7 +82,7 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
-  void _setError(String message) {
+  void setError(String message) {
     _errorMessage = message;
 
     Future.microtask(() {
@@ -88,7 +90,7 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
-  void _setNavigateToDetail(bool value) {
+  void setNavigateToDetail(bool value) {
     _navigateToDetail = value;
 
     // // Postpone notifyListeners() to avoid calling it during build phase
@@ -100,9 +102,17 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> fetchUser(String userId) async {
+  void setUser(User u) {
+    _user = u;
+
+    Future.microtask(() {
+      notifyListeners();
+    });
+  }
+
+  Future<void> fetchUserFromFirestore(String userId) async {
     resetNavigation();
-    _setLoading(true);
+    setLoading(true);
     try {
       final doc = await FirebaseFirestore.instance.collection(Constants.users).doc(userId).get();
       if (doc.exists && doc.data() != null) {
@@ -111,12 +121,30 @@ class HomeViewModel extends ChangeNotifier {
 
         resetNavigation();
       } else {
-        _setError("User not found");
+        setError("User not found in firestore");
       }
     } catch (e) {
-      _setError("Failed to fetch user: $e");
+      setError("Failed to fetch user: $e");
     }
-    _setLoading(false);
+    setLoading(false);
+  }
+
+  Future<void> fetchUserFromAuth() async {
+    resetNavigation();
+    setLoading(true);
+
+    try {
+      if (auth.currentUser == null) {
+        setError("User not found in auth");
+        return;
+      }
+      setUser(auth.currentUser!);
+      await fetchUserFromFirestore(auth.currentUser!.uid);
+    } catch (e) {
+      setError("Failed to fetch user: $e");
+    } finally {
+      setLoading(false);
+    }
   }
 
   Future<int> getWishlistSize() async {
@@ -127,7 +155,7 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> analyzeImage(String path) async {
     if (_isLoading) return; // Prevent multiple triggers if already loading
 
-    _setLoading(true);
+    setLoading(true);
 
     try {
       final responses = await Future.wait([
@@ -142,25 +170,29 @@ class HomeViewModel extends ChangeNotifier {
       print(_clothingItems);
 
       if (_clothingItems.isEmpty) {
-        _setError("API response was empty or null");
+        setError("API response was empty or null");
       } else {
         updateAnalysisCount();
-        _setNavigateToDetail(true);
+        setNavigateToDetail(true);
       }
     } catch (e) {
-      _setError("Failed to analyze image: $e");
+      setError("Failed to analyze image: $e");
     } finally {
-      _setLoading(false);
+      setLoading(false);
     }
   }
 
-  void updateAnalysisCount() {
-    FirebaseFirestore.instance
-        .collection(Constants.users)
-        .doc(user!.uid)
-        .update({
-      Constants.currentAnalysisCount: userModel!.currentAnalysisCount + 1,
-    });
+  void updateAnalysisCount() async {
+    try {
+      await locator<FirebaseFirestore>()
+          .collection(Constants.users)
+          .doc(user!.uid)
+          .update({
+        Constants.currentAnalysisCount: userModel!.currentAnalysisCount + 1,
+      });
+    } catch (e) {
+      print("❌ Failed to update analysis count: $e");
+    }
   }
 
   Future<List<ClothingItemModel>> _analyzeImage(String path) async {

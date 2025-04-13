@@ -310,7 +310,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   itemBuilder: (context, index) {
                                     final result = results[index];
                                     return GestureDetector(
-                                      onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
+                                      onDoubleTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
                                       child: Stack(
                                         children: [
                                           Image.network(
@@ -436,7 +436,6 @@ class _DetailScreenState extends State<DetailScreen> {
                 height: double.infinity,
               ),
             ),
-
             // Centered image with interaction
             Center(
               child: InteractiveViewer(
@@ -446,6 +445,23 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ),
             ),
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 18,
+              right: 14,
+              child: Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
+                    onPressed: () => Navigator.pop(context)
+                ),
+              ),
+            )
           ],
         ),
       ),

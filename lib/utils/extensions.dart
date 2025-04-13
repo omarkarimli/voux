@@ -43,26 +43,28 @@ extension FirstWhereOrNull<E> on Iterable<E> {
 
 extension SnackBarHelper on BuildContext {
   void showCustomSnackBar(String state, String message) {
-    ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: Theme.of(this).textTheme.bodyMedium?.copyWith(
-            color: state == Constants.success
-                ? Theme.of(this).colorScheme.onPrimaryContainer
-                : Theme.of(this).colorScheme.onErrorContainer,
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(this).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: Theme.of(this).textTheme.bodyMedium?.copyWith(
+              color: state == Constants.success
+                  ? Theme.of(this).colorScheme.onPrimaryContainer
+                  : Theme.of(this).colorScheme.onErrorContainer,
+            ),
           ),
+          backgroundColor: state == Constants.success
+              ? Theme.of(this).colorScheme.primaryContainer
+              : Theme.of(this).colorScheme.errorContainer,
+          closeIconColor: state == Constants.success
+              ? Theme.of(this).colorScheme.onPrimaryContainer
+              : Theme.of(this).colorScheme.onErrorContainer,
+          showCloseIcon: true,
+          behavior: SnackBarBehavior.floating,
         ),
-        backgroundColor: state == Constants.success
-            ? Theme.of(this).colorScheme.primaryContainer
-            : Theme.of(this).colorScheme.errorContainer,
-        closeIconColor: state == Constants.success
-            ? Theme.of(this).colorScheme.onPrimaryContainer
-            : Theme.of(this).colorScheme.onErrorContainer,
-        showCloseIcon: true,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+      );
+    });
 
     print(state == Constants.success
         ? "Success: $message"

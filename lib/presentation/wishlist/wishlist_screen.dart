@@ -117,7 +117,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
   // Function to build the list of wishlist items
   Widget _buildWishlistItemsList() {
     return vm.wishlistItems.isEmpty
-        ? Center(child: Text("No items in wishlist", style: Theme.of(context).textTheme.bodyLarge))
+        ? SizedBox(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: Center(child: Text("No items in wishlist", style: Theme.of(context).textTheme.bodyLarge))
+          )
         : ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -126,7 +129,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
               final item = vm.wishlistItems[index];
               return buildItemWidget(context, item);
             }
-        );
+          );
   }
 
   Widget buildItemWidget(BuildContext context, ClothingItemFloorModel item) {
@@ -217,7 +220,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                             itemBuilder: (context, index) {
                               final result = item.googleResults[index];
                               return GestureDetector(
-                                onTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
+                                onDoubleTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
                                 child: Stack(
                                   children: [
                                     Image.network(
@@ -321,19 +324,51 @@ class _WishlistScreenState extends State<WishlistScreen> {
   void _showFullScreenImage(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
+      barrierColor: Colors.black.withAlpha(90),
       builder: (_) => Dialog(
-        insetPadding: EdgeInsets.all(24),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        child: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: InteractiveViewer(
-            child: Center(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.contain,
+        insetPadding: EdgeInsets.zero,
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            // Detect tap outside
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                color: Colors.transparent,
+                width: double.infinity,
+                height: double.infinity,
               ),
             ),
-          ),
+
+            // Centered image with interaction
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 18,
+              right: 14,
+              child: Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
+                  onPressed: () => Navigator.pop(context)
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

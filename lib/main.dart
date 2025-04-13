@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voux/presentation/auth/auth_view_model.dart';
 import 'di/locator.dart';
 import 'theme/theme_util.dart';
 import 'theme/theme.dart';
@@ -26,19 +27,30 @@ void main() async {
   // Setup DI before using locator
   await setupLocator();
 
-  final ThemeMode initialTheme = await _loadThemeMode();
+  final ThemeMode initialTheme = loadThemeMode();
   themeNotifier.value = initialTheme; // Set the initial theme
 
   runApp(MyApp());
 }
 
 // Global theme notifier
-final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
 
-Future<ThemeMode> _loadThemeMode() async {
-  final prefs = await SharedPreferences.getInstance();
-  bool isDark = prefs.getBool(Constants.isDarkMode) ?? false;
-  return isDark ? ThemeMode.dark : ThemeMode.light;
+// Load theme preference from SharedPreferences
+ThemeMode loadThemeMode() {
+  final prefs = locator<SharedPreferences>();
+  final String? theme = prefs.getString(Constants.theme);
+
+  if (theme == null) {
+    prefs.setString(Constants.theme, Constants.themeSystem);
+
+    // No preference saved — follow system
+    return ThemeMode.system;
+  } else if (theme == Constants.themeLight) {
+    return ThemeMode.light;
+  } else {
+    return ThemeMode.dark;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -57,6 +69,7 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => locator<HomeViewModel>()),
             ChangeNotifierProvider(create: (_) => DetailViewModel()),
             ChangeNotifierProvider(create: (_) => WishlistViewModel()),
+            ChangeNotifierProvider(create: (_) => locator<AuthViewModel>()),
             // Add more providers here if necessary
           ],
           child: MaterialApp(

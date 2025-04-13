@@ -6,7 +6,7 @@ class Constants {
   // Corner Radius
   static const cornerRadiusLarge = 32.0;
   static const cornerRadiusMedium = 18.0;
-  static const cornerRadiusSmall = 6.0;
+  static const cornerRadiusSmall = 12.0;
 
   // Border width
   static const borderWidth = 3.0;
@@ -40,8 +40,18 @@ class Constants {
 
   // Shared Preferences
   static const String isLoggedIn = "isLoggedIn";
-  static const String isDarkMode = "isDarkMode";
-  static const String canNoti = "canNoti";
+  static const String theme = "theme";
+  static const String notification = "notification";
+
+  // Theme
+  static const String themeLight = "Light";
+  static const String themeDark = "Dark";
+  static const String themeSystem = "System";
+
+  // Notification
+  static const String notificationOn = "On";
+  static const String notificationOff = "Off";
+  static const String notificationSystem = "System";
 
   static const String plan = "Plan";
 

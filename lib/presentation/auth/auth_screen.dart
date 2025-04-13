@@ -4,206 +4,167 @@
 // gradlew signingReport
 // C:\Users\user\.android\debug.keystore
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart' as apple;
+import 'package:provider/provider.dart';
 import 'package:voux/presentation/home/home_screen.dart';
-import 'dart:io';
-import 'package:uuid/uuid.dart';
 import 'package:voux/utils/extensions.dart';
-import '../../models/subscription_payment_model.dart';
-import '../../models/user_model.dart';
 import '../../utils/constants.dart';
+import 'auth_view_model.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
+  static const routeName = '/${Constants.auth}';
   const AuthScreen({super.key});
 
-  static const routeName = '/${Constants.auth}';
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  late AuthViewModel vm;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    vm = Provider.of<AuthViewModel>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bg.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
-              child: FittedBox(
-                child: Text(
-                  Constants.appName,
-                  style: TextStyle(
-                    letterSpacing: 8,
-                    fontFamily: "Aboreto",
-                    fontSize: 112,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.surface,
+    return Consumer<AuthViewModel>(
+      builder: (context, vm, _) {
+        if (vm.navigateToHome == true) {
+          // Delay navigation to the next frame
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            vm.setNavigateToHomeScreen(false);
+
+            context.showCustomSnackBar(Constants.success, "Signed as ${vm.auth.currentUser?.displayName}");
+
+            // Navigate to HomeScreen
+            Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
+          });
+        }
+
+        if (vm.errorMessage != null) {
+          final error = vm.errorMessage!;
+          context.showCustomSnackBar(Constants.error, "Error: $error");
+          Future.microtask(() => vm.clearError());
+        }
+
+        return Scaffold(
+          body: AbsorbPointer(
+            absorbing: vm.isLoading,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/bg.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
+                      child: FittedBox(
+                        child: Text(
+                          Constants.appName,
+                          style: TextStyle(
+                            letterSpacing: 8,
+                            fontFamily: "Aboreto",
+                            fontSize: 112,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
+                        ),
+                      ),
+                    )
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            await vm.signInWithGoogle();
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              padding: EdgeInsets.symmetric(vertical: 12.0)
+                          ),
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/google.png',
+                              width: 18,
+                              height: 18,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          label: Text(
+                            "Continue with Google",
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          iconAlignment: IconAlignment.start,
+                        ),
+                        SizedBox(height: 12.0),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            await vm.signInWithApple();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.onSurface,
+                            padding: EdgeInsets.symmetric(vertical: 12.0),
+                          ),
+                          icon: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/apple.png',
+                              width: 18,
+                              height: 18,
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                          ),
+                          label: Text(
+                            "Continue with Apple",
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                          ),
+                          iconAlignment: IconAlignment.start,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (vm.isLoading)
+                  Center(
+                    child: Card(
+                        color: Theme.of(context).colorScheme.surface,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)),
+                        clipBehavior: Constants.clipBehaviour,
+                        elevation: 3,
+                        child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: CupertinoActivityIndicator(
+                              radius: 20.0,
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                        )
+                    ),
+                  ),
+              ],
             )
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final user = await signInWithGoogle();
-                      _checkLoginState(context, user);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.surface,
-                      padding: EdgeInsets.symmetric(vertical: 12.0)
-                    ),
-                    icon: Padding(
-                      padding: EdgeInsets.only(right: 8.0),
-                      child: Image.asset(
-                        'assets/images/google.png',
-                        width: 18,
-                        height: 18,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    label: Text(
-                      "Continue with Google",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    iconAlignment: IconAlignment.start,
-                  ),
-                  SizedBox(height: 12.0),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final user = await signInWithApple();
-                      _checkLoginState(context, user);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.onSurface,
-                      padding: EdgeInsets.symmetric(vertical: 12.0),
-                    ),
-                    icon: Padding(
-                      padding: EdgeInsets.only(right: 8.0),
-                      child: Image.asset(
-                        'assets/images/apple.png',
-                        width: 18,
-                        height: 18,
-                        color: Theme.of(context).colorScheme.surface,
-                      ),
-                    ),
-                    label: Text(
-                      "Continue with Apple",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.surface,
-                      ),
-                    ),
-                    iconAlignment: IconAlignment.start,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
-  }
-
-  Future<UserCredential?> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return null; // User canceled sign-in
-
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  Future<UserCredential?> signInWithApple() async {
-    if (!Platform.isIOS) return null;
-
-    final credential = await apple.SignInWithApple.getAppleIDCredential(
-      scopes: [apple.AppleIDAuthorizationScopes.email, apple.AppleIDAuthorizationScopes.fullName],
-    );
-
-    final oauthCredential = OAuthProvider("apple.com").credential(
-      idToken: credential.identityToken,
-      accessToken: credential.authorizationCode,
-    );
-
-    return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-  }
-
-  Future<void> _checkLoginState(BuildContext context, UserCredential? user) async {
-    if (user != null) {
-      await Future.wait([
-        _saveUserToFirestore(user),
-        _saveLoginState(true),
-      ]);
-
-      context.showCustomSnackBar(Constants.success, 'Signed in as ${user.user?.displayName}');
-
-      Navigator.pushNamed(context, HomeScreen.routeName);
-    } else {
-      context.showCustomSnackBar(Constants.error, 'Sign-in failed');
-    }
-  }
-
-  // Function to save the login state in SharedPreferences
-  Future<void> _saveLoginState(bool isLoggedIn) async {
-    final prefs = await SharedPreferences.getInstance();
-    await Future.wait([
-      prefs.setBool(Constants.isLoggedIn, isLoggedIn),
-      prefs.setBool(Constants.isDarkMode, false),
-      prefs.setBool(Constants.canNoti, false),
-    ]);
-  }
-
-  Future<void> _saveUserToFirestore(UserCredential userCredential) async {
-    final user = userCredential.user;
-    if (user == null) return;
-
-    final userDoc = FirebaseFirestore.instance.collection(Constants.users).doc(user.uid);
-    final docSnapshot = await userDoc.get();
-
-    if (!docSnapshot.exists) {
-      // Create a new user with an initial subscription
-      Timestamp now = Timestamp.now();
-      SubscriptionPaymentModel initialSubscription = SubscriptionPaymentModel(
-        id: Uuid().v4(),
-        name: Constants.freePlan,
-        purchaseTime: now,
-        endTime: Timestamp.fromDate(now.toDate().add(Duration(days: 30))),
-      );
-
-      UserModel newUser = UserModel(
-        uid: user.uid,
-        name: user.displayName ?? Constants.unknown,
-        email: user.email ?? '',
-        createdAt: now,
-        currentSubscriptionStatus: Constants.freePlan,
-        analysisLimit: Constants.analysisLimitCountFree,
-        currentAnalysisCount: 0,
-        subscriptions: [initialSubscription],
-      );
-
-      await userDoc.set(newUser.toMap());
-    }
   }
 }

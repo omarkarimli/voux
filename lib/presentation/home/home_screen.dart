@@ -24,13 +24,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late HomeViewModel vm;
+  bool _initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    vm = Provider.of<HomeViewModel>(context, listen: false);
-    vm.fetchUser(vm.user!.uid);
+    if (!_initialized) {
+      vm = Provider.of<HomeViewModel>(context, listen: false);
+      vm.fetchUserFromAuth();
+      _initialized = true;
+    }
   }
 
   @override
@@ -54,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ).then((_) {
-              vm.fetchUser(vm.user!.uid);
+              vm.fetchUserFromFirestore(vm.user!.uid);
               vm.resetNavigation(); // <-- Create this function in ViewModel
             });
           });
@@ -128,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       buildButtonsRow(vm),
                       const SizedBox(height: 16),
                       buildStatsCard(vm),
-                      buildWishlistCard(),
+                      buildWishlistCard()
                     ],
                   ),
                 ),
@@ -164,11 +167,12 @@ class _HomeScreenState extends State<HomeScreen> {
         gradient: LinearGradient(
           colors: [
             Theme.of(context).colorScheme.primaryContainer,
-            Theme.of(context).colorScheme.primaryContainer.withAlpha(50),
+            Theme.of(context).colorScheme.primaryContainer.withAlpha(5),
+            Theme.of(context).colorScheme.surface,
             Theme.of(context).colorScheme.surface,
           ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
         ),
       ),
       child: Padding(
@@ -231,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             clipBehavior: Constants.clipBehaviour,
             style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)),
                 backgroundColor: Theme.of(context).colorScheme.surface
             ),
             child: RichText(
@@ -253,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             clipBehavior: Constants.clipBehaviour,
             style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)),
                 backgroundColor: Theme.of(context).colorScheme.surface
             ),
             child: Row(
@@ -273,6 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          SizedBox(width: 8),
         ],
       ),
     );
@@ -349,8 +354,8 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: const EdgeInsets.symmetric(vertical: 8),
           color: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-          clipBehavior: Clip.antiAlias,
-          elevation: 3,
+          clipBehavior: Constants.clipBehaviour,
+          elevation: 2,
           child: Stack(
             alignment: Alignment.center,
             children: [
