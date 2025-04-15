@@ -279,7 +279,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                                         color: item.clothingItemModel.colorHexCode.toColor(),
                                                         border: Border.all(
                                                           color: item.clothingItemModel.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
-                                                          width: Constants.borderWidth,
+                                                          width: Constants.borderWidthLarge,
                                                         ),
                                                         borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
                                                     ),

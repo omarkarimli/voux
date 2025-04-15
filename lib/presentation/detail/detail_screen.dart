@@ -213,6 +213,74 @@ class _DetailScreenState extends State<DetailScreen> {
     final details = item.toDetailString(widget.optionalAnalysisResult);
     print(details);
 
+    String selectedSource = "Amazon"; // Default
+
+    // Select Source
+    Future<void> selectSource(String value) async {
+      setState(() {
+        selectedSource = value;
+      });
+
+      Navigator.pop(context);
+    }
+
+    // Show source selection sheet
+    void showSourcePicker(BuildContext context) {
+      final List<String> list = ["Amazon", "Ebay", "Alibaba"];
+
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          String selectedValue = selectedSource;
+          int initialIndex = list.indexOf(selectedValue);
+          int selectedIndex = initialIndex;
+
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 18,
+              right: 18,
+              top: 24,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 96,
+                  child: CupertinoPicker(
+                    itemExtent: 40.0,
+                    scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+                    onSelectedItemChanged: (int index) {
+                      selectedIndex = index;
+                    },
+                    children: list.map((lang) {
+                      return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    if (selectedIndex != initialIndex) selectSource(list[selectedIndex]);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    elevation: 3,
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    backgroundColor: Theme.of(context).colorScheme.onSurface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
     return GestureDetector(
       onLongPress: () async {
           final googleResults = await vm.fetchGoogleImages(details);
@@ -368,28 +436,62 @@ class _DetailScreenState extends State<DetailScreen> {
                                                 style: Theme.of(context).textTheme.titleLarge
                                             ),
                                             SizedBox(height: 16),
-                                            GestureDetector(
-                                                onTap: () => copyToClipboard(context, item.colorHexCode),
-                                                child: Container(
-                                                    decoration: BoxDecoration(
-                                                        color: item.colorHexCode.toColor(),
-                                                        border: Border.all(
-                                                          color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
-                                                          width: Constants.borderWidth,
+                                            Row(
+                                              children: [
+                                                GestureDetector(
+                                                    onTap: () => copyToClipboard(context, item.colorHexCode),
+                                                    child: Container(
+                                                        clipBehavior: Constants.clipBehaviour,
+                                                        decoration: BoxDecoration(
+                                                            color: item.colorHexCode.toColor(),
+                                                            border: Border.all(
+                                                              color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
+                                                              width: Constants.borderWidthLarge,
+                                                            ),
+                                                            borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
                                                         ),
-                                                        borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
-                                                    ),
-                                                    padding: EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 2
-                                                    ),
-                                                    child: Text(
-                                                      item.color,
-                                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                        color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
-                                                      ),
+                                                        padding: EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 2
+                                                        ),
+                                                        child: Text(
+                                                          item.color,
+                                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                            color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
+                                                          ),
+                                                        )
                                                     )
+                                                ),
+                                                SizedBox(width: 8),
+                                                GestureDetector(
+                                                  onTap: () => showSourcePicker(context),
+                                                  child: Container(
+                                                      clipBehavior: Constants.clipBehaviour,
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                            color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha(25),
+                                                            width: Constants.borderWidthMedium,
+                                                          ),
+                                                          borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                      ),
+                                                      padding: EdgeInsets.only(
+                                                        left: 12,
+                                                        right: 6,
+                                                        top: 4,
+                                                        bottom: 4,
+                                                      ),
+                                                      child: Row(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Text(selectedSource.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
+                                                            SizedBox(width: 4),
+                                                            Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
+                                                          ]
+                                                      )
+                                                  )
                                                 )
+                                              ],
                                             )
                                           ],
                                         )

@@ -9,7 +9,8 @@ class Constants {
   static const cornerRadiusSmall = 12.0;
 
   // Border width
-  static const borderWidth = 3.0;
+  static const borderWidthLarge = 3.0;
+  static const borderWidthMedium = 1.0;
 
   // ❗ Don't hardcode API keys! Use environment variables or secure storage instead.
   static const String geminiApiKey = "AIzaSyBT3sZF3rFCY2HoIsQAfCN3SYaUs6rqCtY";
