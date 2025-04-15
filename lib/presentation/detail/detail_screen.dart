@@ -14,6 +14,7 @@ import '../reusables/stacked_avatar_badge.dart';
 import '../../models/clothing_item_model.dart';
 import '../../utils/extensions.dart';
 import '../reusables/stacked_text_badge.dart';
+import 'clothing_item_card.dart';
 
 class DetailScreen extends StatefulWidget {
   final String imagePath;
@@ -169,7 +170,13 @@ class _DetailScreenState extends State<DetailScreen> {
                                       itemCount: widget.clothingItems.length,
                                       itemBuilder: (context, index) {
                                         final item = widget.clothingItems[index];
-                                        return buildItemWidget(context, vm, item);
+                                        //return buildItemWidget(context, vm, item);
+                                        return ClothingItemCard(
+                                          vm: vm,
+                                          imagePath: widget.imagePath,
+                                          item: item,
+                                          optionalAnalysisResult: widget.optionalAnalysisResult
+                                        );
                                       },
                                     )
                                   ],
@@ -281,6 +288,69 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
+    Future<void> goToProductWebPageInBrowser(BuildContext context, String url) async {
+      if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+        context.showCustomSnackBar(Constants.error, "Could not launch $url");
+        throw Exception('Could not launch $url');
+      }
+    }
+
+    void showFullScreenImage(BuildContext context, String imageUrl) {
+      showDialog(
+        context: context,
+        barrierColor: Colors.black.withAlpha(90),
+        builder: (_) => Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            children: [
+              // Detect tap outside
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                behavior: HitTestBehavior.translucent,
+                child: Container(
+                  color: Colors.transparent,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
+              // Centered image with interaction
+              Center(
+                child: InteractiveViewer(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 18,
+                right: 14,
+                child: Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
+                      onPressed: () => Navigator.pop(context)
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
+    void copyToClipboard(BuildContext context, String text) {
+      Clipboard.setData(ClipboardData(text: text));
+      context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+    }
+
     return GestureDetector(
       onLongPress: () async {
           final googleResults = await vm.fetchGoogleImages(details);
@@ -378,7 +448,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   itemBuilder: (context, index) {
                                     final result = results[index];
                                     return GestureDetector(
-                                      onDoubleTap: () => _goToProductWebPageInBrowser(context, result['productUrl']!),
+                                      onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
                                       child: Stack(
                                         children: [
                                           Image.network(
@@ -400,7 +470,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                                   color: Theme.of(context).colorScheme.surface,
                                                 ),
                                                 child: IconButton(
-                                                    onPressed: () => _showFullScreenImage(context, result['imageUrl']!),
+                                                    onPressed: () => showFullScreenImage(context, result['imageUrl']!),
                                                     padding: EdgeInsets.all(12),
                                                     icon: Icon(Icons.open_in_full_rounded, color: Theme.of(context).colorScheme.primary)
                                                 ),
@@ -510,69 +580,6 @@ class _DetailScreenState extends State<DetailScreen> {
           )
       )
     );
-  }
-
-  Future<void> _goToProductWebPageInBrowser(BuildContext context, String url) async {
-    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
-      context.showCustomSnackBar(Constants.error, "Could not launch $url");
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  void _showFullScreenImage(BuildContext context, String imageUrl) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withAlpha(90),
-      builder: (_) => Dialog(
-        insetPadding: EdgeInsets.zero,
-        backgroundColor: Colors.transparent,
-        child: Stack(
-          children: [
-            // Detect tap outside
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              behavior: HitTestBehavior.translucent,
-              child: Container(
-                color: Colors.transparent,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-            ),
-            // Centered image with interaction
-            Center(
-              child: InteractiveViewer(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 18,
-              right: 14,
-              child: Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
-                    onPressed: () => Navigator.pop(context)
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  void copyToClipboard(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
-    context.showCustomSnackBar(Constants.success, "Copied to clipboard");
   }
 
   double calculateTotalPrice() {
