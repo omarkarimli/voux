@@ -87,7 +87,10 @@ Analyze the given image and generate a list of clothing items based on the detec
     "material": "Cotton",
     "brand": "Nike",
     "model": "AirMax Tee",
-    "price": "29.99"
+    "sources": [
+      {"name": "Amazon", "price": "79.99"},
+      {"name": "eBay", "price": "72.00"}
+    ]
   },
   {
     "name": "Denim Jeans",
@@ -98,7 +101,10 @@ Analyze the given image and generate a list of clothing items based on the detec
     "material": "Denim",
     "brand": "Levi's",
     "model": "511 Slim Fit",
-    "price": "79.99"
+    "sources": [
+      {"name": "Amazon", "price": "79.99"},
+      {"name": "eBay", "price": "72.00"}
+    ]
   }
 ]
 
