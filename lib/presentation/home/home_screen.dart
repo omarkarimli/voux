@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -76,14 +78,24 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Stack(
               children: [
                 Positioned(
-                  top: 0,
-                  left: 0,
+                  top: -228,
                   right: 0,
-                  child: Image.asset(
-                    'assets/images/abstract_1.png',
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
-                    color: Theme.of(context).colorScheme.primaryContainer,
+                  left: 0,
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: [
+                        Theme.of(context).colorScheme.surface,
+                        Colors.transparent
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ).createShader(bounds),
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      'assets/images/abstract_1.png',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
                   ),
                 ),
                 SingleChildScrollView(
@@ -112,18 +124,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 72),
+                      const SizedBox(height: 128),
                       FittedBox(
                         child: RichText(
                           text: TextSpan(
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(height: 1.4),
-                            children: const [
-                              TextSpan(text: "Hello 👋 dear\n"),
-                              TextSpan(text: "I hope you are\n"),
-                              TextSpan(text: "doing well", style: TextStyle(fontWeight: FontWeight.w600)),
+                            children: [
+                              const TextSpan(text: "Hello "),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Image.asset(
+                                    "assets/images/app_icon.png",
+                                    width: 64,
+                                    height: 64
+                                )
+                              ),
+                              const TextSpan(text: " dear\n"),
+                              const TextSpan(text: "I hope you are\n"),
+                              const TextSpan(text: "doing well", style: TextStyle(fontWeight: FontWeight.w600)),
                             ],
                           ),
-                        ),
+                        )
                       ),
                       const SizedBox(height: 16),
                       buildExploreCard(vm),
@@ -293,15 +314,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Positioned(
-            bottom: -16,
-            right: -90,
-            child: Image.asset(
-              'assets/images/eye_ball.png',
-              width: 272,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
@@ -310,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/ai_search.png"),
+                    StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/ai_search.png"),
                   ],
                 ),
                 SizedBox(height: 22),
@@ -329,18 +341,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Positioned(
-            right: 19,
-            top: 20,
-            child: CircleAvatar(
-              radius: 24,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, UpgradeScreen.routeName);
-                },
-                icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onPrimary),
-              ),
-            ),
+            right: 32,
+            bottom: 32,
+            child: Image.asset(
+              width: 172,
+              height: 172,
+              "assets/images/abstract_2.png"
+            )
           )
         ],
       ),
@@ -386,7 +393,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-                        StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/wishlist.png", badgePadding: 10),
+                        StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/wishlist.png", badgePadding: 10),
                       ],
                     )
                   ],

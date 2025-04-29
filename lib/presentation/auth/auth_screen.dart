@@ -94,7 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             await vm.signInWithGoogle();
                           },
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              backgroundColor: Theme.of(context).colorScheme.onSurface,
                               padding: EdgeInsets.symmetric(vertical: 12.0)
                           ),
                           icon: Padding(
@@ -103,13 +103,13 @@ class _AuthScreenState extends State<AuthScreen> {
                               'assets/images/google.png',
                               width: 18,
                               height: 18,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: Theme.of(context).colorScheme.surface,
                             ),
                           ),
                           label: Text(
                             "Continue with Google",
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: Theme.of(context).colorScheme.surface,
                             ),
                           ),
                           iconAlignment: IconAlignment.start,
@@ -120,7 +120,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             await vm.signInWithApple();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.onSurface,
+                            backgroundColor: Theme.of(context).colorScheme.surface,
                             padding: EdgeInsets.symmetric(vertical: 12.0),
                           ),
                           icon: Padding(
@@ -129,13 +129,13 @@ class _AuthScreenState extends State<AuthScreen> {
                               'assets/images/apple.png',
                               width: 18,
                               height: 18,
-                              color: Theme.of(context).colorScheme.surface,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           label: Text(
                             "Continue with Apple",
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.surface,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           iconAlignment: IconAlignment.start,

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:voux/presentation/auth/auth_screen.dart';
 import '../../utils/constants.dart';
@@ -11,125 +12,71 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bg.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-          Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24),
-                child: FittedBox(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.asset('assets/images/collage.png', width: MediaQuery.of(context).size.width, fit: BoxFit.cover),
+            SizedBox(height: 32),
+            Image.asset('assets/images/app_icon.png', width: 96, height: 96),
+            SizedBox(height: 16),
+            Text('Voux', style: Theme.of(context).textTheme.headlineLarge),
+            SizedBox(height: 12),
+            Text("Your fashion companion\nfor every occasion", style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
+            SizedBox(height: 32),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AuthScreen.routeName);
+                  },
                   child: Text(
-                    Constants.appName,
-                    style: TextStyle(
-                      letterSpacing: 8,
-                      fontFamily: "Aboreto",
-                      fontSize: 112,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
+                    'Get Started',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
                   ),
                 ),
-              )
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Card(
-                    color: Theme.of(context).colorScheme.surface,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-                    clipBehavior: Clip.antiAlias,
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              StackedAvatarBadge(profileImage: "assets/images/woman_avatar.png", badgeImage: "assets/images/sparkle.png"),
-                              CircleAvatar(
-                                radius: 24,
-                                backgroundColor: Theme.of(context).colorScheme.surface,
-                                child: IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface),
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 22),
-                          Container(
-                            width: double.infinity,
-                            height: 192,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(22),
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/card_bg_1.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 22),
-                          Padding(
-                              padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("AI-Powered", style: Theme.of(context).textTheme.bodyLarge),
-                                  SizedBox(height: 4),
-                                  Text("Discover fashion\ninsights from your\nwardrobe", style: Theme.of(context).textTheme.headlineMedium?.copyWith(height: 1.4)),
-                                ],
-                              )
-                          ),
-                          SizedBox(height: 8),
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                              child: SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          AuthScreen.routeName,
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(context).colorScheme.onSurface,
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 12),
-                                        child: Text("Get Started", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
-                                      )
-                                  )
-                              )
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    "© Developed by Omar",
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
-                  ),
-                ],
               ),
             ),
-          ),
-        ],
-      ),
+            SizedBox(height: 24),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  children: [
+                    TextSpan(text: "By signing up, you agree to our\n"),
+                    TextSpan(text: "Terms of Service ",
+                        style: TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            // TODO: Open Terms of Service page
+                            print("Terms of Service clicked!");
+                          }
+                    ),
+                    TextSpan(text: "and "),
+                    TextSpan(text: "Privacy Policy",
+                        style: TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            // TODO: Open Privacy Policy page
+                            print("Privacy Policy clicked!");
+                          }
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 48)
+          ],
+        )
+      )
     );
   }
 }

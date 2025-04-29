@@ -1,22 +1,23 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../reusables/more_bottom_sheet.dart';
-import '../../models/clothing_item_model.dart';
 import '../../models/optional_analysis_result_model.dart';
+import '../../models/clothing_item_floor_model.dart';
 import '../../utils/extensions.dart';
 import '../../utils/constants.dart';
-import '../detail/detail_view_model.dart';
+import 'wishlist_view_model.dart';
 
-class ClothingItemCard extends StatefulWidget {
-  final DetailViewModel vm;
+class ClothingItemWishlistCard extends StatefulWidget {
+  final WishlistViewModel vm;
   final String imagePath;
-  final ClothingItemModel item;
+  final ClothingItemFloorModel item;
   final OptionalAnalysisResult optionalAnalysisResult;
 
-  const ClothingItemCard({
+  const ClothingItemWishlistCard({
     super.key,
     required this.vm,
     required this.optionalAnalysisResult,
@@ -25,23 +26,23 @@ class ClothingItemCard extends StatefulWidget {
   });
 
   @override
-  State<ClothingItemCard> createState() => _ClothingItemCardState();
+  State<ClothingItemWishlistCard> createState() => _ClothingItemWishlistCardState();
 }
 
-class _ClothingItemCardState extends State<ClothingItemCard> {
+class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
   @override
   void initState() {
     super.initState();
 
-    if (widget.item.sellerSources.isNotEmpty) {
-      widget.item.setSelectedSource(widget.item.sellerSources[0].name);
+    if (widget.item.clothingItemModel.sellerSources.isNotEmpty) {
+      widget.item.clothingItemModel.setSelectedSource(widget.item.clothingItemModel.sellerSources[0].name);
     }
   }
 
   // Select Source
   Future<void> selectSource(String value) async {
     setState(() {
-      widget.item.setSelectedSource(value);
+      widget.item.clothingItemModel.setSelectedSource(value);
     });
 
     Navigator.pop(context);
@@ -54,7 +55,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        String selectedValue = widget.item.selectedSource!;
+        String selectedValue = widget.item.clothingItemModel.selectedSource!;
         int initialIndex = list.indexOf(selectedValue);
         int selectedIndex = initialIndex;
 
@@ -111,7 +112,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
     }
   }
 
-  void showFullScreenImage(BuildContext context, String imageUrl) {
+  void showFullScreenImage(BuildContext context, String imagePath, bool isWebImg) {
     showDialog(
       context: context,
       barrierColor: Colors.black.withAlpha(90),
@@ -133,10 +134,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
             // Centered image with interaction
             Center(
               child: InteractiveViewer(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.contain,
-                ),
+                child: isWebImg ? Image.network(imagePath, fit: BoxFit.contain) : Image.file(File(imagePath), fit: BoxFit.contain)
               ),
             ),
             Positioned(
@@ -169,14 +167,12 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = widget.vm;
     final item = widget.item;
-    final details = item.toDetailString(widget.optionalAnalysisResult);
+    final details = item.clothingItemModel.toDetailString(widget.optionalAnalysisResult);
     print(details);
 
     return GestureDetector(
         onLongPress: () async {
-          final googleResults = await vm.fetchGoogleImages(details);
           showModalBottomSheet(
             context: context,
             shape: RoundedRectangleBorder(
@@ -185,12 +181,14 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
             builder: (context) {
               return MoreBottomSheet(
                   imagePath: widget.imagePath,
-                  googleResults: googleResults,
-                  clothingItemModel: item,
+                  googleResults: item.googleResults,
+                  clothingItemModel: item.clothingItemModel,
                   optionalAnalysisResult: widget.optionalAnalysisResult
               );
             },
-          );
+          ).then((_) {
+            widget.vm.loadWishlist(); // Refresh wishlist after closing bottom sheet
+          });
         },
         child: Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
@@ -209,7 +207,6 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                       StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/stack.png", badgePadding: 10),
                       IconButton(
                           onPressed: () async {
-                            final googleResults = await vm.fetchGoogleImages(details);
                             showModalBottomSheet(
                               context: context,
                               shape: RoundedRectangleBorder(
@@ -218,12 +215,14 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                               builder: (context) {
                                 return MoreBottomSheet(
                                     imagePath: widget.imagePath,
-                                    googleResults: googleResults,
-                                    clothingItemModel: item,
+                                    googleResults: item.googleResults,
+                                    clothingItemModel: item.clothingItemModel,
                                     optionalAnalysisResult: widget.optionalAnalysisResult
                                 );
                               },
-                            );
+                            ).then((_) {
+                              widget.vm.loadWishlist(); // Refresh wishlist after closing bottom sheet
+                            });
                           },
                           icon: Image.asset(
                             "assets/images/menu.png",
@@ -243,78 +242,92 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                       ),
                       child: Column(
                         children: [
-                          FutureBuilder<List<Map<String, String>>>(
-                            future: vm.fetchGoogleImages(details), // Fetch images with links
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(
-                                    child: CupertinoActivityIndicator(
-                                        radius: 20.0,
-                                        color: Theme.of(context).colorScheme.primary
-                                    )
-                                );
-                              } else if (snapshot.hasError) {
-                                print('Error: ${snapshot.error}');
-                                return SizedBox.shrink();
-                              } else if (snapshot.hasData) {
-                                final results = snapshot.data!;
-                                return results.isNotEmpty ? Container(
-                                  height: 96,
-                                  clipBehavior: Constants.clipBehaviour,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                                  ),
-                                  child: PageView.builder(
-                                    controller: PageController(),
-                                    itemCount: results.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (context, index) {
-                                      final result = results[index];
-                                      return GestureDetector(
-                                        onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
-                                        child: Stack(
-                                          children: [
-                                            Image.network(
-                                              result['imageUrl']!,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
+                          item.googleResults.isNotEmpty
+                            ? Container(
+                            height: 96,
+                            clipBehavior: Constants.clipBehaviour,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                            ),
+                            child: PageView.builder(
+                              controller: PageController(),
+                              itemCount: item.googleResults.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final result = item.googleResults[index];
+                                return GestureDetector(
+                                  onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
+                                  child: Stack(
+                                    children: [
+                                      Image.network(
+                                        result['imageUrl']!,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Container(
+                                            width: 36,
+                                            height: 36,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                                                bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                                              ),
+                                              color: Theme.of(context).colorScheme.surface,
                                             ),
-                                            Positioned(
-                                                bottom: 0,
-                                                right: 0,
-                                                child: Container(
-                                                  width: 36,
-                                                  height: 36,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                                      bottomRight: Radius.circular(Constants.cornerRadiusMedium),
-                                                    ),
-                                                    color: Theme.of(context).colorScheme.surface,
-                                                  ),
-                                                  child: IconButton(
-                                                      onPressed: () => showFullScreenImage(context, result['imageUrl']!),
-                                                      padding: EdgeInsets.only(top: 16, left: 16),
-                                                      icon: Image.asset(
-                                                          "assets/images/expand.png",
-                                                          color: Theme.of(context).colorScheme.onSurface,
-                                                          width: 24,
-                                                          height: 24,
-                                                      )
-                                                  ),
-                                                )
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    },
+                                            child: IconButton(
+                                                onPressed: () => showFullScreenImage(context, result['imageUrl']!, true),
+                                                padding: EdgeInsets.all(12),
+                                                icon: Icon(Icons.open_in_full_rounded, color: Theme.of(context).colorScheme.primary)
+                                            ),
+                                          )
+                                      )
+                                    ],
                                   ),
-                                ) : SizedBox.shrink();
-                              } else {
-                                print('No images found');
-                                return SizedBox.shrink();
-                              }
-                            },
+                                );
+                              },
+                            ),
+                          )
+                            : Container(
+                            height: 96,
+                            clipBehavior: Constants.clipBehaviour,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                            ),
+                            child: Stack(
+                              children: [
+                                Image.file(
+                                  File(widget.imagePath),
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset('assets/placeholder.png', width: 128, height: 128, fit: BoxFit.cover);
+                                  },
+                                ),
+                                Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 36,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                                          bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                                        ),
+                                        color: Theme.of(context).colorScheme.surface,
+                                      ),
+                                      child: IconButton(
+                                          onPressed: () => showFullScreenImage(context, item.imagePath, false),
+                                          padding: EdgeInsets.all(12),
+                                          icon: Icon(Icons.open_in_full_rounded, color: Theme.of(context).colorScheme.primary)
+                                      ),
+                                    )
+                                )
+                              ],
+                            )
                           ),
                           SizedBox(height: 16),
                           Padding(
@@ -337,13 +350,13 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                               Row(
                                                 children: [
                                                   GestureDetector(
-                                                      onTap: () => copyToClipboard(context, item.colorHexCode),
+                                                      onTap: () => copyToClipboard(context, item.clothingItemModel.colorHexCode),
                                                       child: Container(
                                                           clipBehavior: Constants.clipBehaviour,
                                                           decoration: BoxDecoration(
-                                                              color: item.colorHexCode.toColor(),
+                                                              color: item.clothingItemModel.colorHexCode.toColor(),
                                                               border: Border.all(
-                                                                color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
+                                                                color: item.clothingItemModel.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
                                                                 width: Constants.borderWidthLarge,
                                                               ),
                                                               borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
@@ -353,53 +366,53 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                               vertical: 2
                                                           ),
                                                           child: Text(
-                                                            item.color,
+                                                            item.clothingItemModel.color,
                                                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                              color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
+                                                              color: item.clothingItemModel.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
                                                             ),
                                                           )
                                                       )
                                                   ),
                                                   SizedBox(width: 8),
-                                                  if (item.selectedSource != null && item.selectedSource!.isNotEmpty)
+                                                  if (item.clothingItemModel.selectedSource != null && item.clothingItemModel.selectedSource!.isNotEmpty)
                                                     GestureDetector(
-                                                      onTap: () => showSourcePicker(context),
-                                                      child: Container(
-                                                          clipBehavior: Constants.clipBehaviour,
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha(25),
-                                                                width: Constants.borderWidthMedium,
-                                                              ),
-                                                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
-                                                          ),
-                                                          padding: EdgeInsets.only(
-                                                            left: 12,
-                                                            right: 6,
-                                                            top: 4,
-                                                            bottom: 4,
-                                                          ),
-                                                          child: Row(
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(item.selectedSource!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
-                                                                SizedBox(width: 4),
-                                                                Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
-                                                              ]
-                                                          )
-                                                      )
-                                                  )
+                                                        onTap: () => showSourcePicker(context),
+                                                        child: Container(
+                                                            clipBehavior: Constants.clipBehaviour,
+                                                            decoration: BoxDecoration(
+                                                                border: Border.all(
+                                                                  color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha(25),
+                                                                  width: Constants.borderWidthMedium,
+                                                                ),
+                                                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                            ),
+                                                            padding: EdgeInsets.only(
+                                                              left: 12,
+                                                              right: 6,
+                                                              top: 4,
+                                                              bottom: 4,
+                                                            ),
+                                                            child: Row(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                children: [
+                                                                  Text(item.clothingItemModel.selectedSource!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
+                                                                  SizedBox(width: 4),
+                                                                  Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
+                                                                ]
+                                                            )
+                                                        )
+                                                    )
                                                 ],
                                               )
                                             ],
                                           )
                                       ),
                                       SizedBox(width: 8),
-                                      if (item.selectedSource != null && item.selectedSource!.isNotEmpty)
+                                      if (item.clothingItemModel.selectedSource != null && item.clothingItemModel.selectedSource!.isNotEmpty)
                                         Text(
-                                          item.selectedSourcePrice()!,
-                                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
+                                            item.clothingItemModel.selectedSourcePrice(),
+                                            style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
                                         )
                                     ]
                                 )

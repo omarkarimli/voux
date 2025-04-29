@@ -1,6 +1,6 @@
-import 'package:voux/models/optional_analysis_result_model.dart';
-import 'package:voux/utils/extensions.dart';
-
+import '../models/optional_analysis_result_model.dart';
+import '../models/seller_source_model.dart';
+import '../utils/extensions.dart';
 import '../utils/constants.dart';
 
 class ClothingItemModel {
@@ -12,7 +12,10 @@ class ClothingItemModel {
   final String material;
   final String brand;
   final String model;
-  final String price;
+  final List<SellerSourceModel> sellerSources;
+
+  // Added to store the selected source
+  String? selectedSource;
 
   ClothingItemModel({
     required this.name,
@@ -23,7 +26,9 @@ class ClothingItemModel {
     required this.material,
     required this.brand,
     required this.model,
-    required this.price,
+    required this.sellerSources,
+
+    this.selectedSource
   });
 
   // Optionally, add a method to convert JSON response from the API
@@ -37,7 +42,11 @@ class ClothingItemModel {
       material: json['material'],
       brand: json['brand'],
       model: json['model'],
-      price: json['price'],
+      sellerSources: (json['sellerSources'] as List<dynamic>? ?? [])
+          .map((sellerSourceJson) => SellerSourceModel.fromJson(sellerSourceJson))
+          .toList(),
+
+      selectedSource: json['selectedSource']
     );
   }
 
@@ -52,7 +61,9 @@ class ClothingItemModel {
       'material': material,
       'brand': brand,
       'model': model,
-      'price': price,
+      'sellerSources': sellerSources.map((s) => s.toJson()).toList(),
+
+      'selectedSource': selectedSource,
     };
   }
 
@@ -69,5 +80,22 @@ class ClothingItemModel {
     final details = attributes;
 
     return details.capitalizeFirst();
+  }
+
+  // Get the price for the selected source
+  String selectedSourcePrice() {
+    if (selectedSource != null) {
+      final source = sellerSources.firstWhere(
+            (s) => s.name == selectedSource,
+        orElse: () => SellerSourceModel(name: Constants.unknown, price: Constants.unknown),
+      );
+      return source.price.toFormattedPrice();
+    }
+    return "0";
+  }
+
+  // Set the selected source
+  void setSelectedSource(String sourceName) {
+    selectedSource = sourceName;
   }
 }

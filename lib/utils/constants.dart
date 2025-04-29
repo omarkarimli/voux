@@ -108,7 +108,7 @@ Analyze the given image and generate a list of clothing items based on the detec
   }
 ]
 
-Price should be in USD.
+Price should be in USD and should be price in that source store.
 If property is unknown, use "unknown".
 The response should only contain the JSON array without additional text.
 """;

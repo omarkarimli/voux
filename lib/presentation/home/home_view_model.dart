@@ -214,6 +214,8 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   List<ClothingItemModel> _parseResponse(String? text) {
+    print("✅ Raw JSON Response: $text");
+
     if (text == null || text.trim().isEmpty) return [];
     try {
       final cleaned = text.replaceAll('```', '').replaceAll('json', '').replaceAll('null', '"${Constants.unknown}"');

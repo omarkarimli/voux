@@ -39,17 +39,21 @@ final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
 // Load theme preference from SharedPreferences
 ThemeMode loadThemeMode() {
   final prefs = locator<SharedPreferences>();
-  final String? theme = prefs.getString(Constants.theme);
+  final String? themePref = prefs.getString(Constants.theme);
 
-  if (theme == null) {
+  if (themePref == null) {
     prefs.setString(Constants.theme, Constants.themeSystem);
 
     // No preference saved — follow system
     return ThemeMode.system;
-  } else if (theme == Constants.themeLight) {
-    return ThemeMode.light;
   } else {
-    return ThemeMode.dark;
+    if (themePref == Constants.themeLight) {
+      return ThemeMode.light;
+    } else if (themePref == Constants.themeDark) {
+      return ThemeMode.dark;
+    } else {
+      return ThemeMode.system;
+    }
   }
 }
 
