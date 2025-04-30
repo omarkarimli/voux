@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,15 +24,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late HomeViewModel vm;
-  bool _initialized = false;
+  bool initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
+    if (!initialized) {
       vm = Provider.of<HomeViewModel>(context, listen: false);
       vm.fetchUserFromAuth();
-      _initialized = true;
+      initialized = true;
     }
   }
 
@@ -134,7 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child: Image.asset(
-                                    "assets/images/app_icon.png",
+                                    Theme.of(context).brightness == Brightness.dark
+                                        ? 'assets/images/logo_dark.png'
+                                        : 'assets/images/logo_light.png',
                                     width: 64,
                                     height: 64
                                 )

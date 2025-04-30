@@ -1,11 +1,11 @@
-class SellerSourceModel {
+class StoreModel {
   final String name;
   final String price;
 
-  SellerSourceModel({required this.name, required this.price});
+  StoreModel({required this.name, required this.price});
 
-  factory SellerSourceModel.fromJson(Map<String, dynamic> json) {
-    return SellerSourceModel(
+  factory StoreModel.fromJson(Map<String, dynamic> json) {
+    return StoreModel(
       name: json['name'],
       price: json['price'],
     );

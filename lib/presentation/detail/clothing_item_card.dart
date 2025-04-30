@@ -33,8 +33,8 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
   void initState() {
     super.initState();
 
-    if (widget.item.sellerSources.isNotEmpty) {
-      widget.item.setSelectedSource(widget.item.sellerSources[0].name);
+    if (widget.item.stores.isNotEmpty) {
+      widget.item.setSelectedSource(widget.item.stores[0].name);
     }
   }
 
@@ -54,7 +54,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        String selectedValue = widget.item.selectedSource!;
+        String selectedValue = widget.item.selectedStore!;
         int initialIndex = list.indexOf(selectedValue);
         int selectedIndex = initialIndex;
 
@@ -225,12 +225,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                               },
                             );
                           },
-                          icon: Image.asset(
-                            "assets/images/menu.png",
-                            color: Theme.of(context).colorScheme.onSurface,
-                            width: 24,
-                            height: 24,
-                          )
+                          icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface)
                       )
                     ],
                   ),
@@ -361,7 +356,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                       )
                                                   ),
                                                   SizedBox(width: 8),
-                                                  if (item.selectedSource != null && item.selectedSource!.isNotEmpty)
+                                                  if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
                                                     GestureDetector(
                                                       onTap: () => showSourcePicker(context),
                                                       child: Container(
@@ -383,7 +378,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                               mainAxisSize: MainAxisSize.min,
                                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                               children: [
-                                                                Text(item.selectedSource!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
+                                                                Text(item.selectedStore!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
                                                                 SizedBox(width: 4),
                                                                 Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
                                                               ]
@@ -396,7 +391,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                           )
                                       ),
                                       SizedBox(width: 8),
-                                      if (item.selectedSource != null && item.selectedSource!.isNotEmpty)
+                                      if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
                                         Text(
                                           item.selectedSourcePrice()!,
                                           style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)

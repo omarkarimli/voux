@@ -1,3 +1,5 @@
+import 'package:voux/utils/constants.dart';
+
 class OptionalAnalysisResult {
   final String gender;
   final bool isChild;
@@ -10,16 +12,16 @@ class OptionalAnalysisResult {
   // Deserialize from JSON
   factory OptionalAnalysisResult.fromJson(Map<String, dynamic> json) {
     return OptionalAnalysisResult(
-      gender: json['gender'],
-      isChild: json['isChild'],
+      gender: json[Constants.gender],
+      isChild: json[Constants.isChild],
     );
   }
 
   // Serialize to JSON
   Map<String, dynamic> toJson() {
     return {
-      'gender': gender,
-      'isChild': isChild,
+      Constants.gender: gender,
+      Constants.isChild: isChild,
     };
   }
 }

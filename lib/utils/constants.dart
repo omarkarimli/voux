@@ -62,8 +62,9 @@ class Constants {
 
   // Analyze
   static const String unknown = "unknown";
-  static const String forChildOrNot = "forChildOrNot";
   static const String gender = "gender";
+  static const String isChild = "isChild";
+  static const String child = "child";
   static const String items = "items";
   static const String size = "size";
   static const String color = "color";
@@ -73,6 +74,9 @@ class Constants {
   static const String type = "type";
   static const String name = "name";
   static const String price = "price";
+  static const String colorHexCode = "colorHexCode";
+  static const String stores = "stores";
+  static const String selectedStore = "selectedStore";
 
   static const String geminiPrompt = """
 Analyze the given image and generate a list of clothing items based on the detected apparel. For each clothing item, provide structured details in JSON format as follows:
@@ -87,7 +91,7 @@ Analyze the given image and generate a list of clothing items based on the detec
     "material": "Cotton",
     "brand": "Nike",
     "model": "AirMax Tee",
-    "sources": [
+    "stores": [
       {"name": "Amazon", "price": "79.99"},
       {"name": "eBay", "price": "72.00"}
     ]
@@ -101,7 +105,7 @@ Analyze the given image and generate a list of clothing items based on the detec
     "material": "Denim",
     "brand": "Levi's",
     "model": "511 Slim Fit",
-    "sources": [
+    "stores": [
       {"name": "Amazon", "price": "79.99"},
       {"name": "eBay", "price": "72.00"}
     ]
@@ -244,5 +248,4 @@ We may update this Privacy Policy periodically. Continued use of the App after c
 For any questions about this Privacy Policy, please contact us at [Insert Contact Email].
 
 By using Voux, you agree to this Privacy Policy.''';
-
 }

@@ -1,5 +1,5 @@
 import '../models/optional_analysis_result_model.dart';
-import '../models/seller_source_model.dart';
+import '../models/store_model.dart';
 import '../utils/extensions.dart';
 import '../utils/constants.dart';
 
@@ -12,10 +12,10 @@ class ClothingItemModel {
   final String material;
   final String brand;
   final String model;
-  final List<SellerSourceModel> sellerSources;
+  final List<StoreModel> stores;
 
   // Added to store the selected source
-  String? selectedSource;
+  String? selectedStore;
 
   ClothingItemModel({
     required this.name,
@@ -26,51 +26,50 @@ class ClothingItemModel {
     required this.material,
     required this.brand,
     required this.model,
-    required this.sellerSources,
+    required this.stores,
 
-    this.selectedSource
+    this.selectedStore
   });
 
   // Optionally, add a method to convert JSON response from the API
   factory ClothingItemModel.fromJson(Map<String, dynamic> json) {
     return ClothingItemModel(
-      name: json['name'],
-      color: json['color'],
-      colorHexCode: json['colorHexCode'],
-      size: json['size'],
-      type: json['type'],
-      material: json['material'],
-      brand: json['brand'],
-      model: json['model'],
-      sellerSources: (json['sellerSources'] as List<dynamic>? ?? [])
-          .map((sellerSourceJson) => SellerSourceModel.fromJson(sellerSourceJson))
+      name: json[Constants.name],
+      color: json[Constants.color],
+      colorHexCode: json[Constants.colorHexCode],
+      size: json[Constants.size],
+      type: json[Constants.type],
+      material: json[Constants.material],
+      brand: json[Constants.brand],
+      model: json[Constants.model],
+      stores: (json[Constants.stores] as List<dynamic>? ?? [])
+          .map((sellerSourceJson) => StoreModel.fromJson(sellerSourceJson))
           .toList(),
 
-      selectedSource: json['selectedSource']
+      selectedStore: json[Constants.selectedStore]
     );
   }
 
   // Serialize to JSON
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
-      'color': color,
-      'colorHexCode': colorHexCode,
-      'size': size,
-      'type': type,
-      'material': material,
-      'brand': brand,
-      'model': model,
-      'sellerSources': sellerSources.map((s) => s.toJson()).toList(),
-
-      'selectedSource': selectedSource,
+      Constants.name: name,
+      Constants.color: color,
+      Constants.colorHexCode: colorHexCode,
+      Constants.size: size,
+      Constants.type: type,
+      Constants.material: material,
+      Constants.brand: brand,
+      Constants.model: model,
+      Constants.stores: stores.map((s) => s.toJson()).toList(),
+      Constants.selectedStore: selectedStore,
     };
   }
 
   String toDetailString(OptionalAnalysisResult optionalAnalysisResult) {
     final attributes = [
       optionalAnalysisResult.gender,
-      optionalAnalysisResult.isChild ? 'Child' : '',
+      optionalAnalysisResult.isChild ? Constants.child : '',
       material,
       size,
       brand,
@@ -84,10 +83,10 @@ class ClothingItemModel {
 
   // Get the price for the selected source
   String selectedSourcePrice() {
-    if (selectedSource != null) {
-      final source = sellerSources.firstWhere(
-            (s) => s.name == selectedSource,
-        orElse: () => SellerSourceModel(name: Constants.unknown, price: Constants.unknown),
+    if (selectedStore != null) {
+      final source = stores.firstWhere(
+            (s) => s.name == selectedStore,
+        orElse: () => StoreModel(name: Constants.unknown, price: Constants.unknown),
       );
       return source.price.toFormattedPrice();
     }
@@ -96,6 +95,6 @@ class ClothingItemModel {
 
   // Set the selected source
   void setSelectedSource(String sourceName) {
-    selectedSource = sourceName;
+    selectedStore = sourceName;
   }
 }

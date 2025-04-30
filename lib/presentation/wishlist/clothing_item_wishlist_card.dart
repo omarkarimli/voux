@@ -34,8 +34,8 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
   void initState() {
     super.initState();
 
-    if (widget.item.clothingItemModel.sellerSources.isNotEmpty) {
-      widget.item.clothingItemModel.setSelectedSource(widget.item.clothingItemModel.sellerSources[0].name);
+    if (widget.item.clothingItemModel.stores.isNotEmpty) {
+      widget.item.clothingItemModel.setSelectedSource(widget.item.clothingItemModel.stores[0].name);
     }
   }
 
@@ -55,7 +55,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        String selectedValue = widget.item.clothingItemModel.selectedSource!;
+        String selectedValue = widget.item.clothingItemModel.selectedStore!;
         int initialIndex = list.indexOf(selectedValue);
         int selectedIndex = initialIndex;
 
@@ -374,7 +374,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
                                                       )
                                                   ),
                                                   SizedBox(width: 8),
-                                                  if (item.clothingItemModel.selectedSource != null && item.clothingItemModel.selectedSource!.isNotEmpty)
+                                                  if (item.clothingItemModel.selectedStore != null && item.clothingItemModel.selectedStore!.isNotEmpty)
                                                     GestureDetector(
                                                         onTap: () => showSourcePicker(context),
                                                         child: Container(
@@ -396,7 +396,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
                                                                 mainAxisSize: MainAxisSize.min,
                                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                 children: [
-                                                                  Text(item.clothingItemModel.selectedSource!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
+                                                                  Text(item.clothingItemModel.selectedStore!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
                                                                   SizedBox(width: 4),
                                                                   Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
                                                                 ]
@@ -409,7 +409,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
                                           )
                                       ),
                                       SizedBox(width: 8),
-                                      if (item.clothingItemModel.selectedSource != null && item.clothingItemModel.selectedSource!.isNotEmpty)
+                                      if (item.clothingItemModel.selectedStore != null && item.clothingItemModel.selectedStore!.isNotEmpty)
                                         Text(
                                             item.clothingItemModel.selectedSourcePrice(),
                                             style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)

@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:voux/di/locator.dart';
 
+import '../../di/locator.dart';
 import '../../db/database.dart';
 import '../../models/clothing_item_model.dart';
 import '../../models/optional_analysis_result_model.dart';
@@ -159,8 +159,8 @@ class HomeViewModel extends ChangeNotifier {
 
     try {
       final responses = await Future.wait([
-        _analyzeImage(path),
-        _analyzeOptional(path),
+        analyzeGeneral(path),
+        analyzeOptional(path),
       ]);
 
       _imagePath = path;
@@ -195,7 +195,7 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<List<ClothingItemModel>> _analyzeImage(String path) async {
+  Future<List<ClothingItemModel>> analyzeGeneral(String path) async {
     try {
       final imageBytes = await File(path).readAsBytes();
       final content = [
@@ -206,14 +206,14 @@ class HomeViewModel extends ChangeNotifier {
       ];
 
       final response = await model.generateContent(content);
-      return _parseResponse(response.text);
+      return parseResponse(response.text);
     } catch (e) {
       print("❌ _analyzeImage error: $e");
       return [];
     }
   }
 
-  List<ClothingItemModel> _parseResponse(String? text) {
+  List<ClothingItemModel> parseResponse(String? text) {
     print("✅ Raw JSON Response: $text");
 
     if (text == null || text.trim().isEmpty) return [];
@@ -227,7 +227,7 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<OptionalAnalysisResult> _analyzeOptional(String path) async {
+  Future<OptionalAnalysisResult> analyzeOptional(String path) async {
     try {
       final imageBytes = await File(path).readAsBytes();
       final content = [
@@ -254,8 +254,8 @@ class HomeViewModel extends ChangeNotifier {
       if (match == null) return OptionalAnalysisResult(gender: Constants.unknown, isChild: false);
       final jsonData = json.decode(match.group(0)!);
       return OptionalAnalysisResult(
-        gender: jsonData["gender"] ?? Constants.unknown,
-        isChild: jsonData["is_child"] ?? false,
+        gender: jsonData[Constants.gender] ?? Constants.unknown,
+        isChild: jsonData[Constants.isChild] ?? false,
       );
     } catch (e) {
       print("❌ Parse Optional Error: $e");
