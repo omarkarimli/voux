@@ -1,8 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:voux/presentation/auth/auth_screen.dart';
+import '../auth/auth_screen.dart';
 import '../../utils/constants.dart';
-import '../reusables/stacked_avatar_badge.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -18,7 +17,7 @@ class OnboardingScreen extends StatelessWidget {
           children: [
             Image.asset('assets/images/collage.png', width: MediaQuery.of(context).size.width, fit: BoxFit.cover),
             SizedBox(height: 32),
-            Image.asset('assets/images/app_icon.png', width: 96, height: 96),
+            Image.asset('assets/images/logo_light.png', width: 96, height: 96),
             SizedBox(height: 16),
             Text('Voux', style: Theme.of(context).textTheme.headlineLarge),
             SizedBox(height: 12),

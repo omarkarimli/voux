@@ -54,6 +54,7 @@ dependencies:
   sqflite: ^2.4.2
   provider: ^6.1.4
   get_it: ^8.0.3
+  icons_launcher: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -65,28 +66,23 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  flutter_launcher_icons: "^0.14.3"
   floor_generator: ^1.4.2
   build_runner: ^2.1.2
 
-# flutter pub run flutter_launcher_icons:main
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
+# flutter pub get
+# dart run icons_launcher:create
+icons_launcher:
   image_path: "assets/images/app_icon.png"
-  min_sdk_android: 21 # android min sdk min:16, default 21
-  web:
-    generate: true
-    image_path: "assets/images/app_icon.png"
-    background_color: "#FFFFFF"
-    theme_color: "#FFFFFF"
-  windows:
-    generate: true
-    image_path: "assets/images/app_icon.png"
-    icon_size: 48 # min:48, max:256, default: 48
-  macos:
-    generate: true
-    image_path: "assets/images/app_icon.png"
+  platforms:
+    android:
+      enable: true
+      adaptive_background_color: '#ffffff'
+      adaptive_foreground_image: "assets/images/app_icon.png"
+    ios:
+      enable: true
+      image_path: "assets/images/app_icon.png"
+      # For iOS 18+ (support dark and tinted)
+      dark_path: "assets/images/app_icon_dark.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
