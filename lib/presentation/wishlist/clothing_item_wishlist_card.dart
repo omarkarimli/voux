@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,6 +12,7 @@ import '../../utils/constants.dart';
 import 'wishlist_view_model.dart';
 
 class ClothingItemWishlistCard extends StatefulWidget {
+  final BuildContext parentContext;
   final WishlistViewModel vm;
   final bool isSelecting;
   final String imagePath;
@@ -21,6 +21,7 @@ class ClothingItemWishlistCard extends StatefulWidget {
 
   const ClothingItemWishlistCard({
     super.key,
+    required this.parentContext,
     required this.vm,
     required this.isSelecting,
     required this.optionalAnalysisResult,
@@ -43,130 +44,6 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
     }
   }
 
-  // Select Source
-  Future<void> selectStore(String value) async {
-    setState(() {
-      widget.item.clothingItemModel.setSelectedStore(value);
-    });
-
-    Navigator.pop(context);
-  }
-
-  // Show source selection sheet
-  void showStorePicker(BuildContext context, List<StoreModel> modelList) {
-    for (var model in modelList) {
-      print('Store Name: ${model.name}, Price: ${model.price}');
-    }
-    List<String> list = modelList.map((e) => e.name).toList();
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        String selectedValue = widget.item.clothingItemModel.selectedStore!;
-        int initialIndex = list.indexOf(selectedValue);
-        int selectedIndex = initialIndex;
-
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 18,
-            right: 18,
-            top: 24,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                height: 96,
-                child: CupertinoPicker(
-                  itemExtent: 40.0,
-                  scrollController: FixedExtentScrollController(initialItem: selectedIndex),
-                  onSelectedItemChanged: (int index) {
-                    selectedIndex = index;
-                  },
-                  children: list.map((lang) {
-                    return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
-                  }).toList(),
-                ),
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  if (selectedIndex != initialIndex) selectStore(list[selectedIndex]);
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 3,
-                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                  backgroundColor: Theme.of(context).colorScheme.onSurface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> goToProductWebPageInBrowser(BuildContext context, String url) async {
-    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
-      context.showCustomSnackBar(Constants.error, "Could not launch $url");
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  void showFullScreenImage(BuildContext context, String imagePath, bool isWebImg) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withAlpha(90),
-      builder: (_) => Dialog(
-        insetPadding: EdgeInsets.zero,
-        backgroundColor: Colors.transparent,
-        child: Stack(
-          children: [
-            // Detect tap outside
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              behavior: HitTestBehavior.translucent,
-              child: Container(
-                color: Colors.transparent,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-            ),
-            // Centered image with interaction
-            Center(
-              child: InteractiveViewer(
-                  child: isWebImg ? Image.network(imagePath, fit: BoxFit.contain) : Image.file(File(imagePath), fit: BoxFit.contain)
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 18,
-              right: 14,
-              child: Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
-                    onPressed: () => Navigator.pop(context)
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final vm = widget.vm;
@@ -175,6 +52,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
     print(details);
 
     return AnimatedSize(
+      key: ValueKey(vm.isSelecting),
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       child: Row(
@@ -386,7 +264,10 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
                                                                     GestureDetector(
                                                                         onTap: () {
                                                                           vm.copyToClipboard(item.clothingItemModel.colorHexCode);
-                                                                          context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+
+                                                                          setState(() {
+                                                                            widget.parentContext.showCustomSnackBar(Constants.success, "Copied to clipboard");
+                                                                          });
                                                                         },
                                                                         child: Container(
                                                                             clipBehavior: Constants.clipBehaviour,
@@ -467,6 +348,130 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
           )
         ],
       )
+    );
+  }
+
+  // Select Source
+  Future<void> selectStore(String value) async {
+    setState(() {
+      widget.item.clothingItemModel.setSelectedStore(value);
+    });
+
+    Navigator.pop(context);
+  }
+
+  // Show source selection sheet
+  void showStorePicker(BuildContext context, List<StoreModel> modelList) {
+    for (var model in modelList) {
+      print('Store Name: ${model.name}, Price: ${model.price}');
+    }
+    List<String> list = modelList.map((e) => e.name).toList();
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        String selectedValue = widget.item.clothingItemModel.selectedStore!;
+        int initialIndex = list.indexOf(selectedValue);
+        int selectedIndex = initialIndex;
+
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 18,
+            right: 18,
+            top: 24,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: 96,
+                child: CupertinoPicker(
+                  itemExtent: 40.0,
+                  scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+                  onSelectedItemChanged: (int index) {
+                    selectedIndex = index;
+                  },
+                  children: list.map((lang) {
+                    return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  if (selectedIndex != initialIndex) selectStore(list[selectedIndex]);
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 3,
+                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                  backgroundColor: Theme.of(context).colorScheme.onSurface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> goToProductWebPageInBrowser(BuildContext context, String url) async {
+    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      context.showCustomSnackBar(Constants.error, "Could not launch $url");
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  void showFullScreenImage(BuildContext context, String imagePath, bool isWebImg) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withAlpha(90),
+      builder: (_) => Dialog(
+        insetPadding: EdgeInsets.zero,
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            // Detect tap outside
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                color: Colors.transparent,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            // Centered image with interaction
+            Center(
+              child: InteractiveViewer(
+                  child: isWebImg ? Image.network(imagePath, fit: BoxFit.contain) : Image.file(File(imagePath), fit: BoxFit.contain)
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 18,
+              right: 14,
+              child: Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
+                    onPressed: () => Navigator.pop(context)
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

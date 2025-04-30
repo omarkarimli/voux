@@ -157,9 +157,14 @@ class _WishlistScreenState extends State<WishlistScreen> {
           )
         : Column(
             spacing: 8,
-            children: vm.wishlistItems
-              .map((item) => ClothingItemWishlistCard(vm: vm, isSelecting: vm.isSelecting, imagePath: item.imagePath, item: item, optionalAnalysisResult: item.optionalAnalysisResult))
-              .toList(),
+            children: vm.wishlistItems.map((item) => ClothingItemWishlistCard(
+                parentContext: context,
+                vm: vm,
+                isSelecting: vm.isSelecting,
+                imagePath: item.imagePath,
+                item: item,
+                optionalAnalysisResult: item.optionalAnalysisResult
+            )).toList(),
           );
   }
 }

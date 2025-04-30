@@ -341,7 +341,10 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                     GestureDetector(
                                                         onTap: () {
                                                           vm.copyToClipboard(item.colorHexCode);
-                                                          context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+
+                                                          setState(() {
+                                                            context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+                                                          });
                                                         },
                                                         child: Container(
                                                             clipBehavior: Constants.clipBehaviour,
