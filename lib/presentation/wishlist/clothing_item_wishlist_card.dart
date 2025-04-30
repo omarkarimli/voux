@@ -1,8 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../models/store_model.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../reusables/more_bottom_sheet.dart';
 import '../../models/optional_analysis_result_model.dart';
@@ -13,6 +14,7 @@ import 'wishlist_view_model.dart';
 
 class ClothingItemWishlistCard extends StatefulWidget {
   final WishlistViewModel vm;
+  final bool isSelecting;
   final String imagePath;
   final ClothingItemFloorModel item;
   final OptionalAnalysisResult optionalAnalysisResult;
@@ -20,6 +22,7 @@ class ClothingItemWishlistCard extends StatefulWidget {
   const ClothingItemWishlistCard({
     super.key,
     required this.vm,
+    required this.isSelecting,
     required this.optionalAnalysisResult,
     required this.item,
     required this.imagePath,
@@ -30,27 +33,31 @@ class ClothingItemWishlistCard extends StatefulWidget {
 }
 
 class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
+
   @override
   void initState() {
     super.initState();
 
     if (widget.item.clothingItemModel.stores.isNotEmpty) {
-      widget.item.clothingItemModel.setSelectedSource(widget.item.clothingItemModel.stores[0].name);
+      widget.item.clothingItemModel.setSelectedStore(widget.item.clothingItemModel.stores[0].name);
     }
   }
 
   // Select Source
-  Future<void> selectSource(String value) async {
+  Future<void> selectStore(String value) async {
     setState(() {
-      widget.item.clothingItemModel.setSelectedSource(value);
+      widget.item.clothingItemModel.setSelectedStore(value);
     });
 
     Navigator.pop(context);
   }
 
   // Show source selection sheet
-  void showSourcePicker(BuildContext context) {
-    final List<String> list = ["Amazon", "Ebay", "Alibaba"];
+  void showStorePicker(BuildContext context, List<StoreModel> modelList) {
+    for (var model in modelList) {
+      print('Store Name: ${model.name}, Price: ${model.price}');
+    }
+    List<String> list = modelList.map((e) => e.name).toList();
 
     showModalBottomSheet(
       context: context,
@@ -86,7 +93,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
-                  if (selectedIndex != initialIndex) selectSource(list[selectedIndex]);
+                  if (selectedIndex != initialIndex) selectStore(list[selectedIndex]);
                 },
                 style: ElevatedButton.styleFrom(
                   elevation: 3,
@@ -134,7 +141,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
             // Centered image with interaction
             Center(
               child: InteractiveViewer(
-                child: isWebImg ? Image.network(imagePath, fit: BoxFit.contain) : Image.file(File(imagePath), fit: BoxFit.contain)
+                  child: isWebImg ? Image.network(imagePath, fit: BoxFit.contain) : Image.file(File(imagePath), fit: BoxFit.contain)
               ),
             ),
             Positioned(
@@ -160,271 +167,306 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
     );
   }
 
-  void copyToClipboard(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
-    context.showCustomSnackBar(Constants.success, "Copied to clipboard");
-  }
-
   @override
   Widget build(BuildContext context) {
+    final vm = widget.vm;
     final item = widget.item;
     final details = item.clothingItemModel.toDetailString(widget.optionalAnalysisResult);
     print(details);
 
-    return GestureDetector(
-        onLongPress: () async {
-          showModalBottomSheet(
-            context: context,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            builder: (context) {
-              return MoreBottomSheet(
-                  imagePath: widget.imagePath,
-                  googleResults: item.googleResults,
-                  clothingItemModel: item.clothingItemModel,
-                  optionalAnalysisResult: widget.optionalAnalysisResult
-              );
-            },
-          ).then((_) {
-            widget.vm.loadWishlist(); // Refresh wishlist after closing bottom sheet
-          });
-        },
-        child: Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            color: Theme.of(context).colorScheme.surface,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
-            clipBehavior: Constants.clipBehaviour,
-            elevation: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/stack.png", badgePadding: 10),
-                      IconButton(
-                          onPressed: () async {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    return AnimatedSize(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      child: Row(
+        children: [
+          widget.isSelecting ? Row(
+            children: [
+              Checkbox(
+                  value: item.isSelected,
+                  onChanged: (bool? value) {
+                    if (value != null) {
+                      setState(() {
+                        item.isSelected = value;
+                      });
+                    }
+                  }
+              ),
+              const SizedBox(width: 16)
+            ],
+          ) : SizedBox.shrink(),
+
+          Expanded(
+              child: AbsorbPointer(
+                absorbing: widget.isSelecting,
+                child: GestureDetector(
+                    onLongPress: () async {
+                      final googleResults = widget.item.googleResults;
+                      showModalBottomSheet(
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                        ),
+                        builder: (context) {
+                          return MoreBottomSheet(
+                              imagePath: widget.imagePath,
+                              googleResults: googleResults,
+                              clothingItemModel: item.clothingItemModel,
+                              optionalAnalysisResult: widget.optionalAnalysisResult
+                          );
+                        },
+                      );
+                    },
+                    child: Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        color: Theme.of(context).colorScheme.surface,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
+                        clipBehavior: Constants.clipBehaviour,
+                        elevation: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/stack.png", badgePadding: 10),
+                                  IconButton(
+                                      onPressed: () async {
+                                        final googleResults = widget.item.googleResults;
+                                        showModalBottomSheet(
+                                          context: context,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                          ),
+                                          builder: (context) {
+                                            return MoreBottomSheet(
+                                                imagePath: widget.imagePath,
+                                                googleResults: googleResults,
+                                                clothingItemModel: item.clothingItemModel,
+                                                optionalAnalysisResult: widget.optionalAnalysisResult
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: Icon(Icons.arrow_outward_rounded, color: Theme.of(context).colorScheme.onSurface)
+                                  )
+                                ],
                               ),
-                              builder: (context) {
-                                return MoreBottomSheet(
-                                    imagePath: widget.imagePath,
-                                    googleResults: item.googleResults,
-                                    clothingItemModel: item.clothingItemModel,
-                                    optionalAnalysisResult: widget.optionalAnalysisResult
-                                );
-                              },
-                            ).then((_) {
-                              widget.vm.loadWishlist(); // Refresh wishlist after closing bottom sheet
-                            });
-                          },
-                          icon: Image.asset(
-                            "assets/images/menu.png",
-                            color: Theme.of(context).colorScheme.onSurface,
-                            width: 24,
-                            height: 24,
-                          )
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                      padding: EdgeInsets.only(
-                        left: 8,
-                        right: 8,
-                        bottom: 8,
-                      ),
-                      child: Column(
-                        children: [
-                          item.googleResults.isNotEmpty
-                            ? Container(
-                            height: 96,
-                            clipBehavior: Constants.clipBehaviour,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                            ),
-                            child: PageView.builder(
-                              controller: PageController(),
-                              itemCount: item.googleResults.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                final result = item.googleResults[index];
-                                return GestureDetector(
-                                  onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
-                                  child: Stack(
+                              SizedBox(height: 8),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 8,
+                                    right: 8,
+                                    bottom: 8,
+                                  ),
+                                  child: Column(
                                     children: [
-                                      Image.network(
-                                        result['imageUrl']!,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      Positioned(
-                                          bottom: 0,
-                                          right: 0,
-                                          child: Container(
-                                            width: 36,
-                                            height: 36,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                                bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                                      widget.item.googleResults.isNotEmpty
+                                          ? Container(
+                                        height: 96,
+                                        clipBehavior: Constants.clipBehaviour,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                                        ),
+                                        child: PageView.builder(
+                                          controller: PageController(),
+                                          itemCount: widget.item.googleResults.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (context, index) {
+                                            final result = widget.item.googleResults[index];
+                                            return GestureDetector(
+                                              onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
+                                              child: Stack(
+                                                children: [
+                                                  Image.network(
+                                                    result['imageUrl']!,
+                                                    width: double.infinity,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                  Positioned(
+                                                      bottom: 0,
+                                                      right: 0,
+                                                      child: Container(
+                                                        width: 36,
+                                                        height: 36,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                                                            bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                                                          ),
+                                                          color: Theme.of(context).colorScheme.surface,
+                                                        ),
+                                                        child: IconButton(
+                                                            onPressed: () => showFullScreenImage(context, result['imageUrl']!, true),
+                                                            padding: EdgeInsets.only(top: 16, left: 16),
+                                                            icon: Image.asset(
+                                                              "assets/images/expand.png",
+                                                              color: Theme.of(context).colorScheme.onSurface,
+                                                              width: 24,
+                                                              height: 24,
+                                                            )
+                                                        ),
+                                                      )
+                                                  )
+                                                ],
                                               ),
-                                              color: Theme.of(context).colorScheme.surface,
-                                            ),
-                                            child: IconButton(
-                                                onPressed: () => showFullScreenImage(context, result['imageUrl']!, true),
-                                                padding: EdgeInsets.all(12),
-                                                icon: Icon(Icons.open_in_full_rounded, color: Theme.of(context).colorScheme.primary)
-                                            ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                          : GestureDetector(
+                                          onTap: () => showFullScreenImage(context, widget.imagePath, false),
+                                          child: Container(
+                                              height: 96,
+                                              clipBehavior: Constants.clipBehaviour,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                                              ),
+                                              child: Stack(
+                                                children: [
+                                                  Image.file(
+                                                    File(widget.imagePath),
+                                                    width: double.infinity,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                  Positioned(
+                                                      bottom: 0,
+                                                      right: 0,
+                                                      child: Container(
+                                                        width: 36,
+                                                        height: 36,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                                                            bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                                                          ),
+                                                          color: Theme.of(context).colorScheme.surface,
+                                                        ),
+                                                        child: Padding(
+                                                            padding: EdgeInsets.only(top: 16, left: 16),
+                                                            child: Image.asset(
+                                                              "assets/images/expand.png",
+                                                              color: Theme.of(context).colorScheme.onSurface,
+                                                              width: 24,
+                                                              height: 24,
+                                                            )
+                                                        ),
+                                                      )
+                                                  )
+                                                ],
+                                              )
+                                          )
+                                      ),
+                                      SizedBox(height: 16),
+                                      Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 4),
+                                          child: Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    SelectableText(
+                                                        details,
+                                                        style: Theme.of(context).textTheme.titleLarge
+                                                    ),
+                                                    SizedBox(height: 16),
+                                                    Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                      children: [
+                                                        Expanded(
+                                                            child: SingleChildScrollView(
+                                                              scrollDirection: Axis.horizontal,
+                                                              clipBehavior: Constants.clipBehaviour,
+                                                              child: Row(
+                                                                  spacing: 8,
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    GestureDetector(
+                                                                        onTap: () {
+                                                                          vm.copyToClipboard(item.clothingItemModel.colorHexCode);
+                                                                          context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+                                                                        },
+                                                                        child: Container(
+                                                                            clipBehavior: Constants.clipBehaviour,
+                                                                            decoration: BoxDecoration(
+                                                                                color: item.clothingItemModel.colorHexCode.toColor(),
+                                                                                border: Border.all(
+                                                                                  color: item.clothingItemModel.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
+                                                                                  width: Constants.borderWidthLarge,
+                                                                                ),
+                                                                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                                            ),
+                                                                            padding: EdgeInsets.symmetric(
+                                                                                horizontal: 12,
+                                                                                vertical: 2
+                                                                            ),
+                                                                            child: Text(
+                                                                              item.clothingItemModel.color,
+                                                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                                                color: item.clothingItemModel.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
+                                                                              ),
+                                                                            )
+                                                                        )
+                                                                    ),
+                                                                    if (item.clothingItemModel.selectedStore != null && item.clothingItemModel.selectedStore!.isNotEmpty)
+                                                                      GestureDetector(
+                                                                          onTap: () => showStorePicker(context, item.clothingItemModel.stores),
+                                                                          child: Container(
+                                                                              clipBehavior: Constants.clipBehaviour,
+                                                                              decoration: BoxDecoration(
+                                                                                  border: Border.all(
+                                                                                    color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha(25),
+                                                                                    width: Constants.borderWidthMedium,
+                                                                                  ),
+                                                                                  borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                                              ),
+                                                                              padding: EdgeInsets.only(
+                                                                                left: 12,
+                                                                                right: 6,
+                                                                                top: 4,
+                                                                                bottom: 4,
+                                                                              ),
+                                                                              child: Row(
+                                                                                  mainAxisSize: MainAxisSize.min,
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    Text(item.clothingItemModel.selectedStore!, style: Theme.of(context).textTheme.bodySmall),
+                                                                                    SizedBox(width: 4),
+                                                                                    Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
+                                                                                  ]
+                                                                              )
+                                                                          )
+                                                                      )
+                                                                  ]
+                                                              ),
+                                                            )
+                                                        ),
+                                                        SizedBox(width: 16),
+                                                        if (item.clothingItemModel.selectedStore != null && item.clothingItemModel.selectedStore!.isNotEmpty)
+                                                          Text(
+                                                              item.clothingItemModel.selectedStorePrice().toFormattedPrice(),
+                                                              style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
+                                                          )
+                                                      ],
+                                                    )
+                                                  ]
+                                              )
                                           )
                                       )
                                     ],
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                            : Container(
-                            height: 96,
-                            clipBehavior: Constants.clipBehaviour,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                            ),
-                            child: Stack(
-                              children: [
-                                Image.file(
-                                  File(widget.imagePath),
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset('assets/placeholder.png', width: 128, height: 128, fit: BoxFit.cover);
-                                  },
-                                ),
-                                Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: Container(
-                                      width: 36,
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                          bottomRight: Radius.circular(Constants.cornerRadiusMedium),
-                                        ),
-                                        color: Theme.of(context).colorScheme.surface,
-                                      ),
-                                      child: IconButton(
-                                          onPressed: () => showFullScreenImage(context, item.imagePath, false),
-                                          padding: EdgeInsets.all(12),
-                                          icon: Icon(Icons.open_in_full_rounded, color: Theme.of(context).colorScheme.primary)
-                                      ),
-                                    )
-                                )
-                              ],
-                            )
+                                  )
+                              )
+                            ],
                           ),
-                          SizedBox(height: 16),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              SelectableText(
-                                                  details,
-                                                  style: Theme.of(context).textTheme.titleLarge
-                                              ),
-                                              SizedBox(height: 16),
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                      onTap: () => copyToClipboard(context, item.clothingItemModel.colorHexCode),
-                                                      child: Container(
-                                                          clipBehavior: Constants.clipBehaviour,
-                                                          decoration: BoxDecoration(
-                                                              color: item.clothingItemModel.colorHexCode.toColor(),
-                                                              border: Border.all(
-                                                                color: item.clothingItemModel.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
-                                                                width: Constants.borderWidthLarge,
-                                                              ),
-                                                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
-                                                          ),
-                                                          padding: EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 2
-                                                          ),
-                                                          child: Text(
-                                                            item.clothingItemModel.color,
-                                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                              color: item.clothingItemModel.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
-                                                            ),
-                                                          )
-                                                      )
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  if (item.clothingItemModel.selectedStore != null && item.clothingItemModel.selectedStore!.isNotEmpty)
-                                                    GestureDetector(
-                                                        onTap: () => showSourcePicker(context),
-                                                        child: Container(
-                                                            clipBehavior: Constants.clipBehaviour,
-                                                            decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                  color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha(25),
-                                                                  width: Constants.borderWidthMedium,
-                                                                ),
-                                                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
-                                                            ),
-                                                            padding: EdgeInsets.only(
-                                                              left: 12,
-                                                              right: 6,
-                                                              top: 4,
-                                                              bottom: 4,
-                                                            ),
-                                                            child: Row(
-                                                                mainAxisSize: MainAxisSize.min,
-                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                children: [
-                                                                  Text(item.clothingItemModel.selectedStore!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
-                                                                  SizedBox(width: 4),
-                                                                  Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
-                                                                ]
-                                                            )
-                                                        )
-                                                    )
-                                                ],
-                                              )
-                                            ],
-                                          )
-                                      ),
-                                      SizedBox(width: 8),
-                                      if (item.clothingItemModel.selectedStore != null && item.clothingItemModel.selectedStore!.isNotEmpty)
-                                        Text(
-                                            item.clothingItemModel.selectedSourcePrice(),
-                                            style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
-                                        )
-                                    ]
-                                )
-                            ),
-                          )
-                        ],
-                      )
-                  )
-                ],
-              ),
-            )
-        )
+                        )
+                    )
+                )
+              )
+          )
+        ],
+      )
     );
   }
 }

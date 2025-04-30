@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:voux/models/store_model.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../reusables/more_bottom_sheet.dart';
 import '../../models/clothing_item_model.dart';
@@ -34,22 +35,28 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
     super.initState();
 
     if (widget.item.stores.isNotEmpty) {
-      widget.item.setSelectedSource(widget.item.stores[0].name);
+      widget.item.setSelectedStore(widget.item.stores[0].name);
     }
   }
 
   // Select Source
-  Future<void> selectSource(String value) async {
+  Future<void> selectStore(String value) async {
     setState(() {
-      widget.item.setSelectedSource(value);
+      widget.item.setSelectedStore(value);
     });
+
+    // ✅ Trigger total price recalculation
+    widget.vm.calculateTotalPrice();
 
     Navigator.pop(context);
   }
 
   // Show source selection sheet
-  void showSourcePicker(BuildContext context) {
-    final List<String> list = ["Amazon", "Ebay", "Alibaba"];
+  void showStorePicker(BuildContext context, List<StoreModel> modelList) {
+    for (var model in modelList) {
+      print('Store Name: ${model.name}, Price: ${model.price}');
+    }
+    List<String> list = modelList.map((e) => e.name).toList();
 
     showModalBottomSheet(
       context: context,
@@ -85,7 +92,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
-                  if (selectedIndex != initialIndex) selectSource(list[selectedIndex]);
+                  if (selectedIndex != initialIndex) selectStore(list[selectedIndex]);
                 },
                 style: ElevatedButton.styleFrom(
                   elevation: 3,
@@ -160,11 +167,6 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
         ),
       ),
     );
-  }
-
-  void copyToClipboard(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
-    context.showCustomSnackBar(Constants.success, "Copied to clipboard");
   }
 
   @override
@@ -315,90 +317,98 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 4),
                             child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              SelectableText(
-                                                  details,
-                                                  style: Theme.of(context).textTheme.titleLarge
-                                              ),
-                                              SizedBox(height: 16),
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                      onTap: () => copyToClipboard(context, item.colorHexCode),
-                                                      child: Container(
-                                                          clipBehavior: Constants.clipBehaviour,
-                                                          decoration: BoxDecoration(
-                                                              color: item.colorHexCode.toColor(),
-                                                              border: Border.all(
-                                                                color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
-                                                                width: Constants.borderWidthLarge,
-                                                              ),
-                                                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
-                                                          ),
-                                                          padding: EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 2
-                                                          ),
-                                                          child: Text(
-                                                            item.color,
-                                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                              color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
-                                                            ),
-                                                          )
-                                                      )
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
+                              alignment: Alignment.bottomLeft,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SelectableText(
+                                        details,
+                                        style: Theme.of(context).textTheme.titleLarge
+                                    ),
+                                    SizedBox(height: 16),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              clipBehavior: Constants.clipBehaviour,
+                                              child: Row(
+                                                  spacing: 8,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
                                                     GestureDetector(
-                                                      onTap: () => showSourcePicker(context),
-                                                      child: Container(
-                                                          clipBehavior: Constants.clipBehaviour,
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha(25),
-                                                                width: Constants.borderWidthMedium,
+                                                        onTap: () {
+                                                          vm.copyToClipboard(item.colorHexCode);
+                                                          context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+                                                        },
+                                                        child: Container(
+                                                            clipBehavior: Constants.clipBehaviour,
+                                                            decoration: BoxDecoration(
+                                                                color: item.colorHexCode.toColor(),
+                                                                border: Border.all(
+                                                                  color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
+                                                                  width: Constants.borderWidthLarge,
+                                                                ),
+                                                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                            ),
+                                                            padding: EdgeInsets.symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 2
+                                                            ),
+                                                            child: Text(
+                                                              item.color,
+                                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                                color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
                                                               ),
-                                                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
-                                                          ),
-                                                          padding: EdgeInsets.only(
-                                                            left: 12,
-                                                            right: 6,
-                                                            top: 4,
-                                                            bottom: 4,
-                                                          ),
-                                                          child: Row(
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(item.selectedStore!.capitalizeFirst(), style: Theme.of(context).textTheme.bodySmall),
-                                                                SizedBox(width: 4),
-                                                                Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
-                                                              ]
+                                                            )
+                                                        )
+                                                    ),
+                                                    if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
+                                                      GestureDetector(
+                                                          onTap: () => showStorePicker(context, item.stores),
+                                                          child: Container(
+                                                              clipBehavior: Constants.clipBehaviour,
+                                                              decoration: BoxDecoration(
+                                                                  border: Border.all(
+                                                                    color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha(25),
+                                                                    width: Constants.borderWidthMedium,
+                                                                  ),
+                                                                  borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
+                                                              ),
+                                                              padding: EdgeInsets.only(
+                                                                left: 12,
+                                                                right: 6,
+                                                                top: 4,
+                                                                bottom: 4,
+                                                              ),
+                                                              child: Row(
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(item.selectedStore!, style: Theme.of(context).textTheme.bodySmall),
+                                                                    SizedBox(width: 4),
+                                                                    Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
+                                                                  ]
+                                                              )
                                                           )
                                                       )
-                                                  )
-                                                ],
-                                              )
-                                            ],
+                                                  ]
+                                              ),
+                                            )
+                                        ),
+                                        SizedBox(width: 16),
+                                        if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
+                                          Text(
+                                              item.selectedStorePrice().toFormattedPrice(),
+                                              style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
                                           )
-                                      ),
-                                      SizedBox(width: 8),
-                                      if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
-                                        Text(
-                                          item.selectedSourcePrice()!,
-                                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
-                                        )
-                                    ]
-                                )
-                            ),
+                                      ],
+                                    )
+                                  ]
+                              )
+                            )
                           )
                         ],
                       )

@@ -12,6 +12,8 @@ class ClothingItemFloorModel {
   final ClothingItemModel clothingItemModel;
   final OptionalAnalysisResult optionalAnalysisResult;
 
+  bool isSelected = false;
+
   ClothingItemFloorModel(
       this.id,
       this.imagePath,

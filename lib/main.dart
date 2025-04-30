@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
           providers: [
             ChangeNotifierProvider(create: (_) => locator<HomeViewModel>()),
             ChangeNotifierProvider(create: (_) => DetailViewModel()),
-            ChangeNotifierProvider(create: (_) => WishlistViewModel()),
+            ChangeNotifierProvider(create: (_) => locator<WishlistViewModel>()),
             ChangeNotifierProvider(create: (_) => locator<AuthViewModel>()),
             // Add more providers here if necessary
           ],

@@ -27,8 +27,16 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Future.microtask(() {
+      final vm = Provider.of<DetailViewModel>(context, listen: false);
+      vm.clothingItems = widget.clothingItems;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final totalPrice = calculateTotalPrice();
     return Consumer<DetailViewModel>(
       builder: (context, vm, _) {
         return Scaffold(
@@ -147,28 +155,22 @@ class _DetailScreenState extends State<DetailScreen> {
                                     children: [
                                       StackedTextBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/hanger.png", title: "+${widget.clothingItems.length}"),
                                       SizedBox(width: 16),
-                                      if (totalPrice > 0)
-                                        SelectableText(totalPrice.toStringAsFixed(2).toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                                      if (vm.totalPrice > 0)
+                                        SelectableText(vm.totalPrice.toStringAsFixed(2).toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)),
                                     ]
                                 ),
-                                SizedBox(height: 8),
+                                SizedBox(height: 24),
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Existing UI elements
-                                    SizedBox(height: 12),
-                                    Column(
-                                      children: widget.clothingItems
-                                          .map((item) => ClothingItemCard(
-                                        vm: vm,
-                                        imagePath: widget.imagePath,
-                                        item: item,
-                                        optionalAnalysisResult: widget.optionalAnalysisResult,
-                                      ))
-                                          .toList(),
-                                    )
-                                  ],
-                                )
+                                  children: widget.clothingItems
+                                      .map((item) => ClothingItemCard(
+                                    vm: vm,
+                                    imagePath: widget.imagePath,
+                                    item: item,
+                                    optionalAnalysisResult: widget.optionalAnalysisResult,
+                                  ))
+                                      .toList(),
+                                ),
+                                SizedBox(height: 32)
                               ],
                             )
                         ),
@@ -202,9 +204,5 @@ class _DetailScreenState extends State<DetailScreen> {
         );
       },
     );
-  }
-
-  double calculateTotalPrice() {
-    return widget.clothingItems.fold(0.0, (sum, item) => sum + (double.tryParse(item.selectedSourcePrice()) ?? 0.0));
   }
 }

@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `imagePath` TEXT NOT NULL, `googleResults` TEXT NOT NULL, `clothingItemModel` TEXT NOT NULL, `optionalAnalysisResult` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `imagePath` TEXT NOT NULL, `googleResults` TEXT NOT NULL, `clothingItemModel` TEXT NOT NULL, `optionalAnalysisResult` TEXT NOT NULL, `isSelected` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -127,7 +127,8 @@ class _$ClothingItemDao extends ClothingItemDao {
                   'clothingItemModel': _clothingItemModelConverter
                       .encode(item.clothingItemModel),
                   'optionalAnalysisResult': _optionalAnalysisResultConverter
-                      .encode(item.optionalAnalysisResult)
+                      .encode(item.optionalAnalysisResult),
+                  'isSelected': item.isSelected ? 1 : 0
                 },
             changeListener),
         _clothingItemFloorModelUpdateAdapter = UpdateAdapter(
@@ -142,7 +143,8 @@ class _$ClothingItemDao extends ClothingItemDao {
                   'clothingItemModel': _clothingItemModelConverter
                       .encode(item.clothingItemModel),
                   'optionalAnalysisResult': _optionalAnalysisResultConverter
-                      .encode(item.optionalAnalysisResult)
+                      .encode(item.optionalAnalysisResult),
+                  'isSelected': item.isSelected ? 1 : 0
                 },
             changeListener);
 

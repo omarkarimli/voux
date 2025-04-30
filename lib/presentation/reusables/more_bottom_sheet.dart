@@ -66,16 +66,12 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
                       googleResults: widget.googleResults,
                       clothingItemModel: widget.clothingItemModel,
                       optionalAnalysisResult: widget.optionalAnalysisResult,
-                      onSuccess: () {
-                        context.showCustomSnackBar(
-                          Constants.success,
-                          viewModel.isInWishlist
-                              ? "Added to wishlist"
-                              : "Removed from wishlist"
-                        );
+                      onSuccess: (message) {
                         Navigator.pop(context);
+                        context.showCustomSnackBar(Constants.success, message);
                       },
                       onError: (message) {
+                        Navigator.pop(context);
                         context.showCustomSnackBar(Constants.error, message);
                       },
                     );
@@ -83,7 +79,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
                 ),
                 ListTile(
                   leading: Icon(
-                    Icons.arrow_outward_rounded,
+                    Icons.explore_outlined,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   title: Text(
@@ -92,7 +88,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    _searchInBrowser(widget.clothingItemModel
+                    searchInBrowser(widget.clothingItemModel
                         .toDetailString(widget.optionalAnalysisResult));
                   },
                 ),
@@ -104,7 +100,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
     );
   }
 
-  Future<void> _searchInBrowser(String query) async {
+  Future<void> searchInBrowser(String query) async {
     final Uri url = Uri.https('www.google.com', '/search', {'q': query});
 
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {

@@ -1,5 +1,5 @@
 import 'package:floor/floor.dart';
-import 'package:voux/models/clothing_item_model.dart';
+import '../models/clothing_item_model.dart';
 import '../models/clothing_item_floor_model.dart';
 
 @dao

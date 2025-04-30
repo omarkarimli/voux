@@ -43,7 +43,7 @@ class ClothingItemModel {
       brand: json[Constants.brand],
       model: json[Constants.model],
       stores: (json[Constants.stores] as List<dynamic>? ?? [])
-          .map((sellerSourceJson) => StoreModel.fromJson(sellerSourceJson))
+          .map((storeJson) => StoreModel.fromJson(storeJson))
           .toList(),
 
       selectedStore: json[Constants.selectedStore]
@@ -81,20 +81,20 @@ class ClothingItemModel {
     return details.capitalizeFirst();
   }
 
-  // Get the price for the selected source
-  String selectedSourcePrice() {
+  // Get the price for the selected store
+  String selectedStorePrice() {
     if (selectedStore != null) {
-      final source = stores.firstWhere(
+      final store = stores.firstWhere(
             (s) => s.name == selectedStore,
         orElse: () => StoreModel(name: Constants.unknown, price: Constants.unknown),
       );
-      return source.price.toFormattedPrice();
+      return store.price;
     }
     return "0";
   }
 
   // Set the selected source
-  void setSelectedSource(String sourceName) {
-    selectedStore = sourceName;
+  void setSelectedStore(String storeName) {
+    selectedStore = storeName;
   }
 }

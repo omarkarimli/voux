@@ -34,7 +34,7 @@ class MoreBottomSheetViewModel extends ChangeNotifier {
     required List<Map<String, String>> googleResults,
     required ClothingItemModel clothingItemModel,
     required OptionalAnalysisResult optionalAnalysisResult,
-    required VoidCallback onSuccess,
+    required Function(String) onSuccess,
     required Function(String) onError,
   }) async {
     try {
@@ -55,7 +55,11 @@ class MoreBottomSheetViewModel extends ChangeNotifier {
 
       isLoading = false;
       notifyListeners();
-      onSuccess.call();
+      onSuccess.call(
+        isInWishlist
+            ? "Added to wishlist"
+            : "Removed from wishlist"
+      );
     } catch (e, stackTrace) {
       debugPrint("Error updating wishlist: $e\n$stackTrace");
       onError.call("Error updating wishlist");

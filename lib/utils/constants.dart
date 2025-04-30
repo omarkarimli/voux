@@ -112,7 +112,8 @@ Analyze the given image and generate a list of clothing items based on the detec
   }
 ]
 
-Price should be in USD and should be price in that source store.
+Use the model's knowledge to infer likely stores and realistic USD prices based on known brands, models, and product types. Do not use placeholder values. If store and pricing data cannot be inferred with confidence, empty the `stores` field entirely for that item.
+
 If property is unknown, use "unknown".
 The response should only contain the JSON array without additional text.
 """;
@@ -122,7 +123,7 @@ Analyze the given image. Return the result strictly in the following JSON format
 
 {
   "gender": "male" // or "female"
-  "is_child": true // or false
+  "isChild": true // or false
 }
 
 Ensure that the response contains only the JSON object without any additional text.

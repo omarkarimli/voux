@@ -1,10 +1,32 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
+import '../../models/clothing_item_model.dart';
 import '../../utils/constants.dart';
 
 class DetailViewModel extends ChangeNotifier {
+  List<ClothingItemModel> _clothingItems = [];
+  List<ClothingItemModel> get clothingItems => _clothingItems;
+
+  set clothingItems(List<ClothingItemModel> items) {
+    _clothingItems = items;
+    calculateTotalPrice();
+    notifyListeners();
+  }
+
+  double _totalPrice = 0.0;
+  double get totalPrice => _totalPrice;
+
+  void calculateTotalPrice() {
+    _totalPrice = _clothingItems.fold(
+      0.0,
+      (sum, item) => sum + (double.tryParse(item.selectedStorePrice()) ?? 0.0),
+    );
+    print("Updated totalPrice: $_totalPrice");
+    notifyListeners();
+  }
 
   Future<List<Map<String, String>>> fetchGoogleImages(String query) async {
     const String apiKey = Constants.cseApiKey;
@@ -41,5 +63,9 @@ class DetailViewModel extends ChangeNotifier {
       print('Exception in fetchGoogleImages: $e');
       return []; // ← Same here
     }
+  }
+
+  void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
   }
 }

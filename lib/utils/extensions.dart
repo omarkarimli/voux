@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -66,22 +67,24 @@ extension SnackBarHelper on BuildContext {
       );
     });
 
-    print(state == Constants.success
+    if (kDebugMode) {
+      print(state == Constants.success
         ? "Success: $message"
         : "Error: $message"
     );
+    }
   }
 }
 
 extension PriceFormatting on String {
   String toFormattedPrice() {
     // Check if the string contains a decimal point
-    if (this.contains('.') && this.split('.')[1] == '00') {
+    if (contains('.') && split('.')[1] == '00') {
       // If the decimal part is .00, remove it
-      return "\$${this.split('.')[0]}";
+      return "\$${split('.')[0]}";
     } else {
       // Otherwise, keep the original string
-      return "\$${this}";
+      return "\$$this";
     }
   }
 }

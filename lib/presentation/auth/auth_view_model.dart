@@ -52,8 +52,8 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
+    setLoading(true);
     try {
-      setLoading(true);
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return null;
 
@@ -76,10 +76,10 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<UserCredential?> signInWithApple() async {
+    setLoading(true);
     if (!Platform.isIOS) return null;
 
     try {
-      setLoading(true);
 
       final credential = await apple.SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -105,6 +105,8 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<void> saveUserToFirestore(UserCredential userCredential) async {
+    setLoading(true);
+
     final user = userCredential.user;
     if (user == null) return;
 
@@ -151,6 +153,8 @@ class AuthViewModel extends ChangeNotifier {
       if (kDebugMode) {
         print("❌ Firestore error: $e");
       }
+    } finally {
+      setLoading(false);
     }
   }
 

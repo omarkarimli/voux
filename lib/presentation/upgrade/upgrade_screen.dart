@@ -117,7 +117,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       color: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         side: plan.name == selectedPlan?.name
-            ? BorderSide(color: Theme.of(context).colorScheme.outline.withAlpha(50), width: 3)
+            ? BorderSide(color: Theme.of(context).colorScheme.onSurface.withAlpha(50), width: 3)
             : BorderSide.none,
         borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
       ),

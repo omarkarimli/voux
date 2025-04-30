@@ -8,6 +8,7 @@ import '../presentation/auth/auth_view_model.dart';
 import '../presentation/reusables/more_bottom_sheet_view_model.dart';
 import '../dao/clothing_item_dao.dart';
 import '../db/database.dart';
+import '../presentation/wishlist/wishlist_view_model.dart';
 import '../utils/constants.dart';
 import '../presentation/home/home_view_model.dart';
 
@@ -42,5 +43,9 @@ Future<void> setupLocator() async {
 
   locator.registerFactory(() => MoreBottomSheetViewModel(
     clothingItemDao: locator<ClothingItemDao>()
+  ));
+
+  locator.registerFactory(() => WishlistViewModel(
+      clothingItemDao: locator<ClothingItemDao>()
   ));
 }
