@@ -24,13 +24,14 @@ class WishlistViewModel extends ChangeNotifier {
   Future<void> setBoolSelecting(bool value) async {
     _isSelecting = value;
     notifyListeners();
+
+    print("isSelecting: $_isSelecting");
   }
 
   Future<void> removeSelectedItems() async {
     for (var item in wishlistItems) {
       item.isSelected = false;
     }
-
     notifyListeners();
   }
 
@@ -46,12 +47,18 @@ class WishlistViewModel extends ChangeNotifier {
           numDeleteds++;
         }
       }
+
+      if (numDeleteds == 0) {
+        onError.call("No item was selected");
+        return;
+      }
+
       wishlistItems.removeWhere((item) => item.isSelected);
 
       setBoolSelecting(false);
       removeSelectedItems();
 
-      onSuccess.call("$numDeleteds items deleted");
+      onSuccess.call("$numDeleteds item${numDeleteds == 1 ? '' : 's'} deleted");
 
       notifyListeners();
     } catch (e) {

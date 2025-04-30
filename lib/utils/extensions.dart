@@ -47,22 +47,26 @@ extension SnackBarHelper on BuildContext {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(this).showSnackBar(
         SnackBar(
+          elevation: 3,
+          showCloseIcon: true,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall),
+          ),
           content: Text(
             message,
             style: Theme.of(this).textTheme.bodyMedium?.copyWith(
               color: state == Constants.success
-                  ? Theme.of(this).colorScheme.onPrimaryContainer
+                  ? Theme.of(this).colorScheme.surface
                   : Theme.of(this).colorScheme.onErrorContainer,
             ),
           ),
           backgroundColor: state == Constants.success
-              ? Theme.of(this).colorScheme.primaryContainer
+              ? Theme.of(this).colorScheme.onSurface
               : Theme.of(this).colorScheme.errorContainer,
           closeIconColor: state == Constants.success
-              ? Theme.of(this).colorScheme.onPrimaryContainer
+              ? Theme.of(this).colorScheme.surface
               : Theme.of(this).colorScheme.onErrorContainer,
-          showCloseIcon: true,
-          behavior: SnackBarBehavior.floating,
         ),
       );
     });

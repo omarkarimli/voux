@@ -77,10 +77,12 @@ class _WishlistScreenState extends State<WishlistScreen> {
                   left: 0,
                   child: IconButton(
                     onPressed: () {
-                      vm.deleteSelectedItems(
-                        onSuccess: (message) => context.showCustomSnackBar(Constants.success, message),
-                        onError: (message) => context.showCustomSnackBar(Constants.error, message),
-                      );
+                      setState(() {
+                        vm.deleteSelectedItems(
+                          onSuccess: (message) => context.showCustomSnackBar(Constants.success, message),
+                          onError: (message) => context.showCustomSnackBar(Constants.error, message),
+                        );
+                      });
                     },
                     icon: Icon(Icons.delete_outline_rounded, color: Theme.of(context).colorScheme.onSurface),
                   )
