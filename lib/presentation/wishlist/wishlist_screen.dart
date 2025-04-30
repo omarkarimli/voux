@@ -105,10 +105,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                           style: Theme.of(context).textTheme.headlineLarge,
                         ),
                         const SizedBox(height: 16),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: buildWishlistItemsList(),
-                        )
+                        buildWishlistItemsList()
                       ],
                     ),
                   )
