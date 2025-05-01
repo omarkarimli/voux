@@ -46,7 +46,12 @@ class _ConfirmBottomSheetState extends State<ConfirmBottomSheet> {
           ),
           SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () => widget.function,
+            onPressed: () {
+              widget.function();
+              setState(() {
+                Navigator.pop(context);
+              });
+            },
             style: ElevatedButton.styleFrom(
               elevation: 3,
               padding: EdgeInsets.symmetric(vertical: 12.0),

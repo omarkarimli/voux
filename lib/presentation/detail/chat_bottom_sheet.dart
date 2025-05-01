@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:voux/presentation/reusables/confirm_bottom_sheet.dart';
 import '../../utils/constants.dart';
@@ -66,8 +67,8 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
       controller: _sheetController,
-      initialChildSize: 0.15,
-      minChildSize: 0.15,
+      initialChildSize: 0.125,
+      minChildSize: 0.125,
       maxChildSize: 0.85,
       builder: (context, scrollController) {
         return Container(
@@ -125,15 +126,17 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                               bottom: 0,
                               child: IconButton(
                                 onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                    ),
-                                    builder: (context) {
-                                      return ConfirmBottomSheet(function: _clearMessages);
-                                    },
-                                  );
+                                  if (_messages.isNotEmpty && !_isLoading) {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                      ),
+                                      builder: (context) {
+                                        return ConfirmBottomSheet(function: _clearMessages);
+                                      },
+                                    );
+                                  }
                                 },
                                 icon: Icon(Icons.delete_sweep_rounded),
                               ),
@@ -145,7 +148,11 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
 
                     // Messages
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16
+                      ),
                       child: Column(
                         children: [
                           ..._messages.map((msg) {
@@ -178,9 +185,25 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                             );
                           }),
                           if (_isLoading)
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Center(child: CircularProgressIndicator()),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/app_icon.png",
+                                      width: 54,
+                                      height: 54,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    CupertinoActivityIndicator(
+                                      radius: 12.0,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    )
+                                  ],
+                                ),
+                              )
                             ),
                         ],
                       ),
