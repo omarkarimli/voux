@@ -22,6 +22,8 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
   void initState() {
     super.initState();
     _sheetController.addListener(_onSizeChanged);
+
+    _sendMessage("Merhaba");
   }
 
   void _onSizeChanged() {
@@ -31,8 +33,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
     }
   }
 
-  void _sendMessage() {
-    final text = _textController.text.trim();
+  void _sendMessage(String text) {
     if (text.isNotEmpty && !_isLoading) {
       setState(() {
         _messages.add(_ChatMessage(text: text, isUser: true));
@@ -257,7 +258,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                           ),
                           child: IconButton(
                             padding: EdgeInsets.zero,
-                            onPressed: _sendMessage,
+                            onPressed: () => _sendMessage(_textController.text.trim()),
                             icon: Icon(Icons.arrow_upward_rounded, color: Theme.of(context).colorScheme.surface),
                           ),
                         ),
