@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 import '../../di/locator.dart';
@@ -167,7 +166,9 @@ class HomeViewModel extends ChangeNotifier {
       _clothingItems = responses[0] as List<ClothingItemModel>;
       _optionalAnalysisResult = responses[1] as OptionalAnalysisResult;
 
-      print(_clothingItems);
+      if (kDebugMode) {
+        print(_clothingItems);
+      }
 
       if (_clothingItems.isEmpty) {
         setError("API response was empty or null");
@@ -191,7 +192,9 @@ class HomeViewModel extends ChangeNotifier {
         Constants.currentAnalysisCount: userModel!.currentAnalysisCount + 1,
       });
     } catch (e) {
-      print("❌ Failed to update analysis count: $e");
+      if (kDebugMode) {
+        print("❌ Failed to update analysis count: $e");
+      }
     }
   }
 
@@ -208,13 +211,17 @@ class HomeViewModel extends ChangeNotifier {
       final response = await model.generateContent(content);
       return parseResponse(response.text);
     } catch (e) {
-      print("❌ _analyzeImage error: $e");
+      if (kDebugMode) {
+        print("❌ _analyzeImage error: $e");
+      }
       return [];
     }
   }
 
   List<ClothingItemModel> parseResponse(String? text) {
-    print("✅ Raw JSON Response: $text");
+    if (kDebugMode) {
+      print("✅ Raw JSON Response: $text");
+    }
 
     if (text == null || text.trim().isEmpty) return [];
     try {
@@ -222,7 +229,9 @@ class HomeViewModel extends ChangeNotifier {
       final List<dynamic> jsonList = json.decode(cleaned);
       return jsonList.map((item) => ClothingItemModel.fromJson(item)).toList();
     } catch (e) {
-      print("❌ JSON Parse Error: $e");
+      if (kDebugMode) {
+        print("❌ JSON Parse Error: $e");
+      }
       return [];
     }
   }
@@ -238,28 +247,36 @@ class HomeViewModel extends ChangeNotifier {
       ];
 
       final response = await model.generateContent(content);
+      if (kDebugMode) {
+        print("✅ Raw Optional Analysis Response: ${response.text}");
+      }
       return _parseOptional(response.text);
     } catch (e) {
-      print("❌ _analyzeOptional error: $e");
-      return OptionalAnalysisResult(gender: Constants.unknown, isChild: false);
+      if (kDebugMode) {
+        print("❌ _analyzeOptional error: $e");
+      }
+      return OptionalAnalysisResult(gender: Constants.unknown, isChild: false, rate: Constants.unknown);
     }
   }
 
   OptionalAnalysisResult _parseOptional(String? text) {
     if (text == null || text.trim().isEmpty) {
-      return OptionalAnalysisResult(gender: Constants.unknown, isChild: false);
+      return OptionalAnalysisResult(gender: Constants.unknown, isChild: false, rate: Constants.unknown);
     }
     try {
       final match = RegExp(r'\{[\s\S]*?\}').firstMatch(text.replaceAll('```json', '').replaceAll('```', ''));
-      if (match == null) return OptionalAnalysisResult(gender: Constants.unknown, isChild: false);
+      if (match == null) return OptionalAnalysisResult(gender: Constants.unknown, isChild: false, rate: Constants.unknown);
       final jsonData = json.decode(match.group(0)!);
       return OptionalAnalysisResult(
         gender: jsonData[Constants.gender] ?? Constants.unknown,
         isChild: jsonData[Constants.isChild] ?? false,
+        rate: jsonData[Constants.rate] ?? Constants.unknown
       );
     } catch (e) {
-      print("❌ Parse Optional Error: $e");
-      return OptionalAnalysisResult(gender: Constants.unknown, isChild: false);
+      if (kDebugMode) {
+        print("❌ Parse Optional Error: $e");
+      }
+      return OptionalAnalysisResult(gender: Constants.unknown, isChild: false, rate: Constants.unknown);
     }
   }
 

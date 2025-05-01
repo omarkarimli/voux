@@ -97,6 +97,21 @@ class _DetailScreenState extends State<DetailScreen> {
                                             },
                                           ),
                                         ),
+                                      if (widget.optionalAnalysisResult.rate != Constants.unknown)
+                                        Container(
+                                            width: 48,
+                                            height: 48,
+                                            clipBehavior: Constants.clipBehaviour,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                                              color: Theme.of(context).colorScheme.tertiary,
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                                widget.optionalAnalysisResult.rate,
+                                                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onTertiary)
+                                            )
+                                        ),
                                       if (widget.optionalAnalysisResult.gender != Constants.unknown)
                                         Container(
                                             width: 48,
@@ -199,6 +214,49 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ),
                 ),
+
+                // Chat
+                DraggableScrollableSheet(
+                  initialChildSize: 0.15,
+                  minChildSize: 0.15,
+                  maxChildSize: 0.85,
+                  builder: (context, scrollController) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadiusLarge)),
+                        boxShadow: [
+                          BoxShadow(color: Theme.of(context).colorScheme.onSurface.withAlpha(50), blurRadius: 10),
+                        ],
+                      ),
+                      child: SingleChildScrollView(
+                        controller: scrollController, // Required!
+                        child: Column(
+                          children: [
+                            // Drag Handle
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Container(
+                                width: 40,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                                  borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
+                                ),
+                              ),
+                            ),
+
+                            // Content
+                            ...List.generate(
+                              30,
+                                  (index) => ListTile(title: Text('Item $index')),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                )
               ],
             )
         );

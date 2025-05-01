@@ -53,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       OptionalAnalysisResult(
                         gender: Constants.unknown,
                         isChild: false,
+                        rate: Constants.unknown
                       ),
                 ),
               ),

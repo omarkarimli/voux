@@ -62,6 +62,7 @@ class Constants {
 
   // Analyze
   static const String unknown = "unknown";
+  static const String rate = "rate";
   static const String gender = "gender";
   static const String isChild = "isChild";
   static const String child = "child";
@@ -124,8 +125,10 @@ Analyze the given image. Return the result strictly in the following JSON format
 {
   "gender": "male" // or "female"
   "isChild": true // or false
+  "rate": "4.5"
 }
 
+Rate must be a number between 1 and 10.
 Ensure that the response contains only the JSON object without any additional text.
 """;
 
