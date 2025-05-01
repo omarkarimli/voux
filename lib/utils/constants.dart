@@ -125,10 +125,9 @@ Analyze the given image. Return the result strictly in the following JSON format
 {
   "gender": "male" // or "female"
   "isChild": true // or false
-  "rate": "4.5"
+  "rate": "<RATING>" // a string representing a number between 1 and 10, or "unknown"
 }
 
-Rate must be a number between 1 and 10.
 Ensure that the response contains only the JSON object without any additional text.
 """;
 
