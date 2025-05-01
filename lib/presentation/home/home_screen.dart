@@ -92,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     blendMode: BlendMode.dstIn,
                     child: Image.asset(
                       'assets/images/abstract_1.png',
+                      height: 512,
                       fit: BoxFit.cover,
                       width: double.infinity,
                     ),

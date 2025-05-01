@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:voux/presentation/reusables/confirm_bottom_sheet.dart';
 import '../../utils/constants.dart';
 
 class ChatBottomSheet extends StatefulWidget {
-
   const ChatBottomSheet({super.key});
 
   @override
@@ -13,9 +12,10 @@ class ChatBottomSheet extends StatefulWidget {
 class _ChatBottomSheetState extends State<ChatBottomSheet> {
   final DraggableScrollableController _sheetController = DraggableScrollableController();
   final TextEditingController _textController = TextEditingController();
-  final List<String> _messages = [];
+  final List<_ChatMessage> _messages = [];
 
   bool _showInput = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -32,12 +32,26 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
 
   void _sendMessage() {
     final text = _textController.text.trim();
-    if (text.isNotEmpty) {
+    if (text.isNotEmpty && !_isLoading) {
       setState(() {
-        _messages.add(text);
+        _messages.add(_ChatMessage(text: text, isUser: true));
+        _isLoading = true;
         _textController.clear();
       });
+
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          _messages.add(_ChatMessage(text: "Here's a suggestion from Voux!", isUser: false));
+          _isLoading = false;
+        });
+      });
     }
+  }
+
+  void _clearMessages() {
+    setState(() {
+      _messages.clear();
+    });
   }
 
   @override
@@ -88,58 +102,104 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                         ),
                       ),
                     ),
+
+                    // Chat title
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Center(
-                        child: Text(
-                          'Chat',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 32,
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Text(
+                                'Chat',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                    ),
+                                    builder: (context) {
+                                      return ConfirmBottomSheet(function: _clearMessages);
+                                    },
+                                  );
+                                },
+                                icon: Icon(Icons.delete_sweep_rounded),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
 
-                    // Messages list
+                    // Messages
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _messages
-                            .map(
-                              (msg) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary.withAlpha(25),
-                                borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
+                        children: [
+                          ..._messages.map((msg) {
+                            final alignment = msg.isUser ? Alignment.centerRight : Alignment.centerLeft;
+                            final color = msg.isUser
+                                ? Theme.of(context).colorScheme.primary.withAlpha(75)
+                                : Theme.of(context).colorScheme.secondary.withAlpha(25);
+                            final textColor = Theme.of(context).colorScheme.onSurface;
+
+                            return Align(
+                              alignment: alignment,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 6),
+                                padding: const EdgeInsets.all(12),
+                                constraints: const BoxConstraints(maxWidth: 280),
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: const Radius.circular(12),
+                                    bottomRight: const Radius.circular(12),
+                                    topRight: msg.isUser ? const Radius.circular(0) : const Radius.circular(12),
+                                    topLeft: msg.isUser ? const Radius.circular(12) : const Radius.circular(0),
+                                  ),
+                                ),
+                                child: Text(
+                                  msg.text,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
+                                ),
                               ),
-                              child: Text(
-                                msg,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
+                            );
+                          }),
+                          if (_isLoading)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Center(child: CircularProgressIndicator()),
                             ),
-                          ),
-                        )
-                            .toList(),
+                        ],
                       ),
                     ),
 
-                    const SizedBox(height: 80), // Reserve space for input
+                    const SizedBox(height: 80), // Space for input
                   ],
                 ),
               ),
 
-              // Animated input
+              // Input field
               AnimatedPositioned(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOut,
                 bottom: _showInput ? MediaQuery.of(context).padding.bottom + 16 : -100,
                 left: 16,
                 right: 16,
                 child: AnimatedOpacity(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   opacity: _showInput ? 1 : 0,
                   child: Container(
                     padding: const EdgeInsets.only(left: 16, right: 4),
@@ -189,4 +249,12 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
       },
     );
   }
+}
+
+// Simple message model
+class _ChatMessage {
+  final String text;
+  final bool isUser;
+
+  _ChatMessage({required this.text, required this.isUser});
 }

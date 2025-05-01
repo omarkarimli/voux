@@ -9,6 +9,7 @@ import '../agreement/agreement_screen.dart';
 import '../home/home_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../privacyPolicy/privacy_policy_screen.dart';
+import '../reusables/confirm_bottom_sheet.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -155,7 +156,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children: [
                               Text('Reset Settings', style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
-                                onPressed: () => showResetSettingsConfirmationDialog(),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                    ),
+                                    builder: (context) {
+                                      return ConfirmBottomSheet(function: resetSettings);
+                                    },
+                                  );
+                                },
                                 icon: const Icon(Icons.restart_alt_rounded, size: 20),
                               ),
                             ],
@@ -168,7 +179,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children: [
                               Text('Sign out', style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
-                                onPressed: () => showSignOutConfirmationDialog(),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                    ),
+                                    builder: (context) {
+                                      return ConfirmBottomSheet(function: signOut);
+                                    },
+                                  );
+                                },
                                 icon: const Icon(Icons.exit_to_app_rounded, size: 20),
                               ),
                             ],
@@ -390,49 +411,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
     themeNotifier.value = ThemeMode.system;
 
     Navigator.pushNamedAndRemoveUntil(context, OnboardingScreen.routeName, (route) => false);
-  }
-
-  void showSignOutConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Confirm Sign out", style: Theme.of(context).textTheme.titleLarge),
-          content: Text("Are you sure you want to log out?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () => signOut(),
-              child: const Text("Yes"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void showResetSettingsConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Confirm Reset Settings", style: Theme.of(context).textTheme.titleLarge),
-          content: Text("Are you sure you want to reset settings?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () => resetSettings(),
-              child: const Text("Yes"),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
