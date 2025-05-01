@@ -29,11 +29,18 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
   bool _isLoading = false;
   bool _shouldCancel = false;
   bool _isMinimized = true;
+  bool _showItemList = false;
 
   @override
   void initState() {
     super.initState();
     _sheetController.addListener(_onSizeChanged);
+
+    _textController.addListener(() {
+      // Trigger rebuild when the text changes
+      setState(() {});
+    });
+
     String initialMessage = "${widget.clothingItems.map((item) => item.name).join(', ')} how much price is each? and give alternatives, write compactly";
     _sendMessage(initialMessage);
   }
@@ -207,7 +214,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                               child: IconButton(
                                 onPressed: () {
                                   _sheetController.animateTo(
-                                    _isMinimized ? 0.85 : 0.125, // Toggle size
+                                    _isMinimized ? maxChildSize : minChildSize, // Toggle size
                                     duration: const Duration(milliseconds: 400),
                                     curve: Curves.easeOut,
                                   );
@@ -327,7 +334,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                   ],
                 ),
               ),
-              
+
               // Input field
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
@@ -338,51 +345,119 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
                   opacity: _showInput ? 1 : 0,
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 16, right: 12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _textController,
-                            maxLength: 512,
-                            maxLines: null,
-                            decoration: const InputDecoration(
-                              hintText: "Ask Voux",
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
+                  child: Column(
+                    children: [
+                      if (_showItemList) ...[
                         Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () => _isLoading ? stopThinking() : _sendMessage(_textController.text),
-                            icon: Icon(
-                                _isLoading ? Icons.stop_rounded : Icons.arrow_upward_rounded,
-                                color: Theme.of(context).colorScheme.surface
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                                width: 2,
+                              ),
                             ),
+                            child: ListView.builder(
+                              clipBehavior: Constants.clipBehaviour,
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              shrinkWrap: true,
+                              itemCount: widget.clothingItems.length,
+                              itemBuilder: (context, index) {
+                                final item = widget.clothingItems[index];
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _textController.text = "${item.name} price and alternatives?";
+                                          _showItemList = false;
+                                        });
+                                      },
+                                      child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Text(item.name, style: Theme.of(context).textTheme.titleMedium),
+                                              if (item.brand != Constants.unknown)
+                                                Text(item.brand),
+                                            ],
+                                          )
+                                      ),
+                                    ),
+                                    // Divider between list items
+                                    if (index < widget.clothingItems.length - 1)
+                                      Divider(
+                                          color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                                          thickness: 2,
+                                          height: 20
+                                      ),
+                                  ],
+                                );
+                              },
+                            )
+                        ),
+                        const SizedBox(height: 16)
+                      ],
+                      Container(
+                        padding: const EdgeInsets.only(left: 16, right: 12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                            width: 2,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _textController,
+                                maxLength: 512,
+                                maxLines: null,
+                                decoration: const InputDecoration(
+                                  hintText: "Ask Voux",
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Container(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  if (_isLoading) {
+                                    stopThinking();
+                                  } else {
+                                    if (_textController.text.isNotEmpty) {
+                                      _sendMessage(_textController.text);  // Send text message
+                                    } else {
+                                      setState(() {
+                                        _showItemList = !_showItemList;  // Toggle list display
+                                      });
+                                    }
+                                  }
+                                },
+                                icon: _buildIcon(),
+                              ),
+                            ),
+                          ],
+                        )
+                      )
+                    ],
+                  )
                 ),
               ),
             ],
@@ -391,6 +466,40 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
       },
     );
   }
+
+  Widget _buildIcon() {
+    Widget icon;
+
+    if (_isLoading) {
+      icon = Icon(Icons.stop_rounded, key: ValueKey('stop'), color: Theme.of(context).colorScheme.surface);
+    } else {
+      if (_textController.text.isNotEmpty) {
+        icon = Icon(Icons.arrow_upward_rounded, key: ValueKey('arrow'), color: Theme.of(context).colorScheme.surface);
+      } else {
+        if (_showItemList) {
+          icon = Icon(Icons.close_rounded, key: ValueKey('close'), color: Theme.of(context).colorScheme.surface);
+        } else {
+          icon = Image.asset(
+            'assets/images/stack.png',
+            key: ValueKey('stack'),
+            width: 22,
+            height: 22,
+            color: Theme.of(context).colorScheme.surface,
+          );
+        }
+      }
+    }
+
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 300),
+      transitionBuilder: (child, animation) => RotationTransition(
+        turns: animation,
+        child: FadeTransition(opacity: animation, child: child),
+      ),
+      child: icon,
+    );
+  }
+
 }
 
 // Simple message model
