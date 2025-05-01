@@ -177,6 +177,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                                 SizedBox(height: 24),
                                 Column(
+                                  spacing: 16,
                                   children: widget.clothingItems
                                       .map((item) => ClothingItemCard(
                                     vm: vm,
@@ -185,12 +186,11 @@ class _DetailScreenState extends State<DetailScreen> {
                                     optionalAnalysisResult: widget.optionalAnalysisResult,
                                   ))
                                       .toList(),
-                                ),
-                                SizedBox(height: 32)
+                                )
                               ],
                             )
                         ),
-                        SizedBox(height: 144)
+                        SizedBox(height: 160)
                       ],
                     )
                 ),
@@ -217,7 +217,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
 
                 // Chat
-                ChatBottomSheet(),
+                ChatBottomSheet(clothingItems: widget.clothingItems),
               ],
             )
         );

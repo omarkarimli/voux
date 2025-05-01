@@ -80,6 +80,60 @@ extension SnackBarHelper on BuildContext {
   }
 }
 
+extension StyledTextExtension on String {
+  List<TextSpan> toStyledTextSpans(TextStyle baseStyle) {
+    final spans = <TextSpan>[];
+    final regex = RegExp(r'(\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*|\*[^*]+\*)'); // bold italic, bold, italic
+    int currentIndex = 0;
+
+    for (final match in regex.allMatches(this)) {
+      if (match.start > currentIndex) {
+        spans.add(TextSpan(
+          text: substring(currentIndex, match.start),
+          style: baseStyle,
+        ));
+      }
+
+      final matchText = match.group(0)!;
+
+      if (matchText.startsWith('***')) {
+        spans.add(TextSpan(
+          text: matchText.substring(3, matchText.length - 3),
+          style: baseStyle.copyWith(
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic
+          ),
+        ));
+      } else if (matchText.startsWith('**')) {
+        spans.add(TextSpan(
+          text: matchText.substring(2, matchText.length - 2),
+          style: baseStyle.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+      } else if (matchText.startsWith('*')) {
+        spans.add(TextSpan(
+          text: matchText.substring(1, matchText.length - 1),
+          style: baseStyle.copyWith(
+            fontStyle: FontStyle.italic,
+          ),
+        ));
+      }
+
+      currentIndex = match.end;
+    }
+
+    if (currentIndex < length) {
+      spans.add(TextSpan(
+        text: substring(currentIndex),
+        style: baseStyle,
+      ));
+    }
+
+    return spans;
+  }
+}
+
 extension PriceFormatting on String {
   String toFormattedPrice() {
     // Check if the string contains a decimal point

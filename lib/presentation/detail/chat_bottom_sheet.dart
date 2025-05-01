@@ -1,10 +1,20 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:voux/presentation/reusables/confirm_bottom_sheet.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:voux/utils/extensions.dart';
+import '../../models/clothing_item_model.dart';
+import '../reusables/confirm_bottom_sheet.dart';
+import '../../di/locator.dart';
 import '../../utils/constants.dart';
 
 class ChatBottomSheet extends StatefulWidget {
-  const ChatBottomSheet({super.key});
+  final List<ClothingItemModel> clothingItems;
+  
+  const ChatBottomSheet({
+    super.key,
+    required this.clothingItems
+  });
 
   @override
   State<ChatBottomSheet> createState() => _ChatBottomSheetState();
@@ -17,35 +27,79 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
 
   bool _showInput = false;
   bool _isLoading = false;
+  bool _shouldCancel = false;
+  bool _isMinimized = true;
 
   @override
   void initState() {
     super.initState();
     _sheetController.addListener(_onSizeChanged);
-
-    _sendMessage("Merhaba");
+    String initialMessage = "${widget.clothingItems.map((item) => item.name).join(', ')} how much price is each? and give alternatives, write compactly";
+    _sendMessage(initialMessage);
   }
 
   void _onSizeChanged() {
     final isExpanded = _sheetController.size > 0.2;
-    if (_showInput != isExpanded) {
-      setState(() => _showInput = isExpanded);
+    final isMinimized = (_sheetController.size - 0.125).abs() < 0.01;
+
+    if (_showInput != isExpanded || _isMinimized != isMinimized) {
+      setState(() {
+        _showInput = isExpanded;
+        _isMinimized = isMinimized;
+      });
     }
   }
 
-  void _sendMessage(String text) {
-    if (text.isNotEmpty && !_isLoading) {
+  void _sendMessage(String t) {
+    if (t.isNotEmpty && !_isLoading) {
       setState(() {
-        _messages.add(_ChatMessage(text: text, isUser: true));
+        _messages.add(_ChatMessage(text: t, isUser: true));
         _isLoading = true;
         _textController.clear();
       });
 
-      Future.delayed(const Duration(seconds: 1), () {
+      think(t).then((responseText) {
         setState(() {
-          _messages.add(_ChatMessage(text: "Here's a suggestion from Voux!", isUser: false));
+          _messages.add(_ChatMessage(text: responseText, isUser: false));
           _isLoading = false;
         });
+      }).catchError((error) {
+        // Handle any error that might occur when calling think()
+        setState(() {
+          _messages.add(_ChatMessage(text: "Error occurred", isUser: false));
+          _isLoading = false;
+        });
+      });
+    }
+  }
+
+  Future<String> think(String t) async {
+    _shouldCancel = false; // reset cancel flag when starting
+
+    try {
+      final content = [
+        Content.multi([TextPart(t)])
+      ];
+
+      final response = await locator<GenerativeModel>().generateContent(content);
+
+      // Check cancellation before using result
+      if (_shouldCancel) return "Cancelled by user";
+
+      return response.text ?? "Error occurred";
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ Chat Error: $e");
+      }
+      return "Error occurred";
+    }
+  }
+
+  void stopThinking() {
+    if (_isLoading) {
+      setState(() {
+        _shouldCancel = true;
+        _isLoading = false;
       });
     }
   }
@@ -66,11 +120,13 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    double minChildSize = 0.125;
+    double maxChildSize = 0.85;
     return DraggableScrollableSheet(
       controller: _sheetController,
-      initialChildSize: 0.125,
-      minChildSize: 0.125,
-      maxChildSize: 0.85,
+      initialChildSize: minChildSize,
+      minChildSize: minChildSize,
+      maxChildSize: maxChildSize,
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
@@ -122,7 +178,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                               ),
                             ),
                             Positioned(
-                              right: 0,
+                              left: 8,
                               top: 0,
                               bottom: 0,
                               child: IconButton(
@@ -139,8 +195,29 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                                     );
                                   }
                                 },
-                                icon: Icon(Icons.delete_sweep_rounded),
+                                icon: Icon(
+                                  Icons.clear_all_rounded
+                                ),
                               ),
+                            ),
+                            Positioned(
+                              right: 8,
+                              top: 0,
+                              bottom: 0,
+                              child: IconButton(
+                                onPressed: () {
+                                  _sheetController.animateTo(
+                                    _isMinimized ? 0.85 : 0.125, // Toggle size
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeOut,
+                                  );
+                                },
+                                icon: Icon(
+                                  _isMinimized
+                                      ? Icons.keyboard_arrow_up_rounded // Maximize icon
+                                      : Icons.keyboard_arrow_down_rounded, // Minimize icon
+                                ),
+                              )
                             ),
                           ],
                         ),
@@ -156,7 +233,20 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                       ),
                       child: Column(
                         children: [
-                          ..._messages.map((msg) {
+                          if (_messages.isEmpty)
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 24),
+                                child: Text(
+                                  "No messages yet. Start the conversation!",
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurface.withAlpha(75),
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            ..._messages.map((msg) {
                             final alignment = msg.isUser ? Alignment.centerRight : Alignment.centerLeft;
                             final color = msg.isUser
                                 ? Theme.of(context).colorScheme.primary.withAlpha(75)
@@ -165,37 +255,56 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
 
                             return Align(
                               alignment: alignment,
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                padding: const EdgeInsets.all(12),
-                                constraints: const BoxConstraints(maxWidth: 280),
-                                decoration: BoxDecoration(
-                                  color: color,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: const Radius.circular(12),
-                                    bottomRight: const Radius.circular(12),
-                                    topRight: msg.isUser ? const Radius.circular(0) : const Radius.circular(12),
-                                    topLeft: msg.isUser ? const Radius.circular(12) : const Radius.circular(0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (!msg.isUser) // Display image if message is not from the user
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8), // Space between image and container
+                                      child: Image.asset(
+                                        "assets/images/app_icon.png",
+                                        width: 48,
+                                        height: 48,
+                                      ),
+                                    ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 6),
+                                    padding: const EdgeInsets.all(12),
+                                    constraints: const BoxConstraints(maxWidth: 280),
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: const Radius.circular(12),
+                                        bottomRight: const Radius.circular(12),
+                                        topRight: msg.isUser ? const Radius.circular(0) : const Radius.circular(12),
+                                        topLeft: msg.isUser ? const Radius.circular(12) : const Radius.circular(0),
+                                      ),
+                                    ),
+                                    child: SelectableText.rich(
+                                      TextSpan(
+                                        children: msg.text.toStyledTextSpans(Theme.of(context).textTheme.bodyMedium!.copyWith(color: textColor)),
+                                      ),
+                                    )
                                   ),
-                                ),
-                                child: Text(
-                                  msg.text,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
-                                ),
+                                ],
                               ),
                             );
                           }),
+                          SizedBox(height: _messages.isNotEmpty ? 32 : 0),
                           if (_isLoading)
                             Padding(
                               padding: EdgeInsets.symmetric(vertical: 12),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Image.asset(
                                       "assets/images/app_icon.png",
-                                      width: 54,
-                                      height: 54,
+                                      width: 48,
+                                      height: 48,
                                     ),
                                     const SizedBox(width: 8),
                                     CupertinoActivityIndicator(
@@ -214,7 +323,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                   ],
                 ),
               ),
-
+              
               // Input field
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
@@ -258,8 +367,11 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                           ),
                           child: IconButton(
                             padding: EdgeInsets.zero,
-                            onPressed: () => _sendMessage(_textController.text.trim()),
-                            icon: Icon(Icons.arrow_upward_rounded, color: Theme.of(context).colorScheme.surface),
+                            onPressed: () => _isLoading ? stopThinking() : _sendMessage(_textController.text),
+                            icon: Icon(
+                                _isLoading ? Icons.stop_rounded : Icons.arrow_upward_rounded,
+                                color: Theme.of(context).colorScheme.surface
+                            ),
                           ),
                         ),
                       ],
