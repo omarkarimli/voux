@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:voux/presentation/wishlist/wishlist_view_model.dart';
@@ -47,7 +48,7 @@ class _WishlistMoreBottomSheetState extends State<WishlistMoreBottomSheet> {
               children: [
                 ListTile(
                   leading: Icon(
-                    Icons.done_rounded,
+                    CupertinoIcons.check_mark_circled,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   title: Text(
@@ -74,7 +75,7 @@ class _WishlistMoreBottomSheetState extends State<WishlistMoreBottomSheet> {
                 ),
                 ListTile(
                   leading: Icon(
-                    Icons.delete_outline_rounded,
+                    CupertinoIcons.clear_circled,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   title: Text(

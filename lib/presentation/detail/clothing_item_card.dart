@@ -194,12 +194,17 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
             },
           );
         },
-        child: Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            color: Theme.of(context).colorScheme.surface,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge)),
-            clipBehavior: Constants.clipBehaviour,
-            elevation: 3,
+        child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(20),
+                  blurRadius: 5,
+                ),
+              ],
+            ),
             child: Padding(
               padding: const EdgeInsets.all(8),
               child: Column(

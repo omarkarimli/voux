@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:voux/utils/extensions.dart';
+import '../../utils/extensions.dart';
 import '../../models/clothing_item_model.dart';
 import '../reusables/confirm_bottom_sheet.dart';
 import '../../di/locator.dart';
@@ -51,7 +51,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
   }
 
   void _sendMessage(String t) {
-    if (t.isNotEmpty && !_isLoading) {
+    if (t.isNotEmpty && !_isLoading && t.length <= 512) {
       setState(() {
         _messages.add(_ChatMessage(text: t, isUser: true));
         _isLoading = true;
@@ -249,8 +249,8 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                             ..._messages.map((msg) {
                             final alignment = msg.isUser ? Alignment.centerRight : Alignment.centerLeft;
                             final color = msg.isUser
-                                ? Theme.of(context).colorScheme.primary.withAlpha(75)
-                                : Theme.of(context).colorScheme.secondary.withAlpha(25);
+                                ? Theme.of(context).colorScheme.primary.withAlpha(70)
+                                : Theme.of(context).colorScheme.secondary.withAlpha(15);
                             final textColor = Theme.of(context).colorScheme.onSurface;
 
                             return Align(
@@ -263,9 +263,11 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                                     Padding(
                                       padding: const EdgeInsets.only(right: 8), // Space between image and container
                                       child: Image.asset(
-                                        "assets/images/app_icon.png",
-                                        width: 48,
-                                        height: 48,
+                                        Theme.of(context).brightness == Brightness.dark
+                                            ? 'assets/images/logo_dark.png'
+                                            : 'assets/images/logo_light.png',
+                                        width: 36,
+                                        height: 36,
                                       ),
                                     ),
                                   Container(
@@ -291,7 +293,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                               ),
                             );
                           }),
-                          SizedBox(height: _messages.isNotEmpty ? 32 : 0),
+                          SizedBox(height: _messages.isNotEmpty ? 42 : 0),
                           if (_isLoading)
                             Padding(
                               padding: EdgeInsets.symmetric(vertical: 12),
@@ -302,9 +304,11 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Image.asset(
-                                      "assets/images/app_icon.png",
-                                      width: 48,
-                                      height: 48,
+                                      Theme.of(context).brightness == Brightness.dark
+                                          ? 'assets/images/logo_dark.png'
+                                          : 'assets/images/logo_light.png',
+                                      width: 36,
+                                      height: 36,
                                     ),
                                     const SizedBox(width: 8),
                                     CupertinoActivityIndicator(
@@ -335,10 +339,10 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                   duration: const Duration(milliseconds: 300),
                   opacity: _showInput ? 1 : 0,
                   child: Container(
-                    padding: const EdgeInsets.only(left: 16, right: 4),
+                    padding: const EdgeInsets.only(left: 16, right: 12),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
+                      borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
                       border: Border.all(
                         color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
                         width: 2,
@@ -349,6 +353,8 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
                         Expanded(
                           child: TextField(
                             controller: _textController,
+                            maxLength: 512,
+                            maxLines: null,
                             decoration: const InputDecoration(
                               hintText: "Ask Voux",
                               border: InputBorder.none,

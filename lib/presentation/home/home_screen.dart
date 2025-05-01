@@ -421,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
+              leading: const Icon(CupertinoIcons.camera),
               title: const Text('Camera'),
               onTap: () async {
                 Navigator.pop(context);
@@ -430,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_outlined),
+              leading: const Icon(CupertinoIcons.photo),
               title: const Text('Gallery'),
               onTap: () async {
                 Navigator.pop(context);
