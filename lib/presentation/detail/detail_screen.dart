@@ -217,7 +217,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
 
                 // Chat
-                ChatBottomSheet(clothingItems: widget.clothingItems),
+                ChatBottomSheetWrapper(clothingItems: widget.clothingItems)
               ],
             )
         );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../dao/clothing_item_dao.dart';
-import '../../db/database.dart';
 import '../../models/clothing_item_floor_model.dart';
 import '../../models/clothing_item_model.dart';
 import '../../models/optional_analysis_result_model.dart';

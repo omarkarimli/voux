@@ -5,6 +5,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../presentation/auth/auth_view_model.dart';
+import '../presentation/detail/detail_view_model.dart';
 import '../presentation/reusables/more_bottom_sheet_view_model.dart';
 import '../dao/clothing_item_dao.dart';
 import '../db/database.dart';

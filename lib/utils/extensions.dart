@@ -10,6 +10,13 @@ extension StringExtensions on String {
   }
 }
 
+extension TruncateExtension on String {
+  String truncateWithEllipsis(int maxLength) {
+    if (length <= maxLength) return this;
+    return '${substring(0, maxLength)}...';
+  }
+}
+
 extension TextFormatter on String {
   String chunkText(int length) {
     List<String> words = trim().split(RegExp(r'\s+'));
