@@ -62,19 +62,25 @@ class _DetailScreenState extends State<DetailScreen> {
                         Stack(
                           children: [
                             Center(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                  bottomRight: Radius.circular(Constants.cornerRadiusMedium),
-                                ),
-                                child: Image.file(
-                                  File(widget.imagePath),
-                                  width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset('assets/placeholder.png', width: 128, height: 128, fit: BoxFit.cover);
-                                  },
-                                ),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    minHeight: 488,
+                                    maxHeight: 512
+                                  ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(Constants.cornerRadiusMedium),
+                                    bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                                  ),
+                                  child: Image.file(
+                                    File(widget.imagePath),
+                                    width: MediaQuery.of(context).size.width,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset('assets/placeholder.png', width: 128, height: 128, fit: BoxFit.cover);
+                                    },
+                                  ),
+                                )
                               ),
                             ),
                             Positioned(

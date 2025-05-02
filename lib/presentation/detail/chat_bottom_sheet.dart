@@ -372,7 +372,7 @@ class ChatBottomSheet extends StatelessWidget {
                     selectedIndex = index;
                   },
                   children: clothingItems.map((item) {
-                    return Center(child: Text(item.name.truncateWithEllipsis(22), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
+                    return Center(child: Text(item.name.truncateWithEllipsis(22), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis, maxLines: 1));
                   }).toList(),
                 ),
               ),
