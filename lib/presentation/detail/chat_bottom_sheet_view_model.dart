@@ -5,88 +5,34 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../models/clothing_item_model.dart';
 import '../../di/locator.dart';
 
-class ChatViewModel extends ChangeNotifier {
-  final GlobalKey commentsHeaderKey = GlobalKey();
-  double commentsHeaderHeight = 0;
+class ChatBottomSheetViewModel extends ChangeNotifier {
+  final ScrollController scrollController = ScrollController();
+  bool isAtBottom = true;
 
-  double minChildSize = 0.125;
-  double maxChildSize = 0.85;
-  double currentChildSize = 0.125; // Default to minChildSize initially
-
-  final DraggableScrollableController sheetController = DraggableScrollableController();
-
-  final FocusNode textFieldFocusNode = FocusNode();
   final TextEditingController textController = TextEditingController();
   final List<ChatMessage> messages = [];
   final List<ClothingItemModel> clothingItems;
 
-  bool showInput = false;
-  bool isMinimized = true;
   bool isLoading = false;
   bool shouldCancel = false;
-  bool isKeyboardVisible = false; // Track the keyboard visibility
 
-  ChatViewModel({
+  ChatBottomSheetViewModel({
     required this.clothingItems
-  }) {
+  });
+
+  void initialize() {
     sendInitialMessage();
-    textController.addListener(() => notifyListeners());
-    textFieldFocusNode.addListener(_onFocusChanged);
-    sheetController.addListener(onSizeChanged);
 
+    textController.addListener(() {
+      notifyListeners();
+    });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Sets initial size of comments bottom sheet. Thanks to it users always see just a header of the bottom sheet at the beginning.
-      final double currentCommentsHeaderHeight = commentsHeaderKey.currentContext?.size?.height ?? 0;
-      if (currentCommentsHeaderHeight != commentsHeaderHeight) {
-        commentsHeaderHeight = currentCommentsHeaderHeight;
+    scrollController.addListener(() {
+      final isAtBottomCopy = scrollController.offset <= 50; // close to bottom (which is actually top due to reverse)
+      if (isAtBottom != isAtBottomCopy) {
+        isAtBottom = isAtBottomCopy;
         notifyListeners();
       }
-    });
-  }
-
-  void _onFocusChanged() {
-    // When the input field is focused, stop the scrolling
-    if (textFieldFocusNode.hasFocus) {
-      // Disable scroll when focused
-      sheetController.jumpTo(maxChildSize);
-      
-      sheetController.animateTo(
-        maxChildSize,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  void onSizeChanged() {
-    final isExpanded = sheetController.size > 0.3;
-    final isMinimizedCopy = (sheetController.size - minChildSize).abs() < 0.01;
-
-    final inputChanged = showInput != isExpanded;
-    final minimizedChanged = isMinimized != isMinimizedCopy;
-
-    if (inputChanged || minimizedChanged) {
-      showInput = isExpanded;
-      isMinimized = isMinimizedCopy;
-
-      notifyListeners();
-    }
-  }
-
-  // Update currentChildSize when keyboard is visible
-  void updateKeyboardVisibility(bool isVisible) {
-    isKeyboardVisible = isVisible;
-
-    // Schedule the update after the current build phase completes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isKeyboardVisible) {
-        currentChildSize = maxChildSize; // Lock the sheet to max size when keyboard shows
-      } else {
-        currentChildSize = minChildSize; // Reset the sheet to min size when keyboard hides
-      }
-      // Notify listeners after the build phase
-      notifyListeners();
     });
   }
 
@@ -97,10 +43,6 @@ class ChatViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    textFieldFocusNode.removeListener(_onFocusChanged);
-    textFieldFocusNode.dispose();
-    sheetController.removeListener(onSizeChanged);
-    sheetController.dispose();
     textController.dispose();
     super.dispose();
   }
@@ -136,6 +78,17 @@ class ChatViewModel extends ChangeNotifier {
     }
 
     isLoading = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isAtBottom) {
+        scrollController.animateTo(
+          scrollController.position.minScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+
     notifyListeners();
   }
 

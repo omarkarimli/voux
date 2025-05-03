@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
         return MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => locator<HomeViewModel>()),
-            ChangeNotifierProvider(create: (_) => DetailViewModel()),
+            ChangeNotifierProvider(create: (_) => locator<DetailViewModel>()),
             ChangeNotifierProvider(create: (_) => locator<WishlistViewModel>()),
             ChangeNotifierProvider(create: (_) => locator<AuthViewModel>()),
             // Add more providers here if necessary

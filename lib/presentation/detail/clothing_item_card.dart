@@ -200,7 +200,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
               borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(20),
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(30),
                   blurRadius: 5,
                 ),
               ],
@@ -340,39 +340,42 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                               scrollDirection: Axis.horizontal,
                                               clipBehavior: Constants.clipBehaviour,
                                               child: Row(
-                                                  spacing: 8,
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    GestureDetector(
-                                                        onTap: () {
-                                                          vm.copyToClipboard(item.colorHexCode);
+                                                    if(item.colorHexCode != Constants.unknown) ...[
+                                                      GestureDetector(
+                                                          onTap: () {
+                                                            vm.copyToClipboard(item.colorHexCode);
 
-                                                          setState(() {
-                                                            context.showCustomSnackBar(Constants.success, "Copied to clipboard");
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                            clipBehavior: Constants.clipBehaviour,
-                                                            decoration: BoxDecoration(
-                                                                color: item.colorHexCode.toColor(),
-                                                                border: Border.all(
-                                                                  color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
-                                                                  width: Constants.borderWidthLarge,
-                                                                ),
-                                                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
-                                                            ),
-                                                            padding: EdgeInsets.symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 2
-                                                            ),
-                                                            child: Text(
-                                                              item.color,
-                                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                                color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
+                                                            setState(() {
+                                                              context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                              clipBehavior: Constants.clipBehaviour,
+                                                              decoration: BoxDecoration(
+                                                                  color: item.colorHexCode.toColor(),
+                                                                  border: Border.all(
+                                                                    color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
+                                                                    width: Constants.borderWidthLarge,
+                                                                  ),
+                                                                  borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
                                                               ),
-                                                            )
-                                                        )
-                                                    ),
+                                                              padding: EdgeInsets.symmetric(
+                                                                  horizontal: 12,
+                                                                  vertical: 2
+                                                              ),
+                                                              child: Text(
+                                                                item.color,
+                                                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                                  color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
+                                                                ),
+                                                              )
+                                                          )
+                                                      ),
+                                                      SizedBox(width: 16),
+                                                    ],
+
                                                     if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
                                                       GestureDetector(
                                                           onTap: () => showStorePicker(context, item.stores),

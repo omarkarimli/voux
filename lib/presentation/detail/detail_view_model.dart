@@ -7,20 +7,21 @@ import '../../models/clothing_item_model.dart';
 import '../../utils/constants.dart';
 
 class DetailViewModel extends ChangeNotifier {
-  List<ClothingItemModel> _clothingItems = [];
-  List<ClothingItemModel> get clothingItems => _clothingItems;
+  final List<ClothingItemModel> clothingItems;
 
-  set clothingItems(List<ClothingItemModel> items) {
-    _clothingItems = items;
-    calculateTotalPrice();
-    notifyListeners();
-  }
+  DetailViewModel({
+    required this.clothingItems
+  });
 
   double _totalPrice = 0.0;
   double get totalPrice => _totalPrice;
 
+  void initialize() {
+    calculateTotalPrice();
+  }
+
   void calculateTotalPrice() {
-    _totalPrice = _clothingItems.fold(
+    _totalPrice = clothingItems.fold(
       0.0,
       (sum, item) => sum + (double.tryParse(item.selectedStorePrice()) ?? 0.0),
     );

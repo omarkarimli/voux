@@ -36,6 +36,10 @@ Future<void> setupLocator() async {
     database: locator<AppDatabase>(),
   ));
 
+  locator.registerFactory(() => DetailViewModel(
+    clothingItems: []
+  ));
+
   locator.registerFactory(() => AuthViewModel(
     prefs: locator<SharedPreferences>(),
     auth: locator<FirebaseAuth>(),
