@@ -23,11 +23,7 @@ class _ChatBottomSheetState extends State<ChatBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) {
-        final viewModel = ChatBottomSheetViewModel(clothingItems: widget.clothingItems,);
-        viewModel.initialize();
-        return viewModel;
-      },
+      create: (_) => ChatBottomSheetViewModel(clothingItems: widget.clothingItems)..initialize(),
       child: Consumer<ChatBottomSheetViewModel>(
         builder: (context, viewModel, child) {
           return Container(

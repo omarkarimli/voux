@@ -31,11 +31,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
 
     return ChangeNotifierProvider(
-      create: (_) {
-        final viewModel = DetailViewModel(clothingItems: widget.clothingItems);
-        viewModel.initialize();
-        return viewModel;
-      },
+      create: (_) => DetailViewModel(clothingItems: widget.clothingItems)..initialize(),
       child: Consumer<DetailViewModel>(
         builder: (context, viewModel, child) {
           return Scaffold(
@@ -241,8 +237,8 @@ class _DetailScreenState extends State<DetailScreen> {
                             ),
                             builder: (context) {
                               return Padding(
-                                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                                  child: ChatBottomSheet(clothingItems: widget.clothingItems)
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                child: TextField(),
                               );
                             },
                           );
