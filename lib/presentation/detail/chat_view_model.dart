@@ -10,6 +10,7 @@ class ChatViewModel extends ChangeNotifier {
   double maxChildSize = 0.85;
   final DraggableScrollableController sheetController = DraggableScrollableController();
 
+  final FocusNode textFieldFocusNode = FocusNode();
   final TextEditingController textController = TextEditingController();
   final List<ChatMessage> messages = [];
   final List<ClothingItemModel> clothingItems;
@@ -24,7 +25,22 @@ class ChatViewModel extends ChangeNotifier {
   }) {
     sendInitialMessage();
     textController.addListener(() => notifyListeners());
+    textFieldFocusNode.addListener(_onFocusChanged);
     sheetController.addListener(onSizeChanged);
+  }
+
+  void _onFocusChanged() {
+    // When the input field is focused, stop the scrolling
+    if (textFieldFocusNode.hasFocus) {
+      // Disable scroll when focused
+      sheetController.jumpTo(maxChildSize);
+      
+      sheetController.animateTo(
+        maxChildSize,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void onSizeChanged() {
@@ -49,11 +65,12 @@ class ChatViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    super.dispose();
-
+    textFieldFocusNode.removeListener(_onFocusChanged);
+    textFieldFocusNode.dispose();
     sheetController.removeListener(onSizeChanged);
     sheetController.dispose();
     textController.dispose();
+    super.dispose();
   }
 
   void sendInitialMessage() {

@@ -17,11 +17,15 @@ class OnboardingScreen extends StatelessWidget {
           children: [
             Image.asset('assets/images/collage.png', width: MediaQuery.of(context).size.width, fit: BoxFit.cover),
             SizedBox(height: 32),
-            Image.asset('assets/images/logo_light.png', width: 96, height: 96),
+            Image.asset(
+                'assets/images/logo_light.png',
+                width: 96,
+                height: 96
+            ),
             SizedBox(height: 16),
-            Text('Voux', style: Theme.of(context).textTheme.headlineLarge),
+            Text('Voux', style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Colors.black)),
             SizedBox(height: 12),
-            Text("Your fashion companion\nfor every occasion", style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
+            Text("Your fashion companion\nfor every occasion", style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black87), textAlign: TextAlign.center),
             SizedBox(height: 32),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
@@ -42,13 +46,13 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 32),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black87),
                   children: [
                     TextSpan(text: "By signing up, you agree to our\n"),
                     TextSpan(text: "Terms of Service ",

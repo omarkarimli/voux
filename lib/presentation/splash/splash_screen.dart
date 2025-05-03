@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _startApp() async {
     // Wait 3 seconds
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 4));
     bool isLoggedIn = await _initializeApp();
 
     // Navigate based on login state
@@ -52,17 +52,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
-        child: Text(
-          Constants.appName,
-          style: TextStyle(
-            letterSpacing: 8,
-            fontFamily: "Aboreto",
-            fontSize: 112,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
+        child: Image.asset(
+          'assets/images/splash_logo.png',
+          width: 320,
+          height: 320,
+        )
       ),
     );
   }
