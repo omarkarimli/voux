@@ -6,8 +6,13 @@ import '../../models/clothing_item_model.dart';
 import '../../di/locator.dart';
 
 class ChatViewModel extends ChangeNotifier {
+  final GlobalKey commentsHeaderKey = GlobalKey();
+  double commentsHeaderHeight = 0;
+
   double minChildSize = 0.125;
   double maxChildSize = 0.85;
+  double currentChildSize = 0.125; // Default to minChildSize initially
+
   final DraggableScrollableController sheetController = DraggableScrollableController();
 
   final FocusNode textFieldFocusNode = FocusNode();
@@ -19,6 +24,7 @@ class ChatViewModel extends ChangeNotifier {
   bool isMinimized = true;
   bool isLoading = false;
   bool shouldCancel = false;
+  bool isKeyboardVisible = false; // Track the keyboard visibility
 
   ChatViewModel({
     required this.clothingItems
@@ -27,6 +33,16 @@ class ChatViewModel extends ChangeNotifier {
     textController.addListener(() => notifyListeners());
     textFieldFocusNode.addListener(_onFocusChanged);
     sheetController.addListener(onSizeChanged);
+
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Sets initial size of comments bottom sheet. Thanks to it users always see just a header of the bottom sheet at the beginning.
+      final double currentCommentsHeaderHeight = commentsHeaderKey.currentContext?.size?.height ?? 0;
+      if (currentCommentsHeaderHeight != commentsHeaderHeight) {
+        commentsHeaderHeight = currentCommentsHeaderHeight;
+        notifyListeners();
+      }
+    });
   }
 
   void _onFocusChanged() {
@@ -56,6 +72,22 @@ class ChatViewModel extends ChangeNotifier {
 
       notifyListeners();
     }
+  }
+
+  // Update currentChildSize when keyboard is visible
+  void updateKeyboardVisibility(bool isVisible) {
+    isKeyboardVisible = isVisible;
+
+    // Schedule the update after the current build phase completes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isKeyboardVisible) {
+        currentChildSize = maxChildSize; // Lock the sheet to max size when keyboard shows
+      } else {
+        currentChildSize = minChildSize; // Reset the sheet to min size when keyboard hides
+      }
+      // Notify listeners after the build phase
+      notifyListeners();
+    });
   }
 
   void setControllerText(String text) {

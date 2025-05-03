@@ -33,284 +33,301 @@ class ChatBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<ChatViewModel>();
 
+    final MediaQueryData mediaQueryData = MediaQuery.of(context);
+    final double heightOfDevice = mediaQueryData.size.height;
+    final double initialChildSize =
+        (viewModel.commentsHeaderHeight + mediaQueryData.viewPadding.bottom + mediaQueryData.viewPadding.top) / heightOfDevice;
+
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    viewModel.updateKeyboardVisibility(isKeyboardVisible);  // Safely notify the ViewModel
 
     return DraggableScrollableSheet(
+      initialChildSize: initialChildSize,
+      minChildSize: initialChildSize,
+      maxChildSize: 1.0,
+
       controller: isKeyboardVisible ? null : viewModel.sheetController,
-      initialChildSize: viewModel.minChildSize,
-      minChildSize: viewModel.minChildSize,
-      maxChildSize: viewModel.maxChildSize,
+      initialChildSize: isKeyboardVisible ? viewModel.currentChildSize : viewModel.minChildSize,
+      minChildSize: isKeyboardVisible ? viewModel.currentChildSize : viewModel.minChildSize,
+      maxChildSize: isKeyboardVisible ? viewModel.currentChildSize : viewModel.maxChildSize,
       builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadiusLarge)),
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-                blurRadius: 10,
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              GestureDetector(
-                  onTap: () => FocusScope.of(context).unfocus(),
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Drag handle
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: Center(
-                            child: Container(
-                              width: 40,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-                                borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // Chat title
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 32,
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    'Chat',
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface,
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 8,
-                                  top: 0,
-                                  bottom: 0,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      if (viewModel.messages.isNotEmpty && !viewModel.isLoading) {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                          ),
-                                          builder: (context) {
-                                            return ConfirmBottomSheet(function: viewModel.clearMessages);
-                                          },
-                                        );
-                                      }
-                                    },
-                                    icon: Icon(
-                                        Icons.clear_all_rounded
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                    right: 8,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        viewModel.sheetController.animateTo(
-                                          viewModel.isMinimized ? viewModel.maxChildSize : viewModel.minChildSize, // Toggle size
-                                          duration: const Duration(milliseconds: 400),
-                                          curve: Curves.easeOut,
-                                        );
-                                      },
-                                      icon: Icon(
-                                        viewModel.isMinimized
-                                            ? Icons.keyboard_arrow_up_rounded // Maximize icon
-                                            : Icons.keyboard_arrow_down_rounded, // Minimize icon
-                                      ),
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Messages
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              top: 16
-                          ),
-                          child: Column(
-                            children: [
-                              if (viewModel.messages.isEmpty)
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 24),
-                                    child: Text(
-                                      "No messages yet. Start the conversation!",
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Theme.of(context).colorScheme.onSurface.withAlpha(75),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              else
-                                ...viewModel.messages.map((msg) {
-                                  final alignment = msg.isUser ? Alignment.centerRight : Alignment.centerLeft;
-                                  final color = msg.isUser
-                                      ? Theme.of(context).colorScheme.primary.withAlpha(70)
-                                      : Theme.of(context).colorScheme.secondary.withAlpha(15);
-                                  final textColor = Theme.of(context).colorScheme.onSurface;
-
-                                  return Align(
-                                    alignment: alignment,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        if (!msg.isUser) // Display image if message is not from the user
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 8), // Space between image and container
-                                            child: Image.asset(
-                                              Theme.of(context).brightness == Brightness.dark
-                                                  ? 'assets/images/logo_dark.png'
-                                                  : 'assets/images/logo_light.png',
-                                              width: 36,
-                                              height: 36,
-                                            ),
-                                          ),
-                                        Container(
-                                            margin: const EdgeInsets.symmetric(vertical: 6),
-                                            padding: const EdgeInsets.all(12),
-                                            constraints: const BoxConstraints(maxWidth: 280),
-                                            decoration: BoxDecoration(
-                                              color: color,
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft: const Radius.circular(12),
-                                                bottomRight: const Radius.circular(12),
-                                                topRight: msg.isUser ? const Radius.circular(0) : const Radius.circular(12),
-                                                topLeft: msg.isUser ? const Radius.circular(12) : const Radius.circular(0),
-                                              ),
-                                            ),
-                                            child: SelectableText.rich(
-                                              TextSpan(
-                                                children: msg.text.toStyledTextSpans(Theme.of(context).textTheme.bodyMedium!.copyWith(color: textColor)),
-                                              ),
-                                            )
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                              SizedBox(height: viewModel.messages.isNotEmpty ? 42 : 0),
-                              if (viewModel.isLoading)
-                                Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 12),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Image.asset(
-                                            Theme.of(context).brightness == Brightness.dark
-                                                ? 'assets/images/logo_dark.png'
-                                                : 'assets/images/logo_light.png',
-                                            width: 36,
-                                            height: 36,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          CupertinoActivityIndicator(
-                                            radius: 12.0,
-                                            color: Theme.of(context).colorScheme.primary,
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 80), // Space for input
-                      ],
-                    ),
-                  )
-              ),
-
-              // Input field
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-                bottom: viewModel.showInput ? MediaQuery.of(context).viewInsets.bottom + 16 : -100,
-                left: 16,
-                right: 16,
-                child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 200),
-                    opacity: viewModel.showInput ? 1 : 0,
-                    child: Container(
-                        padding: const EdgeInsets.only(left: 16, right: 12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-                            width: 2,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: viewModel.textController,
-                                focusNode: viewModel.textFieldFocusNode,
-                                maxLength: 512,
-                                maxLines: null,
-                                decoration: const InputDecoration(
-                                  hintText: "Ask Voux",
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Container(
-                              width: 42,
-                              height: 42,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                shape: BoxShape.circle,
-                              ),
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: () {
-                                  if (viewModel.isLoading) {
-                                    viewModel.stopThinking();
-                                  } else {
-                                    if (viewModel.textController.text.isNotEmpty) {
-                                      viewModel.sendMessage(viewModel.textController.text);  // Send text message
-                                    } else {
-                                      showItemPicker(context, viewModel, clothingItems);
-                                    }
-                                  }
-                                },
-                                icon: buildIcon(context, viewModel),
-                              ),
-                            ),
-                          ],
-                        )
-                    )
+        return AnimatedPadding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          duration: const Duration(milliseconds: 300),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadiusLarge)),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                  blurRadius: 10,
                 ),
-              )
-            ],
-          ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                AbsorbPointer(
+                  absorbing: isKeyboardVisible,
+                  child: GestureDetector(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Drag handle
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Center(
+                                child: Container(
+                                  width: 40,
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                                    borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Chat title
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 32,
+                                child: Stack(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        'Chat',
+                                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                          color: Theme.of(context).colorScheme.onSurface,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: 8,
+                                      top: 0,
+                                      bottom: 0,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          if (viewModel.messages.isNotEmpty && !viewModel.isLoading) {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                              ),
+                                              builder: (context) {
+                                                return ConfirmBottomSheet(function: viewModel.clearMessages);
+                                              },
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(
+                                            Icons.clear_all_rounded
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                        right: 8,
+                                        top: 0,
+                                        bottom: 0,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            viewModel.sheetController.animateTo(
+                                              viewModel.isMinimized ? viewModel.maxChildSize : viewModel.minChildSize, // Toggle size
+                                              duration: const Duration(milliseconds: 400),
+                                              curve: Curves.easeOut,
+                                            );
+                                          },
+                                          icon: Icon(
+                                            viewModel.isMinimized
+                                                ? Icons.keyboard_arrow_up_rounded // Maximize icon
+                                                : Icons.keyboard_arrow_down_rounded, // Minimize icon
+                                          ),
+                                        )
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                            // Messages
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  top: 16
+                              ),
+                              child: Column(
+                                children: [
+                                  if (viewModel.messages.isEmpty)
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 24),
+                                        child: Text(
+                                          "No messages yet. Start the conversation!",
+                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                            color: Theme.of(context).colorScheme.onSurface.withAlpha(75),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    ...viewModel.messages.map((msg) {
+                                      final alignment = msg.isUser ? Alignment.centerRight : Alignment.centerLeft;
+                                      final color = msg.isUser
+                                          ? Theme.of(context).colorScheme.primary.withAlpha(70)
+                                          : Theme.of(context).colorScheme.secondary.withAlpha(15);
+                                      final textColor = Theme.of(context).colorScheme.onSurface;
+
+                                      return Align(
+                                        alignment: alignment,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            if (!msg.isUser) // Display image if message is not from the user
+                                              Padding(
+                                                padding: const EdgeInsets.only(right: 8), // Space between image and container
+                                                child: Image.asset(
+                                                  Theme.of(context).brightness == Brightness.dark
+                                                      ? 'assets/images/logo_dark.png'
+                                                      : 'assets/images/logo_light.png',
+                                                  width: 36,
+                                                  height: 36,
+                                                ),
+                                              ),
+                                            Container(
+                                                margin: const EdgeInsets.symmetric(vertical: 6),
+                                                padding: const EdgeInsets.all(12),
+                                                constraints: const BoxConstraints(maxWidth: 280),
+                                                decoration: BoxDecoration(
+                                                  color: color,
+                                                  borderRadius: BorderRadius.only(
+                                                    bottomLeft: const Radius.circular(12),
+                                                    bottomRight: const Radius.circular(12),
+                                                    topRight: msg.isUser ? const Radius.circular(0) : const Radius.circular(12),
+                                                    topLeft: msg.isUser ? const Radius.circular(12) : const Radius.circular(0),
+                                                  ),
+                                                ),
+                                                child: SelectableText.rich(
+                                                  TextSpan(
+                                                    children: msg.text.toStyledTextSpans(Theme.of(context).textTheme.bodyMedium!.copyWith(color: textColor)),
+                                                  ),
+                                                )
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                                  SizedBox(height: viewModel.messages.isNotEmpty ? 42 : 0),
+                                  if (viewModel.isLoading)
+                                    Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 12),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                Theme.of(context).brightness == Brightness.dark
+                                                    ? 'assets/images/logo_dark.png'
+                                                    : 'assets/images/logo_light.png',
+                                                width: 36,
+                                                height: 36,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              CupertinoActivityIndicator(
+                                                radius: 12.0,
+                                                color: Theme.of(context).colorScheme.primary,
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                    ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 80), // Space for input
+                          ],
+                        ),
+                      )
+                  ),
+                ),
+
+                // Input field
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  bottom: viewModel.showInput ? MediaQuery.of(context).viewInsets.bottom + 32 : -100,
+                  left: 16,
+                  right: 16,
+                  child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: viewModel.showInput ? 1 : 0,
+                      child: Container(
+                          padding: const EdgeInsets.only(left: 16, right: 12),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: viewModel.textController,
+                                  focusNode: viewModel.textFieldFocusNode,
+                                  maxLength: 512,
+                                  maxLines: null,
+                                  decoration: const InputDecoration(
+                                    hintText: "Ask Voux",
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Container(
+                                width: 42,
+                                height: 42,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    if (viewModel.isLoading) {
+                                      viewModel.stopThinking();
+                                    } else {
+                                      if (viewModel.textController.text.isNotEmpty) {
+                                        viewModel.sendMessage(viewModel.textController.text);  // Send text message
+                                      } else {
+                                        showItemPicker(context, viewModel, clothingItems);
+                                      }
+                                    }
+                                  },
+                                  icon: buildIcon(context, viewModel),
+                                ),
+                              ),
+                            ],
+                          )
+                      )
+                  ),
+                )
+              ],
+            ),
+          )
         );
       },
     );
