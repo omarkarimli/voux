@@ -72,7 +72,7 @@ class ChatBottomSheet extends StatelessWidget {
                       ),
                     ),
 
-                    // Chat title
+                    // Heading
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: SizedBox(
@@ -247,10 +247,10 @@ class ChatBottomSheet extends StatelessWidget {
                 left: 16,
                 right: 16,
                 child: Container(
-                    padding: const EdgeInsets.only(left: 16, right: 12),
+                    padding: const EdgeInsets.only(left: 18, right: 8, bottom: 2, top: 2),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                      borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
                       border: Border.all(
                         color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
                         width: 2,
@@ -260,8 +260,8 @@ class ChatBottomSheet extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
+                            readOnly: true,
                             controller: viewModel.textController,
-                            maxLength: 512,
                             maxLines: null,
                             decoration: const InputDecoration(
                               hintText: "Ask Voux",
