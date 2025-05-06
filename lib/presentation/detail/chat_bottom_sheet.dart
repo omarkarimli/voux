@@ -272,6 +272,25 @@ class ChatBottomSheet extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 16),
+                        if (viewModel.textController.text.isNotEmpty) ...[
+                          Container(
+                            width: 42,
+                            height: 42,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () => viewModel.clearInput(),
+                              icon: Icon(
+                                  Icons.clear_rounded,
+                                  color: Theme.of(context).colorScheme.onSurface.withAlpha(100)
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
                         Container(
                           width: 42,
                           height: 42,

@@ -124,6 +124,11 @@ class ChatViewModel extends ChangeNotifier {
     messages.clear();
     notifyListeners();
   }
+
+  void clearInput() {
+    textController.clear();
+    notifyListeners();
+  }
 }
 
 class ChatMessage {
