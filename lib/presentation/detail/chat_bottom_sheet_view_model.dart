@@ -6,14 +6,18 @@ import '../../models/clothing_item_model.dart';
 import '../../di/locator.dart';
 
 class ChatViewModel extends ChangeNotifier {
-  double minChildSize = 0.125;
-  double maxChildSize = 0.85;
-  final DraggableScrollableController sheetController = DraggableScrollableController();
-
-  final TextEditingController textController = TextEditingController();
-  final List<ChatMessage> messages = [];
   final List<ClothingItemModel> clothingItems;
 
+  double minChildSize = 0.125;
+  double maxChildSize = 0.85;
+
+  final DraggableScrollableController sheetController = DraggableScrollableController();
+  final TextEditingController textController = TextEditingController();
+
+  final List<ChatMessage> messages = [];
+  List<String> exampleQuestions = [];
+
+  bool isGeneratingExamples = false;
   bool showInput = false;
   bool isMinimized = true;
   bool isLoading = false;
@@ -23,12 +27,14 @@ class ChatViewModel extends ChangeNotifier {
     required this.clothingItems
   }) {
     sendInitialMessage();
+    generateExampleQuestions();
+
     textController.addListener(() => notifyListeners());
     sheetController.addListener(onSizeChanged);
   }
 
   void onSizeChanged() {
-    final isExpanded = sheetController.size > 0.3;
+    final isExpanded = sheetController.size > 0.45;
     final isMinimizedCopy = (sheetController.size - minChildSize).abs() < 0.01;
 
     final inputChanged = showInput != isExpanded;
@@ -56,6 +62,35 @@ class ChatViewModel extends ChangeNotifier {
     textController.dispose();
   }
 
+  Future<void> generateExampleQuestions() async {
+    if (isGeneratingExamples || clothingItems.isEmpty) return;
+
+    isGeneratingExamples = true;
+    notifyListeners();
+
+    final itemNames = clothingItems.take(5).map((e) => e.name).join(', ');
+    final prompt = "Based on the following clothing items: $itemNames, give 3 example questions a user might ask about them. Keep them short and helpful.";
+
+    try {
+      final content = [Content.text(prompt)];
+      final response = await locator<GenerativeModel>().generateContent(content);
+      final text = response.text ?? "";
+
+      // Parse the model response into a list
+      exampleQuestions = text
+          .split(RegExp(r'\n|•|-')) // Split on newlines or bullet points
+          .map((q) => q.trim())
+          .where((q) => q.isNotEmpty)
+          .take(3)
+          .toList();
+    } catch (_) {
+      exampleQuestions = ["What should I wear this with?", "Are there cheaper alternatives?", "What style does this fit?"];
+    }
+
+    isGeneratingExamples = false;
+    notifyListeners();
+  }
+
   void sendInitialMessage() {
     sendMessage(buildInitialPrompt());
   }
@@ -63,7 +98,7 @@ class ChatViewModel extends ChangeNotifier {
   String buildInitialPrompt() {
     final names = clothingItems.map((e) => e.name).toList();
     if (names.length > 5) {
-      return "List includes ${names.take(5).join(', ')} and more. What are their prices and alternatives?";
+      return "List includes ${names.take(5).join(', ')} and more. What are their prices and alternatives? Don't do numbering!";
     }
     return "${names.join(', ')} how much price is each? and give alternatives, write compactly";
   }
