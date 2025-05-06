@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voux/presentation/auth/auth_view_model.dart';
+import 'package:voux/presentation/deneme/deneme_screen.dart';
 import 'di/locator.dart';
 import 'theme/theme_util.dart';
 import 'theme/theme.dart';
