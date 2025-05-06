@@ -305,10 +305,10 @@ class ChatBottomSheet extends StatelessWidget {
         left: 16,
         right: 16,
         child: Container(
-            padding: const EdgeInsets.only(left: 18, right: 8, bottom: 2, top: 2),
+            padding: const EdgeInsets.only(left: 18, right: 8, bottom: 2, top: 4),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+              borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
               border: Border.all(
                 color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
                 width: 2,
