@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../di/locator.dart';
-import '../../utils/extensions.dart';
-import '../../models/clothing_item_model.dart';
-import '../../models/optional_analysis_result_model.dart';
 import '../../utils/constants.dart';
-import 'more_bottom_sheet_view_model.dart';
 
 class ConfirmBottomSheet extends StatefulWidget {
   final Function function;
+  final String title;
 
   const ConfirmBottomSheet({
     super.key,
-    required this.function
+    required this.function,
+    required this.title
   });
 
   @override
@@ -21,36 +16,46 @@ class ConfirmBottomSheet extends StatefulWidget {
 }
 
 class _ConfirmBottomSheetState extends State<ConfirmBottomSheet> {
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
         left: 18,
         right: 18,
-        top: 16,
+        top: 24,
         bottom: MediaQuery.of(context).viewInsets.bottom + 36,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Are you sure?", style: Theme.of(context).textTheme.titleLarge),
-                IconButton(
+          Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 48.0), // space for close button
+                child: Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(Icons.close),
-                )
-              ]
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
               widget.function();
-              setState(() {
-                Navigator.pop(context);
-              });
+              Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
               elevation: 3,
@@ -60,7 +65,12 @@ class _ConfirmBottomSheetState extends State<ConfirmBottomSheet> {
                 borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall),
               ),
             ),
-            child: Text("Confirm", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
+            child: Text(
+              "Confirm",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
           )
         ],
       ),

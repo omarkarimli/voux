@@ -163,7 +163,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                                     ),
                                     builder: (context) {
-                                      return ConfirmBottomSheet(function: resetSettings);
+                                      return ConfirmBottomSheet(
+                                          function: resetSettings,
+                                          title: 'Are you sure you want to reset your settings?'
+                                      );
                                     },
                                   );
                                 },
@@ -186,7 +189,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                                     ),
                                     builder: (context) {
-                                      return ConfirmBottomSheet(function: signOut);
+                                      return ConfirmBottomSheet(
+                                          function: signOut,
+                                          title: 'Are you sure you want to sign out?'
+                                      );
                                     },
                                   );
                                 },

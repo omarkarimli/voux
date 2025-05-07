@@ -110,18 +110,27 @@ class ChatBottomSheet extends StatelessWidget {
   }
 
   Widget dragHandle(BuildContext context, ChatViewModel viewModel) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Center(
-        child: Container(
-          width: 40,
-          height: 5,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-            borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
+    return GestureDetector(
+      onTap: () {
+          viewModel.sheetController.animateTo(
+            viewModel.isMinimized ? viewModel.maxChildSize : viewModel.minChildSize,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Center(
+          child: Container(
+            width: 40,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+              borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 
@@ -154,7 +163,10 @@ class ChatBottomSheet extends StatelessWidget {
                         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                       ),
                       builder: (context) {
-                        return ConfirmBottomSheet(function: viewModel.clearMessages);
+                        return ConfirmBottomSheet(
+                            function: viewModel.clearMessages,
+                            title: 'Are you sure you want to clear the chat?'
+                        );
                       },
                     );
                   }
@@ -414,7 +426,7 @@ class ChatBottomSheet extends StatelessWidget {
     );
   }
 
-  // Show language selection sheet
+  // Show item picker
   void showItemPicker(BuildContext context, ChatViewModel viewModel, List<ClothingItemModel> clothingItems) {
     showModalBottomSheet(
       context: context,

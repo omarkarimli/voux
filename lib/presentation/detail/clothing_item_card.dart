@@ -200,7 +200,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
               borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(30),
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
                   blurRadius: 5,
                 ),
               ],

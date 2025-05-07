@@ -200,7 +200,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             ],
                           )
                       ),
-                      SizedBox(height: 48),
+                      SizedBox(height: 160),
                     ],
                   )
               ),
@@ -219,39 +219,6 @@ class _DetailScreenState extends State<DetailScreen> {
                     icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
-                    },
-                  ),
-                ),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).padding.top + 18,
-                right: 14,
-                child: Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: Icon(Icons.info_outline_rounded, color: Theme.of(context).colorScheme.onSurface),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        useSafeArea: true,
-                        backgroundColor: Theme.of(context).colorScheme.surface,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                        ),
-                        builder: (context) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                            child: TextField(),
-                          );
-                        },
-                      );
                     },
                   ),
                 ),
