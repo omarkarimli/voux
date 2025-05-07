@@ -50,32 +50,25 @@ class ChatBottomSheet extends StatelessWidget {
               ),
             ],
           ),
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // Drag handle
-                    dragHandle(context, viewModel),
+            child: Column(
+              children: [
+                // Fixed Header
+                dragHandle(context, viewModel),
+                chatHeader(context, viewModel),
 
-                    // Heading
-                    chatHeader(context, viewModel),
-
-                    // Messages
-                    chatBody(context, viewModel),
-
-                    const SizedBox(height: 128), // Space for input
-                  ],
+                // Scrollable messages
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: chatBody(context, viewModel),
+                  ),
                 ),
-              ),
 
-              // Input field
-              chatBottom(context, viewModel),
-            ],
-          ),
+                // Fixed Input
+                chatBottom(context, viewModel),
+              ],
+            )
         );
       },
     );
@@ -297,117 +290,127 @@ class ChatBottomSheet extends StatelessWidget {
   }
 
   Widget chatBottom(BuildContext context, ChatViewModel viewModel) {
-
-    return AnimatedPositioned(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-        bottom: viewModel.showInput ? MediaQuery.of(context).padding.bottom + 16 : -256,
-        left: 16,
-        right: 16,
-        child: Container(
-            padding: const EdgeInsets.only(left: 18, right: 8, bottom: 2, top: 4),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-                width: 2,
-              ),
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 18,
+        right: 18,
+        bottom: viewModel.showInput ? MediaQuery.of(context).viewInsets.bottom + 32 : 0,
+      ),
+      child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+          height: viewModel.showInput ? null : 0,
+          padding: const EdgeInsets.only(left: 18, right: 10, bottom: 2, top: 6),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+              width: 2,
             ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        readOnly: true,
-                        controller: viewModel.textController,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                          hintText: "Ask Voux",
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      readOnly: true,
+                      controller: viewModel.textController,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        hintText: "Ask Voux",
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    if (viewModel.textController.text.isNotEmpty) ...[
-                      Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () => viewModel.clearInput(),
-                          icon: Icon(
-                              Icons.clear_rounded,
-                              color: Theme.of(context).colorScheme.onSurface.withAlpha(100)
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  if (viewModel.textController.text.isNotEmpty) ...[
                     Container(
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.surface,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () {
-                          if (viewModel.isLoading) {
-                            viewModel.stopThinking();
-                          } else {
-                            if (viewModel.textController.text.isNotEmpty) {
-                              viewModel.sendMessage(viewModel.textController.text);  // Send text message
-                            } else {
-                              showItemPicker(context, viewModel, clothingItems);
-                            }
-                          }
-                        },
-                        icon: buildIcon(context, viewModel),
+                        onPressed: () => viewModel.clearInput(),
+                        icon: Icon(
+                            Icons.clear_rounded,
+                            color: Theme.of(context).colorScheme.onSurface.withAlpha(100)
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                   ],
-                ),
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        if (viewModel.isLoading) {
+                          viewModel.stopThinking();
+                        } else {
+                          if (viewModel.textController.text.isNotEmpty) {
+                            viewModel.sendMessage(viewModel.textController.text);  // Send text message
+                          } else {
+                            showItemPicker(context, viewModel, clothingItems);
+                          }
+                        }
+                      },
+                      icon: buildIcon(context, viewModel),
+                    ),
+                  ),
+                ],
+              ),
 
-                // Example questions
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
+              // Example questions
+              Padding(
+                  padding: const EdgeInsets.only(right: 24),
                   child: Column(
                     children: [
                       SizedBox(height: 16),
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: viewModel.exampleQuestions.map((q) => ActionChip(
-                          backgroundColor: Theme.of(context).colorScheme.surface,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.secondary.withAlpha(50),
-                              width: 1,
+                        children: viewModel.exampleQuestions.map((q) {
+                          return GestureDetector(
+                            onTap: () => viewModel.setControllerText(q),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary.withAlpha(10),
+                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.secondary.withAlpha(50),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Text(
+                                q,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
                             ),
-                          ),
-                          label: Text(q),
-                          onPressed: () {
-                            viewModel.setControllerText(q);
-                          },
-                        )).toList(),
+                          );
+                        }).toList(),
                       ),
                       SizedBox(height: 16),
                     ],
                   )
-                )
-              ],
-            )
-        )
+              )
+            ],
+          )
+      )
     );
   }
 
