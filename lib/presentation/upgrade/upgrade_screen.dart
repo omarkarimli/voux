@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:uuid/uuid.dart';
@@ -11,6 +13,7 @@ import '../../models/user_model.dart';
 import '../../utils/extensions.dart';
 import '../../models/plan_model.dart';
 import '../../utils/constants.dart';
+import '../reusables/confirm_bottom_sheet.dart';
 
 class UpgradeScreen extends StatefulWidget {
   const UpgradeScreen({super.key});
@@ -73,7 +76,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Upgrade to access',
+                    'Upgrade to access'.tr(),
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   Padding(
@@ -139,7 +142,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                 children: [
                   TextSpan(text: "\$${plan.price.toStringAsFixed(2)}"),
                   TextSpan(
-                    text: " / month",
+                    text: " / month".tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface),
                   ),
@@ -159,7 +162,18 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
               child: ElevatedButton(
                 onPressed: plan.name == selectedPlan?.name
                     ? null
-                    : () => showConfirmationDialog(plan),
+                    : () => showModalBottomSheet(
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  builder: (context) {
+                    return ConfirmBottomSheet(
+                        function: () => purchasePlan(plan),
+                        title: '${'Are you sure you want to upgrade to'.tr()} ${plan.name} ?',
+                    );
+                  },
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.onSurface,
                   shape: RoundedRectangleBorder(
@@ -168,7 +182,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                 ),
                 child: plan.name == selectedPlan?.name
                     ? Text(
-                  "Current Plan",
+                  "Current Plan".tr(),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context)
                         .colorScheme
@@ -177,7 +191,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                   ),
                 )
                     : Text(
-                  "Select",
+                  "Select".tr(),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.surface,
                   ),
@@ -204,41 +218,17 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       }).toList();
     });
 
-    print("Current Plan Name: $currentPlanName");
-    print("Selected Plan: ${selectedPlan?.name} ${selectedPlan?.price}");
-  }
-
-  void showConfirmationDialog(PlanModel plan) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Confirm Purchase"),
-          content: Text("Are you sure you want to upgrade to ${plan.name}?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                purchasePlan(plan);
-
-                Navigator.pop(context);
-              },
-              child: const Text("Yes"),
-            ),
-          ],
-        );
-      },
-    );
+    if (kDebugMode) {
+      print("Current Plan Name: $currentPlanName");
+      print("Selected Plan: ${selectedPlan?.name} ${selectedPlan?.price}");
+    }
   }
 
   void purchasePlan(PlanModel plan) async {
     final bool available = await inAppPurchase.isAvailable();
 
     if (!available) {
-      context.showCustomSnackBar(Constants.error, "In-app purchases are not available.");
+      context.showCustomSnackBar(Constants.error, "In-app purchases are not available.".tr());
       return;
     }
 
@@ -252,14 +242,14 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     final ProductDetailsResponse response = await inAppPurchase.queryProductDetails(kProductIds);
 
     if (response.notFoundIDs.isNotEmpty) {
-      context.showCustomSnackBar(Constants.error, "Subscription product not found.");
+      context.showCustomSnackBar(Constants.error, "Subscription product not found.".tr());
       return;
     }
 
     final ProductDetails? productDetails = response.productDetails.firstWhereOrNull((p) => p.id == plan.name);
 
     if (productDetails == null) {
-      context.showCustomSnackBar(Constants.error, "Subscription plan ${plan.name} not found.");
+      context.showCustomSnackBar(Constants.error, "${plan.name} ${"Subscription plan not found.".tr()}");
       return;
     }
 
@@ -352,7 +342,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
         plans = plans.map((p) => p.copyWith(isCurrentPlan: p.name == plan.name)).toList();
       });
 
-      context.showCustomSnackBar(Constants.success, "Successfully subscribed to ${plan.name}.");
+      context.showCustomSnackBar(Constants.success, "${"Successfully subscribed to".tr()} ${plan.name}");
 
       // Go Success and remove UpgradeScreen from the stack
       Navigator.pushNamedAndRemoveUntil(context, SuccessScreen.routeName, (route) => false);

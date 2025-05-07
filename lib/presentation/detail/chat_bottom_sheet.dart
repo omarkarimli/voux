@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -144,7 +145,7 @@ class ChatBottomSheet extends StatelessWidget {
           children: [
             Center(
               child: Text(
-                'Chat',
+                'Chat'.tr(),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -165,7 +166,7 @@ class ChatBottomSheet extends StatelessWidget {
                       builder: (context) {
                         return ConfirmBottomSheet(
                             function: viewModel.clearMessages,
-                            title: 'Are you sure you want to clear the chat?'
+                            title: 'Are you sure you want to clear the chat?'.tr()
                         );
                       },
                     );
@@ -215,7 +216,7 @@ class ChatBottomSheet extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 24),
                 child: Text(
-                  "No messages yet. Start the conversation!",
+                  "No messages yet. Start the conversation!".tr(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurface.withAlpha(75),
                   ),
@@ -330,8 +331,8 @@ class ChatBottomSheet extends StatelessWidget {
                       readOnly: true,
                       controller: viewModel.textController,
                       maxLines: null,
-                      decoration: const InputDecoration(
-                        hintText: "Ask Voux",
+                      decoration: InputDecoration(
+                        hintText: "Ask Voux".tr(),
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -472,7 +473,7 @@ class ChatBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
+                child: Text("Select".tr(), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
               ),
             ],
           ),

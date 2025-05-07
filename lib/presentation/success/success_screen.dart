@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../../presentation/home/home_screen.dart';
@@ -43,7 +44,7 @@ class SuccessScreen extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 18),
-                          child: Text("Continue", style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.surface)),
+                          child: Text("Continue".tr(), style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.surface)),
                         )
                     )
                 )

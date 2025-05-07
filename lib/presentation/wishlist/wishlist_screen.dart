@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:voux/presentation/wishlist/clothing_item_wishlist_card.dart';
@@ -41,7 +42,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
               children: [
                 Center(
                   child: Text(
-                    "${vm.wishlistItems.length} items",
+                    "${vm.wishlistItems.length} ${"items".tr()}",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
@@ -101,7 +102,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                       children: [
                         const SizedBox(height: 72),
                         Text(
-                          'Wishlist',
+                          'Wishlist'.tr(),
                           style: Theme.of(context).textTheme.headlineLarge,
                         ),
                         const SizedBox(height: 16),
@@ -149,7 +150,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset("assets/images/empty.png", width: 128, height: 128),
-                  Text("No items in wishlist", style: Theme.of(context).textTheme.bodyLarge)
+                  Text("No items in wishlist".tr(), style: Theme.of(context).textTheme.bodyLarge)
                 ],
               )
             )

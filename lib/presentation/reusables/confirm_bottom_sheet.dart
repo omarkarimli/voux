@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 
@@ -66,7 +67,7 @@ class _ConfirmBottomSheetState extends State<ConfirmBottomSheet> {
               ),
             ),
             child: Text(
-              "Confirm",
+              "Confirm".tr(),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.surface,
               ),

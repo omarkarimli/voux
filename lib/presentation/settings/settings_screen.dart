@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voux/models/theme_model.dart';
 import '../../di/locator.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
@@ -50,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Settings',
+                  'Settings'.tr(),
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 12),
@@ -63,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Notification', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Notification'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () => showNotificationPicker(context),
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -76,7 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Theme', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Theme'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () => showThemePicker(context),
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -89,7 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Language', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Language'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () => showLangPicker(context),
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -102,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Account', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Account'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () {},
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -115,7 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Privacy Policy', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Privacy Policy'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () => Navigator.pushNamed(context, PrivacyPolicyScreen.routeName),
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -128,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Agreement', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Agreement'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () => Navigator.pushNamed(context, AgreementScreen.routeName),
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -141,7 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('About app', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('About app'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () {},
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -154,7 +156,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Reset Settings', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Reset Settings'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () {
                                   showModalBottomSheet(
@@ -165,7 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     builder: (context) {
                                       return ConfirmBottomSheet(
                                           function: resetSettings,
-                                          title: 'Are you sure you want to reset your settings?'
+                                          title: 'Are you sure you want to reset your settings?'.tr()
                                       );
                                     },
                                   );
@@ -180,7 +182,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Sign out', style: Theme.of(context).textTheme.bodyLarge),
+                              Text('Sign out'.tr(), style: Theme.of(context).textTheme.bodyLarge),
                               IconButton(
                                 onPressed: () {
                                   showModalBottomSheet(
@@ -191,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     builder: (context) {
                                       return ConfirmBottomSheet(
                                           function: signOut,
-                                          title: 'Are you sure you want to sign out?'
+                                          title: 'Are you sure you want to sign out?'.tr()
                                       );
                                     },
                                   );
@@ -222,51 +224,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // Show language selection sheet
   void showLangPicker(BuildContext context) {
-    final List<String> languages = ['English', 'Azerbaijani', 'Spanish', 'French'];
+    final List<String> languages = Constants.listLanguages;
+    final List<Locale> locales = Constants.listLocales;
+
+    String selectedValue = locator<SharedPreferences>().getString('language') ?? 'en';
+    int selectedIndex = locales.indexWhere((locale) => locale.languageCode == selectedValue);
 
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        int selectedIndex = 0;
-
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 18,
-            right: 18,
-            top: 24,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                height: 96,
-                child: CupertinoPicker(
-                  itemExtent: 40.0,
-                  scrollController: FixedExtentScrollController(initialItem: selectedIndex),
-                  onSelectedItemChanged: (int index) {
-                    selectedIndex = index;
-                  },
-                  children: languages.map((lang) {
-                    return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
-                  }).toList(),
-                ),
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  elevation: 3,
-                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                  backgroundColor: Theme.of(context).colorScheme.onSurface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+        return StatefulBuilder(
+          builder: (context, setState) => Padding(
+            padding: EdgeInsets.only(
+              left: 18,
+              right: 18,
+              top: 24,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 96,
+                  child: CupertinoPicker(
+                    itemExtent: 40.0,
+                    scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+                    onSelectedItemChanged: (int index) {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                    children: languages.map((lang) {
+                      return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge));
+                    }).toList(),
                   ),
                 ),
-                child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
-              ),
-            ],
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    final selectedLocale = locales[selectedIndex];
+                    // Save the language selection
+                    await locator<SharedPreferences>().setString('language', selectedLocale.languageCode);
+                    // Update the locale in the context to reload the UI with the new language
+                    context.setLocale(selectedLocale);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.onSurface,
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: Text(
+                    "Select".tr(),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -275,13 +290,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // Show theme selection sheet
   void showThemePicker(BuildContext context) {
-    final List<String> list = [Constants.themeSystem, Constants.themeLight, Constants.themeDark];
+    final List<ThemeModel> listThemeModel = [
+      ThemeModel(nameUi: 'System'.tr(), nameSharedPref: Constants.themeSystem),
+      ThemeModel(nameUi: 'Light'.tr(), nameSharedPref: Constants.themeLight),
+      ThemeModel(nameUi: 'Dark'.tr(), nameSharedPref: Constants.themeDark),
+    ];
+    final List<String> listNameUi = [listThemeModel[0].nameUi, listThemeModel[1].nameUi, listThemeModel[2].nameUi];
 
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        String selectedValue = locator<SharedPreferences>().getString(Constants.theme) ?? Constants.themeSystem;
-        int initialIndex = list.indexOf(selectedValue);
+        String selectedValue = locator<SharedPreferences>().getString(Constants.theme) ?? listThemeModel[0].nameUi;
+        int initialIndex = listThemeModel.indexWhere((element) => element.nameSharedPref == selectedValue);
         int selectedIndex = initialIndex;
 
         return Padding(
@@ -303,7 +323,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onSelectedItemChanged: (int index) {
                     selectedIndex = index;
                   },
-                  children: list.map((lang) {
+                  children: listNameUi.map((lang) {
                     return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
                   }).toList(),
                 ),
@@ -311,7 +331,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
-                  if (selectedIndex != initialIndex) selectTheme(list[selectedIndex]);
+                  if (selectedIndex != initialIndex) selectTheme(listThemeModel[selectedIndex].nameSharedPref);
                 },
                 style: ElevatedButton.styleFrom(
                   elevation: 3,
@@ -321,7 +341,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
+                child: Text("Select".tr(), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
               ),
             ],
           ),
@@ -378,7 +398,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: Text("Select", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
+                child: Text("Select".tr(), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
               ),
             ],
           ),

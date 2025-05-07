@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,11 +49,11 @@ class _WishlistMoreBottomSheetState extends State<WishlistMoreBottomSheet> {
               children: [
                 ListTile(
                   leading: Icon(
-                    CupertinoIcons.check_mark_circled,
+                    Icons.done_rounded,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   title: Text(
-                    'Select',
+                    'Select'.tr(),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   onTap: () {
@@ -75,11 +76,11 @@ class _WishlistMoreBottomSheetState extends State<WishlistMoreBottomSheet> {
                 ),
                 ListTile(
                   leading: Icon(
-                    CupertinoIcons.clear_circled,
+                    Icons.clear_all_rounded,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   title: Text(
-                    'Clear all',
+                    'Clear all'.tr(),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   onTap: () {

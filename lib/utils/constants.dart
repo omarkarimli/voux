@@ -1,6 +1,51 @@
 import 'dart:ui';
 
 class Constants {
+  static const listLanguages = [
+    'Azərbaycanca',   // Azerbaijani
+    'Türkçe',            // Turkish
+    '中文',               // Chinese (Simplified)
+    '日本語',             // Japanese
+    '한국어',             // Korean
+    'English',           // English
+    'Deutsch',           // German
+    'Français',          // French
+    'Italiano',          // Italian
+    'Español',           // Spanish
+    'Português',         // Portuguese
+    'Polski',            // Polish
+    'Ελληνικά',          // Greek
+    'Русский',           // Russian
+    'العربية',           // Arabic
+    'Bahasa Indonesia',  // Indonesian
+    'हिन्दी',             // Hindi
+    'ไทย',               // Thai
+    'Tiếng Việt',        // Vietnamese
+    'বাংলা',             // Bengali
+  ];
+  static const listLocales = [
+    Locale('az'),       // Azerbaijani
+    Locale('tr'),       // Turkish
+    Locale('zh'),       // Chinese
+    Locale('ja'),       // Japanese
+    Locale('ko'),       // Korean
+    Locale('en'),       // English
+    Locale('de'),       // German
+    Locale('fr'),       // French
+    Locale('it'),       // Italian
+    Locale('es'),       // Spanish
+    Locale('pt'),       // Portuguese
+    Locale('pl'),       // Polish
+    Locale('el'),       // Greek
+    Locale('ru'),       // Russian
+    Locale('ar'),       // Arabic
+    Locale('id'),       // Indonesian
+    Locale('hi'),       // Hindi
+    Locale('th'),       // Thai
+    Locale('vi'),       // Vietnamese
+    Locale('bn'),       // Bengali
+  ];
+
   static const clipBehaviour = Clip.hardEdge;
 
   // Corner Radius

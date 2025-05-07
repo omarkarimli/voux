@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -60,7 +61,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Report Issue", style: Theme.of(context).textTheme.titleLarge),
+              Text("Report Issue".tr(), style: Theme.of(context).textTheme.titleLarge),
               IconButton(
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(Icons.close),
@@ -74,7 +75,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
             maxLines: Constants.maxReportLine,
             minLines: 1,
             decoration: InputDecoration(
-              hintText: "Enter your report reason...",
+              hintText: "Enter your report reason...".tr(),
               errorText: errorMessage,
               border: OutlineInputBorder(
                   borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
@@ -98,11 +99,11 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                     reportText,
                     onSuccess: () {
                       // Handle success
-                      context.showCustomSnackBar(Constants.success, "Report submitted successfully");
+                      context.showCustomSnackBar(Constants.success, "Report submitted successfully".tr());
                     },
                     onError: (e) {
                       // Handle error
-                      context.showCustomSnackBar(Constants.error, "Error sending report");
+                      context.showCustomSnackBar(Constants.error, "Error sending report".tr());
                     },
                   );
                 } else {
@@ -112,7 +113,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                 }
               } else {
                 setState(() {
-                  errorMessage = "Fill the field";
+                  errorMessage = "Fill the field".tr();
                 });
               }
             },
@@ -124,7 +125,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                 borderRadius: BorderRadius.circular(Constants.cornerRadiusSmall),
               ),
             ),
-            child: Text("Submit", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
+            child: Text("Confirm".tr(), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.surface)),
           )
         ],
       ),

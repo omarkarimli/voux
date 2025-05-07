@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -130,20 +131,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           text: TextSpan(
                             style: Theme.of(context).textTheme.displayMedium?.copyWith(height: 1.4),
                             children: [
-                              const TextSpan(text: "Hello "),
+                              TextSpan(text: "Hello".tr()),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: Image.asset(
-                                    Theme.of(context).brightness == Brightness.dark
-                                        ? 'assets/images/logo_dark.png'
-                                        : 'assets/images/logo_light.png',
-                                    width: 64,
-                                    height: 64
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 12),
+                                  child: Image.asset(
+                                      Theme.of(context).brightness == Brightness.dark
+                                          ? 'assets/images/logo_dark.png'
+                                          : 'assets/images/logo_light.png',
+                                      width: 64,
+                                      height: 64
+                                  )
                                 )
                               ),
-                              const TextSpan(text: " dear\n"),
-                              const TextSpan(text: "I hope you are\n"),
-                              const TextSpan(text: "doing well", style: TextStyle(fontWeight: FontWeight.w600)),
+                              TextSpan(text: "${"dear".tr()}\n"),
+                              TextSpan(text: "${"I hope you are".tr()}\n"),
+                              TextSpan(text: "${"doing well".tr()}\n", style: TextStyle(fontWeight: FontWeight.w600)),
                             ],
                           ),
                         )
@@ -213,9 +217,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 RichText(
                   text: TextSpan(
                     style: Theme.of(context).textTheme.bodyLarge,
-                    children: const [
-                      TextSpan(text: "Let's find "),
-                      TextSpan(text: "new style", style: TextStyle(fontWeight: FontWeight.w600)),
+                    children: [
+                      TextSpan(text: "${"Let's find".tr()} "),
+                      TextSpan(text: "new style".tr(), style: TextStyle(fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -231,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (!vm.isLoading && vm.canAnalyze()) {
                           showImageSourceSheet(context, vm);
                         } else {
-                          context.showCustomSnackBar("Limit reached", "You have reached limit. Upgrade to continue.");
+                          context.showCustomSnackBar("Limit reached".tr(), "You have reached limit. Upgrade to continue.".tr());
                         }
                       },
                     ),
@@ -266,10 +270,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                 children: [
                   TextSpan(
-                    text: "🚀 Unlock ",
+                    text: "🚀  ${"Unlock".tr()} ",
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  TextSpan(text: "Premium"),
+                  TextSpan(text: "Premium".tr()),
                 ],
               ),
             ),
@@ -290,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: TextSpan(
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                     children: [
-                      TextSpan(text: "🏆  Explored ", style: const TextStyle(fontWeight: FontWeight.w600)),
+                      TextSpan(text: "🏆  ${"Explored".tr()} ", style: const TextStyle(fontWeight: FontWeight.w600)),
                       TextSpan(
                           text: "${vm.userModel?.currentAnalysisCount ?? 0}/${vm.userModel?.analysisLimit ?? 0}"
                       ),
@@ -333,9 +337,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Total explored", style: Theme.of(context).textTheme.bodyLarge),
+                      Text("Total explored".tr(), style: Theme.of(context).textTheme.bodyLarge),
                       SizedBox(height: 4),
-                      Text("${vm.userModel?.currentAnalysisCount ?? 0} images", style: Theme.of(context).textTheme.headlineMedium),
+                      Text("${vm.userModel?.currentAnalysisCount ?? 0} ${"images".tr()}", style: Theme.of(context).textTheme.headlineMedium),
                     ],
                   ),
                 ),
@@ -365,43 +369,39 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           clipBehavior: Constants.clipBehaviour,
           elevation: 2,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 8,
-                  bottom: 8,
-                  right: 8,
-                  left: 24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.headlineSmall,
-                            children: [
-                              TextSpan(
-                                  text: "Saved "
-                              ),
-                              TextSpan(
-                                text: "${vm.wishlistSize ?? 0} items",
-                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.normal),
-                              ),
-                            ],
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 8,
+              bottom: 8,
+              right: 8,
+              left: 24,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: RichText(
+                      text: TextSpan(
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        children: [
+                          TextSpan(
+                              text: "${"Saved".tr()} "
                           ),
-                        ),
-                        StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/wishlist.png", badgePadding: 10),
-                      ],
+                          TextSpan(
+                            text: "${vm.wishlistSize ?? 0} ${"items".tr()}",
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
                     )
-                  ],
+                  )
                 ),
-              )
-            ],
+                SizedBox(width: 16),
+                StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/wishlist.png", badgePadding: 10),
+              ],
+            ),
           ),
         )
     );
@@ -422,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ListTile(
               leading: const Icon(CupertinoIcons.camera),
-              title: const Text('Camera'),
+              title: Text('Camera'.tr()),
               onTap: () async {
                 Navigator.pop(context);
                 final picked = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -431,7 +431,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(CupertinoIcons.photo),
-              title: const Text('Gallery'),
+              title: Text('Gallery'.tr()),
               onTap: () async {
                 Navigator.pop(context);
                 final picked = await ImagePicker().pickImage(source: ImageSource.gallery);

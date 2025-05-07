@@ -1,12 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voux/presentation/auth/auth_view_model.dart';
-import 'package:voux/presentation/deneme/deneme_screen.dart';
 import 'di/locator.dart';
 import 'theme/theme_util.dart';
 import 'theme/theme.dart';
 import 'utils/constants.dart';
+import 'presentation/auth/auth_view_model.dart';
 import 'presentation/wishlist/wishlist_view_model.dart';
 import 'presentation/detail/detail_view_model.dart';
 import 'presentation/home/home_view_model.dart';
@@ -28,10 +28,19 @@ void main() async {
   // Setup DI before using locator
   await setupLocator();
 
+  await EasyLocalization.ensureInitialized();
+
   final ThemeMode initialTheme = loadThemeMode();
   themeNotifier.value = initialTheme; // Set the initial theme
 
-  runApp(MyApp());
+  runApp(
+    EasyLocalization(
+      supportedLocales: Constants.listLocales,
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const MyApp(),
+    ),
+  );
 }
 
 // Global theme notifier
@@ -81,7 +90,10 @@ class MyApp extends StatelessWidget {
             title: Constants.appName,
             theme: theme.light(),
             darkTheme: theme.dark(),
-            themeMode: themeMode, // Dynamic theme
+            themeMode: themeMode,
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
             home: SplashScreen(),
             onGenerateRoute: (settings) => onGenerateRoute(settings),
           )

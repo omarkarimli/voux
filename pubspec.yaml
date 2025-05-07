@@ -57,6 +57,7 @@ dependencies:
   flutter_native_splash: ^2.4.6
   equatable: ^2.0.7
   flutter_bloc: ^9.1.1
+  easy_localization: ^3.0.7+1
 
 dev_dependencies:
   flutter_test:
@@ -99,6 +100,7 @@ flutter:
     - assets/images/
     - assets/animations/
     - assets/fonts/
+    - assets/translations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
