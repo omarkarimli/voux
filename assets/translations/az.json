@@ -46,8 +46,6 @@
   "Feature 5": "Xüsusiyyət 5",
   "Confirm Purchase": "Alışı Təsdiq Edin",
   "Are you sure you want to upgrade to": "Təkmilləşdirmək istədiyinizə əminsiniz",
-  "Cancel": "Ləğv et",
-  "Yes": "Bəli",
   "In-app purchases are not available.": "Tətbiq daxili alış-veriş mövcud deyil.",
   "Subscription product not found.": "Abunə məhsulu tapılmadı.",
   "Subscription plan": "Abunə planı",
@@ -63,5 +61,9 @@
   "Chat": "Söhbət",
   "No messages yet. Start the conversation!": "Hələ mesaj yoxdur. Söhbətə başlayın!",
   "Are you sure you want to clear the chat?": "Söhbəti təmizləmək istədiyinizə əminsiniz?",
-  "Ask Voux": "Soruş Voux-a"
+  "Ask Voux": "Soruş Voux-a",
+
+  "Remove from Wishlist": "İstək siyahısından çıxar",
+  "Add to Wishlist": "İstək siyahısına əlavə et",
+  "Search in Web": "İnternetdə axtar"
 }

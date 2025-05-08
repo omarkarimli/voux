@@ -63,5 +63,9 @@
   "Chat": "Chat",
   "No messages yet. Start the conversation!": "Aucun message pour le moment. Commencez la conversation !",
   "Are you sure you want to clear the chat?": "Êtes-vous sûr de vouloir effacer le chat ?",
-  "Ask Voux": "Demandez à Voux"
+  "Ask Voux": "Demandez à Voux",
+
+  "Remove from Wishlist": "Retirer de la liste de souhaits",
+  "Add to Wishlist": "Ajouter à la liste de souhaits",
+  "Search in Web": "Rechercher sur le Web"
 }

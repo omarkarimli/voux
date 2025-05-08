@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../dao/clothing_item_dao.dart';
 import '../../models/clothing_item_floor_model.dart';
@@ -17,16 +18,16 @@ class WishlistMoreBottomSheetViewModel extends ChangeNotifier {
   }) async {
     try {
       if (clothingItemFloorModels.isEmpty) {
-        onError.call("Wishlist is empty");
+        onError.call("No items in wishlist".tr());
       } else {
         await clothingItemDao.deleteAllClothingItemFloorModels();
-        onSuccess.call("Wishlist cleared");
+        onSuccess.call("Wishlist cleared".tr());
       }
 
       notifyListeners();
     } catch (e, stackTrace) {
       debugPrint("Error updating wishlist: $e\n$stackTrace");
-      onError.call("Error updating wishlist");
+      onError.call("Error updating wishlist".tr());
     }
   }
 
@@ -36,14 +37,14 @@ class WishlistMoreBottomSheetViewModel extends ChangeNotifier {
   }) async {
     try {
       if (clothingItemFloorModels.isEmpty) {
-        onError.call("Wishlist is empty");
+        onError.call("No items in wishlist".tr());
       } else {
         onSuccess.call("");
       }
       notifyListeners();
     } catch (e, stackTrace) {
       debugPrint("Error updating wishlist: $e\n$stackTrace");
-      onError.call("Error updating wishlist");
+      onError.call("Error updating wishlist".tr());
     }
   }
 }

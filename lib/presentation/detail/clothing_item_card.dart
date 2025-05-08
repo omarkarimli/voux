@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:voux/models/store_model.dart';
+import '../../di/locator.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../reusables/more_bottom_sheet.dart';
 import '../../models/clothing_item_model.dart';
@@ -30,6 +33,10 @@ class ClothingItemCard extends StatefulWidget {
 }
 
 class _ClothingItemCardState extends State<ClothingItemCard> {
+
+  final translator = GoogleTranslator();
+  String localeLanguageCode = locator<SharedPreferences>().getString('language') ?? 'en';
+
   @override
   void initState() {
     super.initState();
@@ -84,8 +91,8 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                   onSelectedItemChanged: (int index) {
                     selectedIndex = index;
                   },
-                  children: list.map((lang) {
-                    return Center(child: Text(lang, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
+                  children: list.map((store) {
+                    return Center(child: Text(store, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal)));
                   }).toList(),
                 ),
               ),
@@ -200,7 +207,9 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
               borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+                  blurStyle: BlurStyle.outer,
+                  offset: Offset(0, 3),
                   blurRadius: 5,
                 ),
               ],
@@ -327,10 +336,25 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SelectableText(
-                                        details,
-                                        style: Theme.of(context).textTheme.titleLarge
-                                    ),
+                                    localeLanguageCode != "en"
+                                        ? FutureBuilder<Translation>(
+                                      future: translator.translate(details, from: 'en', to: localeLanguageCode),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return CupertinoActivityIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(details, style: Theme.of(context).textTheme.titleLarge);
+                                        } else if (snapshot.hasData) {
+                                          return SelectableText(
+                                            snapshot.data!.text,
+                                            style: Theme.of(context).textTheme.titleLarge,
+                                          );
+                                        } else {
+                                          return Text(details, style: Theme.of(context).textTheme.titleLarge);
+                                        }
+                                      },
+                                    )
+                                        : Text(details, style: Theme.of(context).textTheme.titleLarge),
                                     SizedBox(height: 16),
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -365,12 +389,25 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                                   horizontal: 12,
                                                                   vertical: 2
                                                               ),
-                                                              child: Text(
-                                                                item.color,
-                                                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                                  color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,
-                                                                ),
+                                                              child: localeLanguageCode != "en"
+                                                                  ? FutureBuilder<Translation>(
+                                                                future: translator.translate(item.color, from: 'en', to: localeLanguageCode),
+                                                                builder: (context, snapshot) {
+                                                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                    return CupertinoActivityIndicator();
+                                                                  } else if (snapshot.hasError) {
+                                                                    return Text(item.color, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,));
+                                                                  } else if (snapshot.hasData) {
+                                                                    return SelectableText(
+                                                                      snapshot.data!.text,
+                                                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,),
+                                                                    );
+                                                                  } else {
+                                                                    return Text(item.color, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,));
+                                                                  }
+                                                                },
                                                               )
+                                                                  : Text(item.color, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,)),
                                                           )
                                                       ),
                                                       SizedBox(width: 16),

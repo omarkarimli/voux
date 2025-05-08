@@ -63,5 +63,9 @@
   "Chat": "聊天",
   "No messages yet. Start the conversation!": "还没有消息。开始对话吧！",
   "Are you sure you want to clear the chat?": "您确定要清除聊天记录吗？",
-  "Ask Voux": "询问Voux"
+  "Ask Voux": "询问Voux",
+
+  "Remove from Wishlist": "从愿望清单移除",
+  "Add to Wishlist": "添加到愿望清单",
+  "Search in Web": "在网页搜索"
 }

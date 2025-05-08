@@ -114,15 +114,20 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
   }
 
   Widget buildPlanCard(PlanModel plan) {
-    return Card(
-      elevation: 3,
+    return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
-      color: Theme.of(context).colorScheme.surface,
-      shape: RoundedRectangleBorder(
-        side: plan.name == selectedPlan?.name
-            ? BorderSide(color: Theme.of(context).colorScheme.onSurface.withAlpha(50), width: 3)
-            : BorderSide.none,
-        borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+      clipBehavior: Constants.clipBehaviour,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusMedium)),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+            blurStyle: BlurStyle.outer,
+            offset: Offset(0, 3),
+            blurRadius: 5,
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),

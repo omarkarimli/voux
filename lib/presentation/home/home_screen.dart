@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 16,
                     right: 16,
                     top: MediaQuery.of(context).padding.top + 16,
-                    bottom: 64,
+                    bottom: 48,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,17 +147,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               TextSpan(text: "${"dear".tr()}\n"),
                               TextSpan(text: "${"I hope you are".tr()}\n"),
-                              TextSpan(text: "${"doing well".tr()}\n", style: TextStyle(fontWeight: FontWeight.w600)),
+                              TextSpan(text: "doing well".tr(), style: TextStyle(fontWeight: FontWeight.w600)),
                             ],
                           ),
                         )
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 28),
                       buildExploreCard(vm),
                       const SizedBox(height: 16),
                       buildButtonsRow(vm),
                       const SizedBox(height: 16),
                       buildStatsCard(vm),
+                      const SizedBox(height: 16),
                       buildWishlistCard()
                     ],
                   ),
@@ -214,13 +215,16 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    children: [
-                      TextSpan(text: "${"Let's find".tr()} "),
-                      TextSpan(text: "new style".tr(), style: TextStyle(fontWeight: FontWeight.w600)),
-                    ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      children: [
+                        TextSpan(text: "${"Let's find".tr()} "),
+                        TextSpan(text: "new style".tr(), style: TextStyle(fontWeight: FontWeight.w600)),
+                      ],
+                    ),
                   ),
                 ),
                 Material(
@@ -256,36 +260,53 @@ class _HomeScreenState extends State<HomeScreen> {
         spacing: 12,
         children: [
           SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, UpgradeScreen.routeName);
+          GestureDetector(
+            onTap: () {
+                Navigator.pushNamed(context, UpgradeScreen.routeName);
             },
-            clipBehavior: Constants.clipBehaviour,
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)),
-                backgroundColor: Theme.of(context).colorScheme.surface
-            ),
-            child: RichText(
-              text: TextSpan(
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
-                children: [
-                  TextSpan(
-                    text: "🚀  ${"Unlock".tr()} ",
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+            child: Container(
+              clipBehavior: Constants.clipBehaviour,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+                    blurStyle: BlurStyle.outer,
+                    blurRadius: 3,
                   ),
-                  TextSpan(text: "Premium".tr()),
                 ],
               ),
-            ),
+              child: RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                  children: [
+                    TextSpan(
+                      text: "🚀  ${"Unlock".tr()} ",
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    TextSpan(text: "Premium".tr()),
+                  ],
+                ),
+              ),
+            )
           ),
-          ElevatedButton(
-            onPressed: () {
-              // Define what happens when the button is pressed
-            },
+          Container(
             clipBehavior: Constants.clipBehaviour,
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)),
-                backgroundColor: Theme.of(context).colorScheme.surface
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+                  blurStyle: BlurStyle.outer,
+                  blurRadius: 3,
+                ),
+              ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -311,12 +332,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildStatsCard(HomeViewModel vm) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      color: Theme.of(context).colorScheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
       clipBehavior: Constants.clipBehaviour,
-      elevation: 3,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+            blurStyle: BlurStyle.outer,
+            offset: Offset(0, 3),
+            blurRadius: 5,
+          ),
+        ],
+      ),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -334,14 +364,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: 22),
                 Padding(
                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Total explored".tr(), style: Theme.of(context).textTheme.bodyLarge),
-                      SizedBox(height: 4),
-                      Text("${vm.userModel?.currentAnalysisCount ?? 0} ${"images".tr()}", style: Theme.of(context).textTheme.headlineMedium),
-                    ],
-                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Total explored".tr(), style: Theme.of(context).textTheme.bodyLarge),
+                        SizedBox(height: 4),
+                        Text("${vm.userModel?.currentAnalysisCount ?? 0} ${"images".tr()}", style: Theme.of(context).textTheme.headlineMedium),
+                      ],
+                    ),
+                  )
                 ),
               ],
             ),
@@ -363,12 +396,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildWishlistCard() {
     return GestureDetector(
         onTap: () => Navigator.pushNamed(context, WishlistScreen.routeName),
-        child: Card(
+        child: Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
-          color: Theme.of(context).colorScheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           clipBehavior: Constants.clipBehaviour,
-          elevation: 2,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+                blurStyle: BlurStyle.outer,
+                offset: Offset(0, 3),
+                blurRadius: 5,
+              ),
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.only(
               top: 8,

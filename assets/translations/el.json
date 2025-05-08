@@ -64,5 +64,9 @@
   "Chat": "Συνομιλία",
   "No messages yet. Start the conversation!": "Δεν υπάρχουν μηνύματα ακόμα. Ξεκινήστε τη συνομιλία!",
   "Are you sure you want to clear the chat?": "Είστε σίγουροι ότι θέλετε να διαγράψετε τη συνομιλία;",
-  "Ask Voux": "Ρώτησε το Voux"
+  "Ask Voux": "Ρώτησε το Voux",
+
+  "Remove from Wishlist": "Αφαίρεση από τη Λίστα Επιθυμιών",
+  "Add to Wishlist": "Προσθήκη στη Λίστα Επιθυμιών",
+  "Search in Web": "Αναζήτηση στο Διαδίκτυο"
 }

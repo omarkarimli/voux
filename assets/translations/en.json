@@ -46,15 +46,13 @@
   "Feature 5": "Feature 5",
   "Confirm Purchase": "Confirm Purchase",
   "Are you sure you want to upgrade to": "Are you sure you want to upgrade to",
-  "Cancel": "Cancel",
-  "Yes": "Yes",
   "In-app purchases are not available.": "In-app purchases are not available.",
   "Subscription product not found.": "Subscription product not found.",
   "Subscription plan not found.": "Subscription plan not found.",
   "Subscription plan": "Subscription plan",
   "not found.": "not found.",
   "Successfully subscribed to": "Successfully subscribed to",
-  "No items in wishlist": "No items in wishlist,",
+  "No items in wishlist": "No items in wishlist",
   "Wishlist": "Wishlist",
   "Report Issue": "Report Issue",
   "Enter your report reason...": "Enter your report reason...",
@@ -64,5 +62,11 @@
   "Chat": "Chat",
   "No messages yet. Start the conversation!": "No messages yet. Start the conversation!",
   "Are you sure you want to clear the chat?": "Are you sure you want to clear the chat?",
-  "Ask Voux": "Ask Voux"
+  "Ask Voux": "Ask Voux",
+  "Remove from Wishlist": "Remove from Wishlist",
+  "Add to Wishlist": "Add to Wishlist",
+  "Search in Web": "Search in Web",
+
+  "Wishlist cleared": "Wishlist cleared",
+  "Error updating wishlist": "Error updating wishlist"
 }

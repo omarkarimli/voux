@@ -46,8 +46,6 @@
   "Feature 5": "ميزة 5",
   "Confirm Purchase": "تأكيد الشراء",
   "Are you sure you want to upgrade to": "هل أنت متأكد أنك تريد الترقية إلى",
-  "Cancel": "إلغاء",
-  "Yes": "نعم",
   "In-app purchases are not available.": "عمليات الشراء داخل التطبيق غير متوفرة.",
   "Subscription product not found.": "لم يتم العثور على منتج الاشتراك.",
   "Subscription plan": "خطة الاشتراك",
@@ -63,5 +61,9 @@
   "Chat": "الدردشة",
   "No messages yet. Start the conversation!": "لا توجد رسائل بعد. ابدأ المحادثة!",
   "Are you sure you want to clear the chat?": "هل أنت متأكد أنك تريد مسح الدردشة؟",
-  "Ask Voux": "اسأل Voux"
+  "Ask Voux": "اسأل Voux",
+
+  "Remove from Wishlist": "إزالة من قائمة الرغبات",
+  "Add to Wishlist": "إضافة إلى قائمة الرغبات",
+  "Search in Web": "البحث على الويب"
 }

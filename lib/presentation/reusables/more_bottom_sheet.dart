@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,7 +56,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   title: Text(
-                    viewModel.isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist',
+                    viewModel.isInWishlist ? 'Remove from Wishlist'.tr() : 'Add to Wishlist'.tr(),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   onTap: viewModel.isLoading
@@ -83,7 +84,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   title: Text(
-                    'Search in Web',
+                    'Search in Web'.tr(),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   onTap: () {

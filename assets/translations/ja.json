@@ -63,5 +63,9 @@
   "Chat": "チャット",
   "No messages yet. Start the conversation!": "まだメッセージがありません。会話を始めましょう！",
   "Are you sure you want to clear the chat?": "チャットをクリアしてもよろしいですか？",
-  "Ask Voux": "Vouxに聞く"
+  "Ask Voux": "Vouxに聞く",
+
+  "Remove from Wishlist": "ウィッシュリストから削除",
+  "Add to Wishlist": "ウィッシュリストに追加",
+  "Search in Web": "ウェブで検索"
 }

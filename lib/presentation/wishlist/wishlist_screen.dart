@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:voux/presentation/wishlist/clothing_item_wishlist_card.dart';
@@ -149,7 +150,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/images/empty.png", width: 128, height: 128),
+                  Image.asset(
+                      Theme.of(context).brightness == Brightness.dark ? 'assets/images/empty_dark.png' : 'assets/images/empty.png',
+                      width: 128,
+                      height: 128,
+                  ),
                   Text("No items in wishlist".tr(), style: Theme.of(context).textTheme.bodyLarge)
                 ],
               )

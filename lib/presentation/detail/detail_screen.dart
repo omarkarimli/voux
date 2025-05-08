@@ -180,14 +180,14 @@ class _DetailScreenState extends State<DetailScreen> {
                                     if (viewModel.totalPrice > 0)
                                       Consumer<DetailViewModel>(
                                           builder: (context, viewModel, child) {
-                                            return SelectableText(viewModel.totalPrice.toStringAsFixed(2).toFormattedPrice(), style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer));
+                                            return SelectableText("\$${viewModel.totalPrice.toStringAsFixed(2)}", style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer));
                                           }
                                       )
                                   ]
                               ),
-                              SizedBox(height: 24),
+                              SizedBox(height: 32),
                               Column(
-                                spacing: 16,
+                                spacing: 32,
                                 children: widget.clothingItems
                                     .map((item) => ClothingItemCard(
                                   vm: viewModel,

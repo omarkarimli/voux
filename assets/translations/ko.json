@@ -63,5 +63,9 @@
   "Chat": "채팅",
   "No messages yet. Start the conversation!": "아직 메시지가 없습니다. 대화를 시작해보세요!",
   "Are you sure you want to clear the chat?": "채팅을 지우시겠습니까?",
-  "Ask Voux": "Voux에게 질문"
+  "Ask Voux": "Voux에게 질문",
+
+  "Remove from Wishlist": "위시리스트에서 제거",
+  "Add to Wishlist": "위시리스트에 추가",
+  "Search in Web": "웹에서 검색"
 }
