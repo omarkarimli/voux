@@ -227,7 +227,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final List<String> languages = Constants.listLanguages;
     final List<Locale> locales = Constants.listLocales;
 
-    String selectedValue = locator<SharedPreferences>().getString('language') ?? 'en';
+    String selectedValue = locator<SharedPreferences>().getString(Constants.language) ?? 'en';
     int selectedIndex = locales.indexWhere((locale) => locale.languageCode == selectedValue);
 
     showModalBottomSheet(
@@ -265,7 +265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onPressed: () async {
                     final selectedLocale = locales[selectedIndex];
                     // Save the language selection
-                    await locator<SharedPreferences>().setString('language', selectedLocale.languageCode);
+                    await locator<SharedPreferences>().setString(Constants.language, selectedLocale.languageCode);
                     // Update the locale in the context to reload the UI with the new language
                     context.setLocale(selectedLocale);
                     Navigator.pop(context);

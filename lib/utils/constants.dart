@@ -88,6 +88,8 @@ class Constants {
   static const String isLoggedIn = "isLoggedIn";
   static const String theme = "theme";
   static const String notification = "notification";
+  static const String language = "language";
+  static const String enableExperimentalFeatures = "enableExperimentalFeatures";
 
   // Theme
   static const String themeLight = "Light";

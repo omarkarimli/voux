@@ -162,7 +162,8 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> saveLoginState(bool isLoggedIn) async {
     await Future.wait([
       prefs.setBool(Constants.isLoggedIn, isLoggedIn),
-      prefs.setString(Constants.notification, Constants.notificationSystem)
+      prefs.setString(Constants.notification, Constants.notificationSystem),
+      prefs.setBool(Constants.enableExperimentalFeatures, false)
     ]);
 
     setNavigateToHomeScreen(true);
