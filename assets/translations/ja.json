@@ -62,8 +62,22 @@
   "No messages yet. Start the conversation!": "まだメッセージがありません。会話を始めましょう！",
   "Are you sure you want to clear the chat?": "チャットをクリアしてもよろしいですか？",
   "Ask Voux": "Vouxに聞く",
-
   "Remove from Wishlist": "ウィッシュリストから削除",
   "Add to Wishlist": "ウィッシュリストに追加",
-  "Search in Web": "ウェブで検索"
+  "Search in Web": "ウェブで検索",
+
+  "Wishlist cleared": "ウィッシュリストをクリアしました",
+  "Error updating wishlist": "ウィッシュリストの更新エラー",
+  "Enable experimental features": "実験的機能を有効にする",
+  "Added to wishlist": "ウィッシュリストに追加しました",
+  "Removed from wishlist": "ウィッシュリストから削除しました",
+  "Could not launch": "起動できませんでした",
+  "Error deleting selected items": "選択した項目の削除エラー",
+  "deleted": "削除しました",
+  "No item was selected": "項目が選択されていません",
+  "Copied to clipboard": "クリップボードにコピーしました",
+  "API response was empty or null": "APIの応答が空またはnullでした",
+  "Failed to analyze image": "画像の解析に失敗しました",
+  "Selecting": "選択中",
+  "Are you sure you want to go external browser?": "外部ブラウザに移動しますか？"
 }

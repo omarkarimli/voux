@@ -51,7 +51,7 @@
   "Subscription plan": "План подписки",
   "not found.": "не найдено.",
   "Successfully subscribed to": "Успешно подписан на",
-  "No items in wishlist": "Нет элементов в списке желаний,",
+  "No items in wishlist": "Нет элементов в списке желаний",
   "Wishlist": "Список желаний",
   "Report Issue": "Сообщить о проблеме",
   "Enter your report reason...": "Введите причину жалобы...",
@@ -62,8 +62,21 @@
   "No messages yet. Start the conversation!": "Пока нет сообщений. Начните разговор!",
   "Are you sure you want to clear the chat?": "Вы уверены, что хотите очистить чат?",
   "Ask Voux": "Спросить Voux",
-
   "Remove from Wishlist": "Удалить из списка желаний",
   "Add to Wishlist": "Добавить в список желаний",
-  "Search in Web": "Искать в интернете"
+  "Search in Web": "Искать в интернете",
+  "Wishlist cleared": "Список желаний очищен",
+  "Error updating wishlist": "Ошибка при обновлении списка желаний",
+  "Enable experimental features": "Включить экспериментальные функции",
+  "Added to wishlist": "Добавлено в список желаний",
+  "Removed from wishlist": "Удалено из списка желаний",
+  "Could not launch": "Не удалось запустить",
+  "Error deleting selected items": "Ошибка при удалении выбранных элементов",
+  "deleted": "удалено",
+  "No item was selected": "Ничего не было выбрано",
+  "Copied to clipboard": "Скопировано в буфер обмена",
+  "API response was empty or null": "Ответ API был пустым или null",
+  "Failed to analyze image": "Не удалось проанализировать изображение",
+  "Selecting": "Выбор",
+  "Are you sure you want to go external browser?": "Вы уверены, что хотите перейти во внешний браузер?"
 }

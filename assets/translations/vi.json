@@ -63,8 +63,22 @@
   "No messages yet. Start the conversation!": "Chưa có tin nhắn nào. Bắt đầu cuộc trò chuyện!",
   "Are you sure you want to clear the chat?": "Bạn có chắc chắn muốn xóa trò chuyện không?",
   "Ask Voux": "Hỏi Voux",
-
   "Remove from Wishlist": "Xóa khỏi Danh sách mong muốn",
   "Add to Wishlist": "Thêm vào Danh sách mong muốn",
-  "Search in Web": "Tìm kiếm trên Web"
+  "Search in Web": "Tìm kiếm trên Web",
+
+  "Wishlist cleared": "Đã xóa danh sách mong muốn",
+  "Error updating wishlist": "Lỗi khi cập nhật danh sách mong muốn",
+  "Enable experimental features": "Bật tính năng thử nghiệm",
+  "Added to wishlist": "Đã thêm vào danh sách mong muốn",
+  "Removed from wishlist": "Đã xóa khỏi danh sách mong muốn",
+  "Could not launch": "Không thể khởi chạy",
+  "Error deleting selected items": "Lỗi khi xóa các mục đã chọn",
+  "deleted": "đã xóa",
+  "No item was selected": "Không có mục nào được chọn",
+  "Copied to clipboard": "Đã sao chép vào bảng nhớ tạm",
+  "API response was empty or null": "Phản hồi API trống hoặc null",
+  "Failed to analyze image": "Không thể phân tích hình ảnh",
+  "Selecting": "Đang chọn",
+  "Are you sure you want to go external browser?": "Bạn có chắc muốn mở trình duyệt bên ngoài không?"
 }

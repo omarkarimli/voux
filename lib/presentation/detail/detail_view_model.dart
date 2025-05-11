@@ -1,31 +1,51 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-
-import '../../models/clothing_item_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../models/clothing_item_model_both.dart';
+import '../../di/locator.dart';
 import '../../utils/constants.dart';
+import '../../utils/extensions.dart';
 
 class DetailViewModel extends ChangeNotifier {
-  final List<ClothingItemModel> clothingItems;
+  final List<ClothingItemModelBoth> clothingItemBoths;
 
   DetailViewModel({
-    required this.clothingItems
+    required this.clothingItemBoths
   });
 
   double _totalPrice = 0.0;
   double get totalPrice => _totalPrice;
 
+  bool enableExperimentalFeatures = false;
+  String localeLanguageCode = 'en';
+
   void initialize() {
+    enableExperimentalFeatures = locator<SharedPreferences>().getBool(Constants.enableExperimentalFeatures) ?? false;
+
+    localeLanguageCode = locator<SharedPreferences>().getString(Constants.language) ?? 'en';
+
     calculateTotalPrice();
   }
 
   void calculateTotalPrice() {
-    _totalPrice = clothingItems.fold(
+    _totalPrice = clothingItemBoths.fold(
       0.0,
-      (sum, item) => sum + (double.tryParse(item.selectedStorePrice()) ?? 0.0),
+          (sum, item) => sum +
+          (double.tryParse(
+            enableExperimentalFeatures
+                ? (item.clothingItemModelExperimental?.selectedStorePrice() ?? "0.0")
+                : (item.clothingItemModel?.price ?? "0.0"),
+          ) ??
+              0.0),
     );
-    print("Updated totalPrice: $_totalPrice");
+
+    if (kDebugMode) {
+      print("Updated totalPrice: $_totalPrice");
+    }
+
     notifyListeners();
   }
 
@@ -40,33 +60,41 @@ class DetailViewModel extends ChangeNotifier {
 
     try {
       final response = await http.get(url);
-      print("Google API Response: ${response.statusCode} - ${response.body}");
+      if (kDebugMode) {
+        print("Google API Response: ${response.statusCode} - ${response.body}");
+      }
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data['items'] == null) return [];
+        if (data[Constants.items] == null) return [];
 
         final List<Map<String, String>> results = [];
 
-        for (var item in data['items']) {
+        for (var item in data[Constants.items]) {
           results.add({
-            'imageUrl': item['link'] ?? '',
-            'productUrl': item['image']['contextLink'] ?? '',
+            Constants.imageUrl: item[Constants.link] ?? '',
+            Constants.productUrl: item[Constants.image][Constants.contextLink] ?? '',
           });
         }
 
         return results;
       } else {
-        print('Google Search API Error: ${response.body}');
+        if (kDebugMode) {
+          print('Google Search API Error: ${response.body}');
+        }
         return []; // ← Don't throw, just return an empty list
       }
     } catch (e) {
-      print('Exception in fetchGoogleImages: $e');
+      if (kDebugMode) {
+        print('Exception in fetchGoogleImages: $e');
+      }
       return []; // ← Same here
     }
   }
 
-  void copyToClipboard(String text) {
+  void copyToClipboard(BuildContext context, String text) async{
     Clipboard.setData(ClipboardData(text: text));
+    context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+    notifyListeners();
   }
 }

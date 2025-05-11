@@ -62,8 +62,22 @@
   "No messages yet. Start the conversation!": "Henüz mesaj yok. Sohbeti başlatın!",
   "Are you sure you want to clear the chat?": "Sohbeti temizlemek istediğinize emin misiniz?",
   "Ask Voux": "Voux'a Sor",
-
   "Remove from Wishlist": "İstek listesinden kaldır",
   "Add to Wishlist": "İstek listesine ekle",
-  "Search in Web": "Web'de ara"
+  "Search in Web": "Web'de ara",
+
+  "Wishlist cleared": "İstek listesi temizlendi",
+  "Error updating wishlist": "İstek listesi güncellenirken hata",
+  "Enable experimental features": "Deneysel özellikleri etkinleştir",
+  "Added to wishlist": "İstek listesine eklendi",
+  "Removed from wishlist": "İstek listesinden kaldırıldı",
+  "Could not launch": "Başlatılamadı",
+  "Error deleting selected items": "Seçilen öğeler silinirken hata",
+  "deleted": "silindi",
+  "No item was selected": "Hiçbir öğe seçilmedi",
+  "Copied to clipboard": "Panoya kopyalandı",
+  "API response was empty or null": "API yanıtı boş veya null idi",
+  "Failed to analyze image": "Görüntü analiz edilemedi",
+  "Selecting": "Seçiliyor",
+  "Are you sure you want to go external browser?": "Harici tarayıcıya gitmek istediğinizden emin misiniz?"
 }

@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `imagePath` TEXT NOT NULL, `googleResults` TEXT NOT NULL, `clothingItemModel` TEXT NOT NULL, `optionalAnalysisResult` TEXT NOT NULL, `isSelected` INTEGER NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `ClothingItemFloorModel` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `imagePath` TEXT NOT NULL, `googleResults` TEXT NOT NULL, `clothingItemModelBoth` TEXT NOT NULL, `optionalAnalysisResult` TEXT NOT NULL, `isSelected` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -124,8 +124,8 @@ class _$ClothingItemDao extends ClothingItemDao {
                   'imagePath': item.imagePath,
                   'googleResults':
                       _googleResultsConverter.encode(item.googleResults),
-                  'clothingItemModel': _clothingItemModelConverter
-                      .encode(item.clothingItemModel),
+                  'clothingItemModelBoth': _clothingItemModelBothConverter
+                      .encode(item.clothingItemModelBoth),
                   'optionalAnalysisResult': _optionalAnalysisResultConverter
                       .encode(item.optionalAnalysisResult),
                   'isSelected': item.isSelected ? 1 : 0
@@ -140,8 +140,8 @@ class _$ClothingItemDao extends ClothingItemDao {
                   'imagePath': item.imagePath,
                   'googleResults':
                       _googleResultsConverter.encode(item.googleResults),
-                  'clothingItemModel': _clothingItemModelConverter
-                      .encode(item.clothingItemModel),
+                  'clothingItemModelBoth': _clothingItemModelBothConverter
+                      .encode(item.clothingItemModelBoth),
                   'optionalAnalysisResult': _optionalAnalysisResultConverter
                       .encode(item.optionalAnalysisResult),
                   'isSelected': item.isSelected ? 1 : 0
@@ -167,8 +167,8 @@ class _$ClothingItemDao extends ClothingItemDao {
             row['id'] as int?,
             row['imagePath'] as String,
             _googleResultsConverter.decode(row['googleResults'] as String),
-            _clothingItemModelConverter
-                .decode(row['clothingItemModel'] as String),
+            _clothingItemModelBothConverter
+                .decode(row['clothingItemModelBoth'] as String),
             _optionalAnalysisResultConverter
                 .decode(row['optionalAnalysisResult'] as String)));
   }
@@ -181,8 +181,8 @@ class _$ClothingItemDao extends ClothingItemDao {
             row['id'] as int?,
             row['imagePath'] as String,
             _googleResultsConverter.decode(row['googleResults'] as String),
-            _clothingItemModelConverter
-                .decode(row['clothingItemModel'] as String),
+            _clothingItemModelBothConverter
+                .decode(row['clothingItemModelBoth'] as String),
             _optionalAnalysisResultConverter
                 .decode(row['optionalAnalysisResult'] as String)),
         arguments: [id],
@@ -191,19 +191,22 @@ class _$ClothingItemDao extends ClothingItemDao {
   }
 
   @override
-  Stream<ClothingItemFloorModel?> getClothingItemFloorModelByClothingItemModel(
-      ClothingItemModel clothingItemModel) {
+  Stream<ClothingItemFloorModel?>
+      getClothingItemFloorModelByClothingItemModelBoth(
+          ClothingItemModelBoth clothingItemModelBoth) {
     return _queryAdapter.queryStream(
-        'SELECT * FROM ClothingItemFloorModel WHERE clothingItemModel = ?1',
+        'SELECT * FROM ClothingItemFloorModel WHERE clothingItemModelBoth = ?1',
         mapper: (Map<String, Object?> row) => ClothingItemFloorModel(
             row['id'] as int?,
             row['imagePath'] as String,
             _googleResultsConverter.decode(row['googleResults'] as String),
-            _clothingItemModelConverter
-                .decode(row['clothingItemModel'] as String),
+            _clothingItemModelBothConverter
+                .decode(row['clothingItemModelBoth'] as String),
             _optionalAnalysisResultConverter
                 .decode(row['optionalAnalysisResult'] as String)),
-        arguments: [_clothingItemModelConverter.encode(clothingItemModel)],
+        arguments: [
+          _clothingItemModelBothConverter.encode(clothingItemModelBoth)
+        ],
         queryableName: 'ClothingItemFloorModel',
         isView: false);
   }
@@ -216,11 +219,13 @@ class _$ClothingItemDao extends ClothingItemDao {
   }
 
   @override
-  Future<void> deleteClothingItemFloorModelByClothingItemModel(
-      ClothingItemModel clothingItemModel) async {
+  Future<void> deleteClothingItemFloorModelByClothingItemModelBoth(
+      ClothingItemModelBoth clothingItemModelBoth) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE FROM ClothingItemFloorModel WHERE clothingItemModel = ?1',
-        arguments: [_clothingItemModelConverter.encode(clothingItemModel)]);
+        'DELETE FROM ClothingItemFloorModel WHERE clothingItemModelBoth = ?1',
+        arguments: [
+          _clothingItemModelBothConverter.encode(clothingItemModelBoth)
+        ]);
   }
 
   @override
@@ -230,20 +235,20 @@ class _$ClothingItemDao extends ClothingItemDao {
 
   @override
   Future<void> insertClothingItemFloorModel(
-      ClothingItemFloorModel clothingItemModel) async {
+      ClothingItemFloorModel clothingItemFloorModel) async {
     await _clothingItemFloorModelInsertionAdapter.insert(
-        clothingItemModel, OnConflictStrategy.abort);
+        clothingItemFloorModel, OnConflictStrategy.abort);
   }
 
   @override
   Future<void> updateClothingItemFloorModel(
-      ClothingItemFloorModel clothingItemModel) async {
+      ClothingItemFloorModel clothingItemFloorModel) async {
     await _clothingItemFloorModelUpdateAdapter.update(
-        clothingItemModel, OnConflictStrategy.abort);
+        clothingItemFloorModel, OnConflictStrategy.abort);
   }
 }
 
 // ignore_for_file: unused_element
-final _clothingItemModelConverter = ClothingItemModelConverter();
+final _clothingItemModelBothConverter = ClothingItemModelBothConverter();
 final _optionalAnalysisResultConverter = OptionalAnalysisResultConverter();
 final _googleResultsConverter = GoogleResultsConverter();

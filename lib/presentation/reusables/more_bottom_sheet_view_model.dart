@@ -1,8 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../dao/clothing_item_dao.dart';
 import '../../models/clothing_item_floor_model.dart';
-import '../../models/clothing_item_model.dart';
 import '../../models/optional_analysis_result_model.dart';
+import '../../models/clothing_item_model_both.dart';
+import '../../dao/clothing_item_dao.dart';
 
 class MoreBottomSheetViewModel extends ChangeNotifier {
   final ClothingItemDao clothingItemDao;
@@ -15,11 +16,11 @@ class MoreBottomSheetViewModel extends ChangeNotifier {
   bool isInWishlist = false;
   bool _initialized = false;
 
-  Future<void> initAndCheckWishlist(ClothingItemModel model) async {
+  Future<void> initAndCheckWishlist(ClothingItemModelBoth model) async {
     if (_initialized) return;
 
     final item = await clothingItemDao
-        .getClothingItemFloorModelByClothingItemModel(model)
+        .getClothingItemFloorModelByClothingItemModelBoth(model)
         .first;
 
     isInWishlist = item != null;
@@ -31,22 +32,22 @@ class MoreBottomSheetViewModel extends ChangeNotifier {
   Future<void> toggleWishlist({
     required String imagePath,
     required List<Map<String, String>> googleResults,
-    required ClothingItemModel clothingItemModel,
+    required ClothingItemModelBoth clothingItemModelBoth,
     required OptionalAnalysisResult optionalAnalysisResult,
     required Function(String) onSuccess,
     required Function(String) onError,
   }) async {
     try {
       if (isInWishlist) {
-        await clothingItemDao.deleteClothingItemFloorModelByClothingItemModel(clothingItemModel);
+        await clothingItemDao.deleteClothingItemFloorModelByClothingItemModelBoth(clothingItemModelBoth);
         isInWishlist = false;
       } else {
         final clothingItemFloorModel = ClothingItemFloorModel(
           null,
           imagePath,
           googleResults,
-          clothingItemModel,
-          optionalAnalysisResult,
+          clothingItemModelBoth,
+          optionalAnalysisResult
         );
         await clothingItemDao.insertClothingItemFloorModel(clothingItemFloorModel);
         isInWishlist = true;
@@ -56,12 +57,12 @@ class MoreBottomSheetViewModel extends ChangeNotifier {
       notifyListeners();
       onSuccess.call(
         isInWishlist
-            ? "Added to wishlist"
-            : "Removed from wishlist"
+            ? "Added to wishlist".tr()
+            : "Removed from wishlist".tr()
       );
     } catch (e, stackTrace) {
       debugPrint("Error updating wishlist: $e\n$stackTrace");
-      onError.call("Error updating wishlist");
+      onError.call("Error updating wishlist".tr());
     }
   }
 }

@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!initialized) {
       vm = Provider.of<HomeViewModel>(context, listen: false);
       vm.fetchUserFromAuth();
+      vm.getEnableExperimentalSharedPreference();
       initialized = true;
     }
   }
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
               animTransitionRoute(
                 DetailScreen(
                   imagePath: vm.imagePath!,
-                  clothingItems: vm.clothingItems,
+                  clothingItemBoths: vm.clothingItemBoths,
                   optionalAnalysisResult: vm.optionalAnalysisResult ??
                       OptionalAnalysisResult(
                         gender: Constants.unknown,
@@ -273,8 +274,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+                    color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
                     blurStyle: BlurStyle.outer,
+                    offset: Offset(3, 3),
                     blurRadius: 3,
                   ),
                 ],
@@ -302,8 +304,9 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadiusLarge)),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
                   blurStyle: BlurStyle.outer,
+                  offset: Offset(3, 3),
                   blurRadius: 3,
                 ),
               ],
@@ -342,8 +345,8 @@ class _HomeScreenState extends State<HomeScreen> {
           BoxShadow(
             color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
             blurStyle: BlurStyle.outer,
-            offset: Offset(0, 3),
-            blurRadius: 5,
+            offset: Offset(3, 3),
+            blurRadius: 3,
           ),
         ],
       ),
@@ -406,16 +409,16 @@ class _HomeScreenState extends State<HomeScreen> {
               BoxShadow(
                 color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
                 blurStyle: BlurStyle.outer,
-                offset: Offset(0, 3),
-                blurRadius: 5,
+                offset: Offset(3, 3),
+                blurRadius: 3,
               ),
             ],
           ),
           child: Padding(
             padding: const EdgeInsets.only(
-              top: 8,
-              bottom: 8,
-              right: 8,
+              top: 4,
+              bottom: 4,
+              right: 6,
               left: 24,
             ),
             child: Row(

@@ -4,23 +4,26 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../di/locator.dart';
 import '../../utils/extensions.dart';
-import '../../models/clothing_item_model.dart';
 import '../../models/optional_analysis_result_model.dart';
+import '../../models/clothing_item_model_both.dart';
 import '../../utils/constants.dart';
 import 'more_bottom_sheet_view_model.dart';
 
 class MoreBottomSheet extends StatefulWidget {
   final String imagePath;
   final List<Map<String, String>> googleResults;
-  final ClothingItemModel clothingItemModel;
+  final ClothingItemModelBoth clothingItemModelBoth;
   final OptionalAnalysisResult optionalAnalysisResult;
+  final VoidCallback? customFuncOnSuccess;
 
   const MoreBottomSheet({
     super.key,
     required this.imagePath,
     required this.googleResults,
-    required this.clothingItemModel,
-    required this.optionalAnalysisResult
+    required this.clothingItemModelBoth,
+    required this.optionalAnalysisResult,
+
+    this.customFuncOnSuccess,
   });
 
   @override
@@ -35,7 +38,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
         final viewModel = MoreBottomSheetViewModel(
             clothingItemDao: locator.get()
         );
-        viewModel.initAndCheckWishlist(widget.clothingItemModel);
+        viewModel.initAndCheckWishlist(widget.clothingItemModelBoth);
         return viewModel;
       },
       child: Consumer<MoreBottomSheetViewModel>(
@@ -65,11 +68,15 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
                     viewModel.toggleWishlist(
                       imagePath: widget.imagePath,
                       googleResults: widget.googleResults,
-                      clothingItemModel: widget.clothingItemModel,
+                      clothingItemModelBoth: widget.clothingItemModelBoth,
                       optionalAnalysisResult: widget.optionalAnalysisResult,
                       onSuccess: (message) {
                         Navigator.pop(context);
                         context.showCustomSnackBar(Constants.success, message);
+
+                        if (widget.customFuncOnSuccess != null) {
+                          widget.customFuncOnSuccess!();
+                        }
                       },
                       onError: (message) {
                         Navigator.pop(context);
@@ -89,8 +96,11 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    searchInBrowser(widget.clothingItemModel
-                        .toDetailString(widget.optionalAnalysisResult));
+                    searchInBrowser(
+                        widget.clothingItemModelBoth.clothingItemModel != null
+                            ? widget.clothingItemModelBoth.clothingItemModel!.toDetailString(widget.optionalAnalysisResult)
+                            : widget.clothingItemModelBoth.clothingItemModelExperimental!.toDetailString(widget.optionalAnalysisResult)
+                    );
                   },
                 ),
               ],
@@ -105,7 +115,7 @@ class _MoreBottomSheetState extends State<MoreBottomSheet> {
     final Uri url = Uri.https('www.google.com', '/search', {'q': query});
 
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      context.showCustomSnackBar(Constants.error, "Could not launch $url");
+      context.showCustomSnackBar(Constants.error, "Could not launch".tr());
     }
   }
 }

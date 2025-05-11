@@ -64,8 +64,21 @@
   "No messages yet. Start the conversation!": "এখনও কোনও বার্তা নেই। কথোপকথন শুরু করুন!",
   "Are you sure you want to clear the chat?": "আপনি কি নিশ্চিত যে আপনি চ্যাট সাফ করতে চান?",
   "Ask Voux": "Voux কে জিজ্ঞাসা করুন",
-
   "Remove from Wishlist": "ইচ্ছেতালিকা থেকে সরান",
   "Add to Wishlist": "ইচ্ছেতালিকায় যোগ করুন",
-  "Search in Web": "ওয়েবে অনুসন্ধান করুন"
+  "Search in Web": "ওয়েবে অনুসন্ধান করুন",
+  "Wishlist cleared": "উইশলিস্ট সাফ করা হয়েছে",
+  "Error updating wishlist": "উইশলিস্ট আপডেট করতে ত্রুটি",
+  "Enable experimental features": "পরীক্ষামূলক বৈশিষ্ট্য সক্রিয় করুন",
+  "Added to wishlist": "উইশলিস্টে যোগ করা হয়েছে",
+  "Removed from wishlist": "উইশলিস্ট থেকে সরানো হয়েছে",
+  "Could not launch": "শুরু করা যায়নি",
+  "Error deleting selected items": "নির্বাচিত আইটেম মুছতে ত্রুটি",
+  "deleted": "মুছে ফেলা হয়েছে",
+  "No item was selected": "কোনো আইটেম নির্বাচন করা হয়নি",
+  "Copied to clipboard": "ক্লিপবোর্ডে কপি করা হয়েছে",
+  "API response was empty or null": "API রেসপন্স খালি বা null ছিল",
+  "Failed to analyze image": "ছবি বিশ্লেষণ করতে ব্যর্থ",
+  "Selecting": "নির্বাচন করা হচ্ছে",
+  "Are you sure you want to go external browser?": "আপনি কি নিশ্চিতভাবে বাহ্যিক ব্রাউজারে যেতে চান?"
 }

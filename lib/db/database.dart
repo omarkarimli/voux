@@ -11,15 +11,15 @@ import 'package:sqflite/sqflite.dart' as sqflite;
 
 import '../dao/clothing_item_dao.dart';
 import '../models/clothing_item_floor_model.dart';
-import '../models/clothing_item_model.dart';
-import 'clothing_item_model_converter.dart';
+import '../models/clothing_item_model_both.dart';
+import 'clothing_item_model_both_converter.dart';
 import 'google_results_converter.dart';
 import 'optional_analysis_result_converter.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
 @TypeConverters([
-  ClothingItemModelConverter,
+  ClothingItemModelBothConverter,
   OptionalAnalysisResultConverter,
   GoogleResultsConverter
 ])

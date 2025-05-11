@@ -1,3 +1,5 @@
+import '../utils/constants.dart';
+
 class StoreModel {
   final String name;
   final String price;
@@ -6,15 +8,15 @@ class StoreModel {
 
   factory StoreModel.fromJson(Map<String, dynamic> json) {
     return StoreModel(
-      name: json['name'],
-      price: json['price'],
+      name: json[Constants.name],
+      price: json[Constants.price],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
-      'price': price,
+      Constants.name: name,
+      Constants.price: price,
     };
   }
 }

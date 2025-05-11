@@ -62,8 +62,22 @@
   "No messages yet. Start the conversation!": "अभी तक कोई संदेश नहीं। बातचीत शुरू करें!",
   "Are you sure you want to clear the chat?": "क्या आप वाकई चैट साफ करना चाहते हैं?",
   "Ask Voux": "Voux से पूछें",
-
   "Remove from Wishlist": "विशलिस्ट से हटाएं",
   "Add to Wishlist": "विशलिस्ट में जोड़ें",
-  "Search in Web": "वेब में खोजें"
+  "Search in Web": "वेब में खोजें",
+
+  "Wishlist cleared": "विशलिस्ट साफ़ की गई",
+  "Error updating wishlist": "विशलिस्ट अपडेट करने में त्रुटि",
+  "Enable experimental features": "प्रायोगिक सुविधाएँ सक्षम करें",
+  "Added to wishlist": "विशलिस्ट में जोड़ा गया",
+  "Removed from wishlist": "विशलिस्ट से हटाया गया",
+  "Could not launch": "लॉन्च नहीं किया जा सका",
+  "Error deleting selected items": "चयनित आइटम हटाने में त्रुटि",
+  "deleted": "हटाया गया",
+  "No item was selected": "कोई आइटम चयनित नहीं था",
+  "Copied to clipboard": "क्लिपबोर्ड पर कॉपी किया गया",
+  "API response was empty or null": "API प्रतिक्रिया खाली या नल थी",
+  "Failed to analyze image": "छवि विश्लेषण विफल",
+  "Selecting": "चयन कर रहा है",
+  "Are you sure you want to go external browser?": "क्या आप वाकई बाहरी ब्राउज़र पर जाना चाहते हैं?"
 }

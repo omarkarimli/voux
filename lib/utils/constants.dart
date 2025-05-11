@@ -125,8 +125,13 @@ class Constants {
   static const String colorHexCode = "colorHexCode";
   static const String stores = "stores";
   static const String selectedStore = "selectedStore";
+  static const String imageUrl = "imageUrl";
+  static const String productUrl = "productUrl";
+  static const String link = "link";
+  static const String contextLink = "contextLink";
+  static const String image = "image";
 
-  static const String geminiPrompt = """
+  static const String geminiPromptExperimental = """
 Analyze the given image and generate a list of clothing items based on the detected apparel. For each clothing item, provide structured details in JSON format as follows:
 
 [
@@ -155,13 +160,45 @@ Analyze the given image and generate a list of clothing items based on the detec
     "model": "511 Slim Fit",
     "stores": [
       {"name": "Amazon", "price": "79.99"},
-      {"name": "eBay", "price": "72.00"}
+      {"name": "eBay", "price": "72.50"}
     ]
   }
 ]
 
-Use the model's knowledge to infer likely stores and realistic USD prices based on known brands, models, and product types. Do not use placeholder values. If store and pricing data cannot be inferred with confidence, empty the `stores` field entirely for that item.
+Store prices must be in USD and Store names should be like Amazon, eBay, etc.
+If property is unknown, use "unknown".
+The response should only contain the JSON array without additional text.
+""";
 
+  static const String geminiPrompt = """
+Analyze the given image and generate a list of clothing items based on the detected apparel. For each clothing item, provide structured details in JSON format as follows:
+
+[
+  {
+    "name": "Casual T-Shirt",
+    "color": "Blue",
+    "colorHexCode": "#0000FF",
+    "size": "M",
+    "type": "T-Shirt",
+    "material": "Cotton",
+    "brand": "Nike",
+    "model": "AirMax Tee",
+    "price": "79.99"
+  },
+  {
+    "name": "Denim Jeans",
+    "color": "Black",
+    "colorHexCode": "#000000",
+    "size": "32",
+    "type": "Jeans",
+    "material": "Denim",
+    "brand": "Levi's",
+    "model": "511 Slim Fit",
+    "price": "43.85"
+  }
+]
+
+Prices must be in USD.
 If property is unknown, use "unknown".
 The response should only contain the JSON array without additional text.
 """;

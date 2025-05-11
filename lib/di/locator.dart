@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:translator/translator.dart';
 
 import '../presentation/auth/auth_view_model.dart';
 import '../presentation/detail/detail_view_model.dart';
@@ -12,6 +13,7 @@ import '../db/database.dart';
 import '../presentation/wishlist/wishlist_view_model.dart';
 import '../utils/constants.dart';
 import '../presentation/home/home_view_model.dart';
+import '../utils/translation_cache.dart';
 
 final locator = GetIt.instance;
 
@@ -25,6 +27,12 @@ Future<void> setupLocator() async {
   final prefs = await SharedPreferences.getInstance();
   locator.registerLazySingleton(() => prefs);
 
+  final translator = GoogleTranslator();
+  locator.registerLazySingleton(() => translator);
+
+  final translationCache = TranslationCache();
+  locator.registerLazySingleton(() => translationCache);
+
   locator.registerLazySingleton(() => FirebaseAuth.instance);
   locator.registerLazySingleton(() => FirebaseFirestore.instance);
   locator.registerFactory(() => GenerativeModel(model: Constants.geminiModel, apiKey: Constants.geminiApiKey));
@@ -37,7 +45,7 @@ Future<void> setupLocator() async {
   ));
 
   locator.registerFactory(() => DetailViewModel(
-    clothingItems: []
+    clothingItemBoths: []
   ));
 
   locator.registerFactory(() => AuthViewModel(

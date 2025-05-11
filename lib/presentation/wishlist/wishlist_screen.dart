@@ -2,9 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voux/presentation/wishlist/clothing_item_wishlist_card.dart';
 import 'package:voux/presentation/wishlist/wishlist_more_bottom_sheet.dart';
 import 'package:voux/utils/extensions.dart';
+import '../../di/locator.dart';
 import '../home/home_screen.dart';
 import '../wishlist/wishlist_view_model.dart';
 import '../../utils/constants.dart';
@@ -20,12 +22,19 @@ class WishlistScreen extends StatefulWidget {
 
 class _WishlistScreenState extends State<WishlistScreen> {
   late WishlistViewModel vm;
+  bool initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    vm = Provider.of<WishlistViewModel>(context, listen: false);
+    if (!initialized) {
+      vm = Provider.of<WishlistViewModel>(context, listen: false); // on true, don't work checkbox
+      vm.localeLanguageCode = locator<SharedPreferences>().getString(Constants.language) ?? 'en';
+
+      initialized = true;
+    }
+
     vm.loadWishlist();
   }
 
@@ -36,61 +45,66 @@ class _WishlistScreenState extends State<WishlistScreen> {
         return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           bottomNavigationBar: BottomAppBar(
-            elevation: 3,
-            color: Theme.of(context).colorScheme.surface,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Center(
-                  child: Text(
-                    "${vm.wishlistItems.length} ${"items".tr()}",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
+              elevation: 3,
+              color: Theme.of(context).colorScheme.surface,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(
+                    child: vm.isSelecting ? Text(
+                      "Selecting".tr(),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ) : Text(
+                      "${vm.wishlistItems.length} ${"items".tr()}",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  right: 0,
-                  child: vm.isSelecting
-                      ? IconButton(
-                    onPressed: () {
-                      vm.setBoolSelecting(false);
-                      vm.removeSelectedItems();
-                    },
-                    icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
-                  )
-                      : IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                        ),
-                        builder: (context) {
-                          return WishlistMoreBottomSheet(clothingItemFloorModels: vm.wishlistItems);
+                  Positioned(
+                      right: 0,
+                      child: vm.isSelecting
+                          ? IconButton(
+                        onPressed: () {
+                          vm.setBoolSelecting(false);
+                          vm.removeSelectedItems();
                         },
-                      );
-                    },
-                    icon: Icon(Icons.more_horiz_rounded, color: Theme.of(context).colorScheme.onSurface),
-                  )
-                ),
-                vm.isSelecting
-                    ? Positioned(
-                  left: 0,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        vm.deleteSelectedItems(
-                          onSuccess: (message) => context.showCustomSnackBar(Constants.success, message),
-                          onError: (message) => context.showCustomSnackBar(Constants.error, message),
-                        );
-                      });
-                    },
-                    icon: Icon(Icons.delete_outline_rounded, color: Theme.of(context).colorScheme.onSurface),
-                  )
-                ) : SizedBox.shrink(),
-              ],
-            )
+                        icon: Icon(Icons.close_rounded, color: Theme.of(context).colorScheme.onSurface),
+                      )
+                          : IconButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                            ),
+                            builder: (context) {
+                              return WishlistMoreBottomSheet(clothingItemFloorModels: vm.wishlistItems);
+                            },
+                          );
+                        },
+                        icon: Icon(Icons.more_horiz_rounded, color: Theme.of(context).colorScheme.onSurface),
+                      )
+                  ),
+                  vm.isSelecting
+                      ? Positioned(
+                      left: 0,
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            vm.deleteSelectedItems(
+                              onSuccess: (message) => context.showCustomSnackBar(Constants.success, message),
+                              onError: (message) => context.showCustomSnackBar(Constants.error, message),
+                            );
+                          });
+                        },
+                        icon: Icon(Icons.delete_outline_rounded, color: Theme.of(context).colorScheme.onSurface),
+                      )
+                  ) : SizedBox.shrink(),
+                ],
+              )
           ),
           body: Stack(
             fit: StackFit.expand,
@@ -145,31 +159,31 @@ class _WishlistScreenState extends State<WishlistScreen> {
   Widget buildWishlistItemsList() {
     return vm.wishlistItems.isEmpty
         ? SizedBox(
-            height: MediaQuery.of(context).size.height - (MediaQuery.of(context).padding.top+MediaQuery.of(context).padding.bottom + 272),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                      Theme.of(context).brightness == Brightness.dark ? 'assets/images/empty_dark.png' : 'assets/images/empty.png',
-                      width: 128,
-                      height: 128,
-                  ),
-                  Text("No items in wishlist".tr(), style: Theme.of(context).textTheme.bodyLarge)
-                ],
-              )
+        height: MediaQuery.of(context).size.height - (MediaQuery.of(context).padding.top+MediaQuery.of(context).padding.bottom + 272),
+        child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  Theme.of(context).brightness == Brightness.dark ? 'assets/images/empty_dark.png' : 'assets/images/empty.png',
+                  width: 128,
+                  height: 128,
+                ),
+                Text("No items in wishlist".tr(), style: Theme.of(context).textTheme.bodyLarge)
+              ],
             )
-          )
+        )
+    )
         : Column(
-            spacing: 8,
-            children: vm.wishlistItems.map((item) => ClothingItemWishlistCard(
-                parentContext: context,
-                vm: vm,
-                isSelecting: vm.isSelecting,
-                imagePath: item.imagePath,
-                item: item,
-                optionalAnalysisResult: item.optionalAnalysisResult
-            )).toList(),
-          );
+      spacing: 8,
+      children: vm.wishlistItems.map((item) => ClothingItemWishlistCard(
+          parentContext: context,
+          vm: vm,
+          isSelecting: vm.isSelecting,
+          imagePath: item.imagePath,
+          item: item,
+          optionalAnalysisResult: item.optionalAnalysisResult
+      )).toList(),
+    );
   }
 }

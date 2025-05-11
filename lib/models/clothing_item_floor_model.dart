@@ -1,5 +1,5 @@
 import 'package:floor/floor.dart';
-import '../models/clothing_item_model.dart';
+import '../models/clothing_item_model_both.dart';
 import '../models/optional_analysis_result_model.dart';
 
 @Entity(tableName: 'ClothingItemFloorModel')
@@ -9,7 +9,7 @@ class ClothingItemFloorModel {
 
   final String imagePath;
   final List<Map<String, String>> googleResults;
-  final ClothingItemModel clothingItemModel;
+  final ClothingItemModelBoth clothingItemModelBoth;
   final OptionalAnalysisResult optionalAnalysisResult;
 
   bool isSelected = false;
@@ -18,7 +18,7 @@ class ClothingItemFloorModel {
       this.id,
       this.imagePath,
       this.googleResults,
-      this.clothingItemModel,
+      this.clothingItemModelBoth,
       this.optionalAnalysisResult
   );
 }

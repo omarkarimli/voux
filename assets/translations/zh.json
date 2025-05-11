@@ -62,8 +62,21 @@
   "No messages yet. Start the conversation!": "还没有消息。开始对话吧！",
   "Are you sure you want to clear the chat?": "您确定要清除聊天记录吗？",
   "Ask Voux": "询问Voux",
-
   "Remove from Wishlist": "从愿望清单移除",
   "Add to Wishlist": "添加到愿望清单",
-  "Search in Web": "在网页搜索"
+  "Search in Web": "在网页搜索",
+  "Wishlist cleared": "愿望清单已清空",
+  "Error updating wishlist": "更新愿望清单时出错",
+  "Enable experimental features": "启用实验性功能",
+  "Added to wishlist": "已添加到愿望清单",
+  "Removed from wishlist": "已从愿望清单移除",
+  "Could not launch": "无法启动",
+  "Error deleting selected items": "删除所选项目时出错",
+  "deleted": "已删除",
+  "No item was selected": "未选择任何项目",
+  "Copied to clipboard": "已复制到剪贴板",
+  "API response was empty or null": "API响应为空或null",
+  "Failed to analyze image": "图片分析失败",
+  "Selecting": "选择中",
+  "Are you sure you want to go external browser?": "您确定要转到外部浏览器吗？"
 }

@@ -1,12 +1,14 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import '../../models/clothing_item_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:translator/translator.dart';
+import '../../models/clothing_item_model_both.dart';
 import '../../di/locator.dart';
+import '../../utils/constants.dart';
 
 class ChatViewModel extends ChangeNotifier {
-  final List<ClothingItemModel> clothingItems;
+  final List<ClothingItemModelBoth> clothingItemBoths;
 
   double minChildSize = 0.125;
   double maxChildSize = 0.85;
@@ -23,14 +25,41 @@ class ChatViewModel extends ChangeNotifier {
   bool isLoading = false;
   bool shouldCancel = false;
 
+  bool enableExperimentalFeatures = false;
+
+  String localeLanguageCode = 'en';
+  final translator = GoogleTranslator();
+  Map<String, String> cachedTranslations = {};
+
   ChatViewModel({
-    required this.clothingItems
+    required this.clothingItemBoths
   }) {
+    enableExperimentalFeatures = locator<SharedPreferences>().getBool(Constants.enableExperimentalFeatures) ?? false;
+    localeLanguageCode = locator<SharedPreferences>().getString(Constants.language) ?? 'en';
+
     sendInitialMessage();
     generateExampleQuestions();
 
     textController.addListener(() => notifyListeners());
     sheetController.addListener(onSizeChanged);
+  }
+
+  Future<String> getTranslatedText(String text) async {
+    if (cachedTranslations.containsKey(text)) {
+      return cachedTranslations[text]!;
+    }
+
+    if (localeLanguageCode != "en") {
+      try {
+        final translation = await translator.translate(text, to: localeLanguageCode);
+        cachedTranslations[text] = translation.text;
+        return translation.text;
+      } catch (_) {
+        return text; // fallback to the original text if translation fails
+      }
+    } else {
+      return text;
+    }
   }
 
   void onSizeChanged() {
@@ -63,12 +92,15 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   Future<void> generateExampleQuestions() async {
-    if (isGeneratingExamples || clothingItems.isEmpty) return;
+    if (isGeneratingExamples || clothingItemBoths.isEmpty) return;
 
     isGeneratingExamples = true;
     notifyListeners();
 
-    final itemNames = clothingItems.take(5).map((e) => e.name).join(', ');
+    final itemNames = clothingItemBoths.take(5).map(
+            (e) =>
+            enableExperimentalFeatures ? e.clothingItemModelExperimental!.name : e.clothingItemModel!.name
+    ).join(', ');
     final prompt = "Based on the following clothing items: $itemNames, give 3 example questions a user might ask about them. Keep them short and helpful.";
 
     try {
@@ -92,11 +124,23 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   void sendInitialMessage() {
-    sendMessage(buildInitialPrompt());
+    var m = buildInitialPrompt();
+    if (m.isNotEmpty) {
+      sendMessage(buildInitialPrompt());
+    }
   }
 
   String buildInitialPrompt() {
-    final names = clothingItems.map((e) => e.name).toList();
+
+    final names = clothingItemBoths.map(
+        (e) =>
+        enableExperimentalFeatures
+            ? (e.clothingItemModelExperimental?.name ?? "")
+            : (e.clothingItemModel?.name ?? "")
+    ).toList();
+
+    if (names.isEmpty) return "";
+
     if (names.length > 5) {
       return "List includes ${names.take(5).join(', ')} and more. What are their prices and alternatives? Don't do numbering!";
     }

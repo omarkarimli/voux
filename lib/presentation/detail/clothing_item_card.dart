@@ -1,14 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:voux/models/store_model.dart';
-import '../../di/locator.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../reusables/more_bottom_sheet.dart';
-import '../../models/clothing_item_model.dart';
+import '../../models/store_model.dart';
+import '../../models/clothing_item_model_both.dart';
 import '../../models/optional_analysis_result_model.dart';
 import '../../utils/extensions.dart';
 import '../../utils/constants.dart';
@@ -17,7 +15,7 @@ import '../detail/detail_view_model.dart';
 class ClothingItemCard extends StatefulWidget {
   final DetailViewModel vm;
   final String imagePath;
-  final ClothingItemModel item;
+  final ClothingItemModelBoth item;
   final OptionalAnalysisResult optionalAnalysisResult;
 
   const ClothingItemCard({
@@ -34,22 +32,23 @@ class ClothingItemCard extends StatefulWidget {
 
 class _ClothingItemCardState extends State<ClothingItemCard> {
 
-  final translator = GoogleTranslator();
-  String localeLanguageCode = locator<SharedPreferences>().getString('language') ?? 'en';
+  bool enableExperimentalFeatures = false;
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.item.stores.isNotEmpty) {
-      widget.item.setSelectedStore(widget.item.stores[0].name);
+    enableExperimentalFeatures = widget.item.clothingItemModelExperimental != null;
+
+    if (enableExperimentalFeatures && widget.item.clothingItemModelExperimental!.stores.isNotEmpty) {
+      widget.item.clothingItemModelExperimental!.setSelectedStore(widget.item.clothingItemModelExperimental!.stores[0].name);
     }
   }
 
   // Select Source
   Future<void> selectStore(String value) async {
     setState(() {
-      widget.item.setSelectedStore(value);
+      widget.item.clothingItemModelExperimental!.setSelectedStore(value);
     });
 
     // ✅ Trigger total price recalculation
@@ -61,14 +60,16 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
   // Show source selection sheet
   void showStorePicker(BuildContext context, List<StoreModel> modelList) {
     for (var model in modelList) {
-      print('Store Name: ${model.name}, Price: ${model.price}');
+      if (kDebugMode) {
+        print('Store Name: ${model.name}, Price: ${model.price}');
+      }
     }
     List<String> list = modelList.map((e) => e.name).toList();
 
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        String selectedValue = widget.item.selectedStore!;
+        String selectedValue = widget.item.clothingItemModelExperimental!.selectedStore!;
         int initialIndex = list.indexOf(selectedValue);
         int selectedIndex = initialIndex;
 
@@ -118,9 +119,9 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
     );
   }
 
-  Future<void> goToProductWebPageInBrowser(BuildContext context, String url) async {
+  Future<void> openLink(BuildContext context, String url) async {
     if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
-      context.showCustomSnackBar(Constants.error, "Could not launch $url");
+      context.showCustomSnackBar(Constants.error, "Could not launch".tr());
       throw Exception('Could not launch $url');
     }
   }
@@ -180,8 +181,16 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
   Widget build(BuildContext context) {
     final vm = widget.vm;
     final item = widget.item;
-    final details = item.toDetailString(widget.optionalAnalysisResult);
-    print(details);
+    final details = enableExperimentalFeatures
+        ? item.clothingItemModelExperimental!.toDetailString(widget.optionalAnalysisResult)
+        : item.clothingItemModel!.toDetailString(widget.optionalAnalysisResult);
+
+    if (kDebugMode) {
+      print(details);
+    }
+
+    String colorHexCode = enableExperimentalFeatures ? item.clothingItemModelExperimental!.colorHexCode : item.clothingItemModel!.colorHexCode;
+    String colorName = enableExperimentalFeatures ? item.clothingItemModelExperimental!.color : item.clothingItemModel!.color;
 
     return GestureDetector(
         onLongPress: () async {
@@ -195,7 +204,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
               return MoreBottomSheet(
                   imagePath: widget.imagePath,
                   googleResults: googleResults,
-                  clothingItemModel: item,
+                  clothingItemModelBoth: item,
                   optionalAnalysisResult: widget.optionalAnalysisResult
               );
             },
@@ -209,8 +218,8 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                 BoxShadow(
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
                   blurStyle: BlurStyle.outer,
-                  offset: Offset(0, 3),
-                  blurRadius: 5,
+                  offset: Offset(3, 3),
+                  blurRadius: 3,
                 ),
               ],
             ),
@@ -235,7 +244,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                 return MoreBottomSheet(
                                     imagePath: widget.imagePath,
                                     googleResults: googleResults,
-                                    clothingItemModel: item,
+                                    clothingItemModelBoth: item,
                                     optionalAnalysisResult: widget.optionalAnalysisResult
                                 );
                               },
@@ -265,7 +274,9 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                     )
                                 );
                               } else if (snapshot.hasError) {
-                                print('Error: ${snapshot.error}');
+                                if (kDebugMode) {
+                                  print('Error: ${snapshot.error}');
+                                }
                                 return SizedBox.shrink();
                               } else if (snapshot.hasData) {
                                 final results = snapshot.data!;
@@ -282,7 +293,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                     itemBuilder: (context, index) {
                                       final result = results[index];
                                       return GestureDetector(
-                                        onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
+                                        onDoubleTap: () => openLink(context, result['productUrl']!),
                                         child: Stack(
                                           children: [
                                             Image.network(
@@ -322,7 +333,9 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                   ),
                                 ) : SizedBox.shrink();
                               } else {
-                                print('No images found');
+                                if (kDebugMode) {
+                                  print('No images found');
+                                }
                                 return SizedBox.shrink();
                               }
                             },
@@ -336,25 +349,11 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    localeLanguageCode != "en"
-                                        ? FutureBuilder<Translation>(
-                                      future: translator.translate(details, from: 'en', to: localeLanguageCode),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return CupertinoActivityIndicator();
-                                        } else if (snapshot.hasError) {
-                                          return Text(details, style: Theme.of(context).textTheme.titleLarge);
-                                        } else if (snapshot.hasData) {
-                                          return SelectableText(
-                                            snapshot.data!.text,
-                                            style: Theme.of(context).textTheme.titleLarge,
-                                          );
-                                        } else {
-                                          return Text(details, style: Theme.of(context).textTheme.titleLarge);
-                                        }
-                                      },
-                                    )
-                                        : Text(details, style: Theme.of(context).textTheme.titleLarge),
+                                    details.translatedText(
+                                      context,
+                                      localeLanguageCode: vm.localeLanguageCode,
+                                      style: Theme.of(context).textTheme.titleLarge,
+                                    ),
                                     SizedBox(height: 16),
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -366,21 +365,15 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                               child: Row(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    if(item.colorHexCode != Constants.unknown) ...[
+                                                    if (colorHexCode != Constants.unknown) ...[
                                                       GestureDetector(
-                                                          onTap: () {
-                                                            vm.copyToClipboard(item.colorHexCode);
-
-                                                            setState(() {
-                                                              context.showCustomSnackBar(Constants.success, "Copied to clipboard");
-                                                            });
-                                                          },
+                                                          onTap: () => vm.copyToClipboard(context, colorHexCode),
                                                           child: Container(
                                                               clipBehavior: Constants.clipBehaviour,
                                                               decoration: BoxDecoration(
-                                                                  color: item.colorHexCode.toColor(),
+                                                                  color: colorHexCode.toColor(),
                                                                   border: Border.all(
-                                                                    color: item.colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
+                                                                    color: colorHexCode.toColor().isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25),
                                                                     width: Constants.borderWidthLarge,
                                                                   ),
                                                                   borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium)
@@ -389,33 +382,19 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                                   horizontal: 12,
                                                                   vertical: 2
                                                               ),
-                                                              child: localeLanguageCode != "en"
-                                                                  ? FutureBuilder<Translation>(
-                                                                future: translator.translate(item.color, from: 'en', to: localeLanguageCode),
-                                                                builder: (context, snapshot) {
-                                                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                                                    return CupertinoActivityIndicator();
-                                                                  } else if (snapshot.hasError) {
-                                                                    return Text(item.color, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,));
-                                                                  } else if (snapshot.hasData) {
-                                                                    return SelectableText(
-                                                                      snapshot.data!.text,
-                                                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,),
-                                                                    );
-                                                                  } else {
-                                                                    return Text(item.color, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,));
-                                                                  }
-                                                                },
+                                                              child: colorName.translatedText(
+                                                                context,
+                                                                localeLanguageCode: vm.localeLanguageCode,
+                                                                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorHexCode.toColor().isDark ? Colors.white : Colors.black)
                                                               )
-                                                                  : Text(item.color, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: item.colorHexCode.toColor().isDark ? Colors.white : Colors.black,)),
                                                           )
                                                       ),
-                                                      SizedBox(width: 16),
+                                                      SizedBox(width: 8),
                                                     ],
 
-                                                    if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
+                                                    if (enableExperimentalFeatures && item.clothingItemModelExperimental!.selectedStore != null && item.clothingItemModelExperimental!.selectedStore!.isNotEmpty)
                                                       GestureDetector(
-                                                          onTap: () => showStorePicker(context, item.stores),
+                                                          onTap: () => showStorePicker(context, item.clothingItemModelExperimental!.stores),
                                                           child: Container(
                                                               clipBehavior: Constants.clipBehaviour,
                                                               decoration: BoxDecoration(
@@ -435,7 +414,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                                   mainAxisSize: MainAxisSize.min,
                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                   children: [
-                                                                    Text(item.selectedStore!, style: Theme.of(context).textTheme.bodySmall),
+                                                                    Text(item.clothingItemModelExperimental!.selectedStore!, style: Theme.of(context).textTheme.bodySmall),
                                                                     SizedBox(width: 4),
                                                                     Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 16)
                                                                   ]
@@ -447,11 +426,21 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                             )
                                         ),
                                         SizedBox(width: 16),
-                                        if (item.selectedStore != null && item.selectedStore!.isNotEmpty)
+
+                                        if (enableExperimentalFeatures &&
+                                            item.clothingItemModelExperimental!.selectedStore != null &&
+                                            item.clothingItemModelExperimental!.selectedStore!.isNotEmpty)
                                           Text(
-                                              item.selectedStorePrice().toFormattedPrice(),
+                                              "\$${item.clothingItemModelExperimental!.selectedStorePrice()}",
                                               style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
-                                          )
+                                          ),
+
+                                        if (!enableExperimentalFeatures &&
+                                            item.clothingItemModel!.price != Constants.unknown)
+                                          Text(
+                                              "\$${item.clothingItemModel!.price}",
+                                              style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer)
+                                          ),
                                       ],
                                     )
                                   ]

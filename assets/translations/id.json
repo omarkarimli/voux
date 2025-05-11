@@ -62,8 +62,22 @@
   "No messages yet. Start the conversation!": "Belum ada pesan. Mulai percakapan!",
   "Are you sure you want to clear the chat?": "Apakah Anda yakin ingin menghapus obrolan?",
   "Ask Voux": "Tanya Voux",
-
   "Remove from Wishlist": "Hapus dari Daftar Keinginan",
   "Add to Wishlist": "Tambahkan ke Daftar Keinginan",
-  "Search in Web": "Cari di Web"
+  "Search in Web": "Cari di Web",
+
+  "Wishlist cleared": "Daftar keinginan dikosongkan",
+  "Error updating wishlist": "Gagal memperbarui daftar keinginan",
+  "Enable experimental features": "Aktifkan fitur eksperimental",
+  "Added to wishlist": "Ditambahkan ke daftar keinginan",
+  "Removed from wishlist": "Dihapus dari daftar keinginan",
+  "Could not launch": "Tidak dapat diluncurkan",
+  "Error deleting selected items": "Gagal menghapus item yang dipilih",
+  "deleted": "dihapus",
+  "No item was selected": "Tidak ada item yang dipilih",
+  "Copied to clipboard": "Disalin ke clipboard",
+  "API response was empty or null": "Respons API kosong atau null",
+  "Failed to analyze image": "Gagal menganalisis gambar",
+  "Selecting": "Memilih",
+  "Are you sure you want to go external browser?": "Apakah Anda yakin ingin membuka browser eksternal?"
 }

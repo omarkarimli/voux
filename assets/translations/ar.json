@@ -62,8 +62,21 @@
   "No messages yet. Start the conversation!": "لا توجد رسائل بعد. ابدأ المحادثة!",
   "Are you sure you want to clear the chat?": "هل أنت متأكد أنك تريد مسح الدردشة؟",
   "Ask Voux": "اسأل Voux",
-
   "Remove from Wishlist": "إزالة من قائمة الرغبات",
   "Add to Wishlist": "إضافة إلى قائمة الرغبات",
-  "Search in Web": "البحث على الويب"
+  "Search in Web": "البحث على الويب",
+  "Wishlist cleared": "تم مسح قائمة الرغبات",
+  "Error updating wishlist": "خطأ في تحديث قائمة الرغبات",
+  "Enable experimental features": "تمكين الميزات التجريبية",
+  "Added to wishlist": "تمت الإضافة إلى قائمة الرغبات",
+  "Removed from wishlist": "تمت الإزالة من قائمة الرغبات",
+  "Could not launch": "تعذر التشغيل",
+  "Error deleting selected items": "خطأ في حذف العناصر المحددة",
+  "deleted": "تم الحذف",
+  "No item was selected": "لم يتم تحديد أي عنصر",
+  "Copied to clipboard": "تم النسخ إلى الحافظة",
+  "API response was empty or null": "كان رد API فارغًا أو غير موجود",
+  "Failed to analyze image": "فشل تحليل الصورة",
+  "Selecting": "تحديد",
+  "Are you sure you want to go external browser?": "هل أنت متأكد أنك تريد الانتقال إلى متصفح خارجي؟"
 }

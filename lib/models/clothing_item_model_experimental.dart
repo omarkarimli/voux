@@ -1,8 +1,9 @@
 import '../models/optional_analysis_result_model.dart';
+import '../models/store_model.dart';
 import '../utils/extensions.dart';
 import '../utils/constants.dart';
 
-class ClothingItemModel {
+class ClothingItemModelExperimental {
   final String name;
   final String color;
   final String colorHexCode;
@@ -11,9 +12,12 @@ class ClothingItemModel {
   final String material;
   final String brand;
   final String model;
-  final String price;
+  final List<StoreModel> stores;
 
-  ClothingItemModel({
+  // Added to store the selected source
+  String? selectedStore;
+
+  ClothingItemModelExperimental({
     required this.name,
     required this.color,
     required this.colorHexCode,
@@ -22,12 +26,14 @@ class ClothingItemModel {
     required this.material,
     required this.brand,
     required this.model,
-    required this.price
+    required this.stores,
+
+    this.selectedStore
   });
 
   // Optionally, add a method to convert JSON response from the API
-  factory ClothingItemModel.fromJson(Map<String, dynamic> json) {
-    return ClothingItemModel(
+  factory ClothingItemModelExperimental.fromJson(Map<String, dynamic> json) {
+    return ClothingItemModelExperimental(
       name: json[Constants.name],
       color: json[Constants.color],
       colorHexCode: json[Constants.colorHexCode],
@@ -36,7 +42,11 @@ class ClothingItemModel {
       material: json[Constants.material],
       brand: json[Constants.brand],
       model: json[Constants.model],
-      price: json[Constants.price]
+      stores: (json[Constants.stores] as List<dynamic>? ?? [])
+          .map((storeJson) => StoreModel.fromJson(storeJson))
+          .toList(),
+
+      selectedStore: json[Constants.selectedStore]
     );
   }
 
@@ -51,7 +61,8 @@ class ClothingItemModel {
       Constants.material: material,
       Constants.brand: brand,
       Constants.model: model,
-      Constants.price: price
+      Constants.stores: stores.map((s) => s.toJson()).toList(),
+      Constants.selectedStore: selectedStore,
     };
   }
 
@@ -68,5 +79,22 @@ class ClothingItemModel {
     final details = attributes;
 
     return details.capitalizeFirst();
+  }
+
+  // Get the price for the selected store
+  String selectedStorePrice() {
+    if (selectedStore != null) {
+      final store = stores.firstWhere(
+            (s) => s.name == selectedStore,
+        orElse: () => StoreModel(name: Constants.unknown, price: "0"),
+      );
+      return store.price;
+    }
+    return "0";
+  }
+
+  // Set the selected source
+  void setSelectedStore(String storeName) {
+    selectedStore = storeName;
   }
 }

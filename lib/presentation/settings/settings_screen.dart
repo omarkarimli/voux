@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voux/models/theme_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../models/theme_model.dart';
 import '../../di/locator.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
-import '../agreement/agreement_screen.dart';
+import '../../utils/extensions.dart';
 import '../home/home_screen.dart';
 import '../onboarding/onboarding_screen.dart';
-import '../privacyPolicy/privacy_policy_screen.dart';
 import '../reusables/confirm_bottom_sheet.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -36,8 +36,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
   }
 
+  Future<void> openLink(BuildContext context, String url) async {
+    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      context.showCustomSnackBar(Constants.error, "Could not launch".tr());
+      throw Exception('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool enableExperimentalFeatures = locator<SharedPreferences>().getBool(Constants.enableExperimentalFeatures) ?? false;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
@@ -61,11 +70,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 4),
                       child: ListView(
                         children: [
+                          // Experimental features
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text('Enable experimental features'.tr(), style: Theme.of(context).textTheme.bodyLarge)
+                              ),
+                              CupertinoSwitch(
+                                // This bool value toggles the switch.
+                                value: enableExperimentalFeatures,
+                                activeTrackColor: CupertinoColors.activeBlue,
+                                onChanged: (bool? value) {
+                                  // This is called when the user toggles the switch.
+                                  setState(() {
+                                    enableExperimentalFeatures = value ?? false;
+                                    locator<SharedPreferences>().setBool(Constants.enableExperimentalFeatures, enableExperimentalFeatures);
+                                  });
+                                },
+                              )
+                            ],
+                          ),
+                          Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
+
                           // Notification
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Notification'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('Notification'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              ),
                               IconButton(
                                 onPressed: () => showNotificationPicker(context),
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -78,7 +112,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Theme'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('Theme'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              ),
                               IconButton(
                                 onPressed: () => showThemePicker(context),
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -91,22 +127,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Language'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('Language'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              ),
                               IconButton(
                                 onPressed: () => showLangPicker(context),
-                                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                              ),
-                            ],
-                          ),
-                          Divider(color: Theme.of(context).colorScheme.outline.withAlpha(50)),
-
-                          // Account
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Account'.tr(), style: Theme.of(context).textTheme.bodyLarge),
-                              IconButton(
-                                onPressed: () {},
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                               ),
                             ],
@@ -117,10 +142,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Privacy Policy'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('Privacy Policy'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              ),
                               IconButton(
-                                onPressed: () => Navigator.pushNamed(context, PrivacyPolicyScreen.routeName),
-                                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                    ),
+                                    builder: (context) {
+                                      return ConfirmBottomSheet(
+                                          function: () => openLink(context, "https://google.com"),
+                                          title: 'Are you sure you want to go external browser?'.tr()
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.arrow_outward_rounded, size: 16),
                               ),
                             ],
                           ),
@@ -130,10 +170,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Agreement'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('Agreement'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              ),
                               IconButton(
-                                onPressed: () => Navigator.pushNamed(context, AgreementScreen.routeName),
-                                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                    ),
+                                    builder: (context) {
+                                      return ConfirmBottomSheet(
+                                          function: () => openLink(context, "https://google.com"),
+                                          title: 'Are you sure you want to go external browser?'.tr()
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.arrow_outward_rounded, size: 16),
                               ),
                             ],
                           ),
@@ -143,7 +198,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('About app'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('About app'.tr(), style: Theme.of(context).textTheme.bodyLarge)
+                              ),
                               IconButton(
                                 onPressed: () {},
                                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
@@ -156,7 +213,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Reset Settings'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('Reset Settings'.tr(), style: Theme.of(context).textTheme.bodyLarge)
+                              ),
                               IconButton(
                                 onPressed: () {
                                   showModalBottomSheet(
@@ -182,7 +241,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Sign out'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              Expanded(
+                                child: Text('Sign out'.tr(), style: Theme.of(context).textTheme.bodyLarge),
+                              ),
                               IconButton(
                                 onPressed: () {
                                   showModalBottomSheet(

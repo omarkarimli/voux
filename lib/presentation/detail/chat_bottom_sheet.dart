@@ -3,31 +3,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../reusables/confirm_bottom_sheet.dart';
-import '../../models/clothing_item_model.dart';
+import '../../models/clothing_item_model_both.dart';
 import '../../utils/extensions.dart';
 import '../../utils/constants.dart';
 import 'chat_bottom_sheet_view_model.dart';
 
 class ChatBottomSheetWrapper extends StatelessWidget {
-  final List<ClothingItemModel> clothingItems;
+  final List<ClothingItemModelBoth> clothingItemBoths;
 
-  const ChatBottomSheetWrapper({super.key, required this.clothingItems});
+  const ChatBottomSheetWrapper({super.key, required this.clothingItemBoths});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ChatViewModel(clothingItems: clothingItems),
-      child: ChatBottomSheet(clothingItems: clothingItems), // This is your UI
+      create: (_) => ChatViewModel(clothingItemBoths: clothingItemBoths),
+      child: ChatBottomSheet(clothingItemBoths: clothingItemBoths), // This is your UI
     );
   }
 }
 
 class ChatBottomSheet extends StatelessWidget {
-  final List<ClothingItemModel> clothingItems;
+  final List<ClothingItemModelBoth> clothingItemBoths;
 
   const ChatBottomSheet({
     super.key,
-    required this.clothingItems,
+    required this.clothingItemBoths,
   });
 
   @override
@@ -111,27 +111,18 @@ class ChatBottomSheet extends StatelessWidget {
   }
 
   Widget dragHandle(BuildContext context, ChatViewModel viewModel) {
-    return GestureDetector(
-      onTap: () {
-          viewModel.sheetController.animateTo(
-            viewModel.isMinimized ? viewModel.maxChildSize : viewModel.minChildSize,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Center(
-          child: Container(
-            width: 40,
-            height: 5,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-              borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Center(
+        child: Container(
+          width: 40,
+          height: 5,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
+            borderRadius: BorderRadius.circular(Constants.cornerRadiusLarge),
           ),
         ),
-      )
+      ),
     );
   }
 
@@ -144,11 +135,20 @@ class ChatBottomSheet extends StatelessWidget {
         child: Stack(
           children: [
             Center(
-              child: Text(
-                'Chat'.tr(),
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              child: GestureDetector(
+                  onTap: () {
+                    viewModel.sheetController.animateTo(
+                      viewModel.isMinimized ? viewModel.maxChildSize : viewModel.minChildSize,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  },
+                  child: Text(
+                    'Chat'.tr(),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  )
               ),
             ),
             Positioned(
@@ -248,25 +248,33 @@ class ChatBottomSheet extends StatelessWidget {
                           height: 36,
                         ),
                       ),
-                    Container(
-                        margin: const EdgeInsets.symmetric(vertical: 6),
-                        padding: const EdgeInsets.all(12),
-                        constraints: const BoxConstraints(maxWidth: 280),
-                        decoration: BoxDecoration(
-                          color: color,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: const Radius.circular(12),
-                            bottomRight: const Radius.circular(12),
-                            topRight: msg.isUser ? const Radius.circular(0) : const Radius.circular(12),
-                            topLeft: msg.isUser ? const Radius.circular(12) : const Radius.circular(0),
-                          ),
-                        ),
-                        child: SelectableText.rich(
-                          TextSpan(
-                            children: msg.text.toStyledTextSpans(Theme.of(context).textTheme.bodyMedium!.copyWith(color: textColor)),
-                          ),
-                        )
-                    ),
+                    FutureBuilder<String>(
+                      future: viewModel.getTranslatedText(msg.text),
+                      builder: (context, snapshot) {
+                        final displayText = snapshot.data ?? msg.text;
+
+                        return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            padding: const EdgeInsets.all(12),
+                            constraints: const BoxConstraints(maxWidth: 280),
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: const Radius.circular(12),
+                                bottomRight: const Radius.circular(12),
+                                topRight: msg.isUser ? const Radius.circular(0) : const Radius.circular(12),
+                                topLeft: msg.isUser ? const Radius.circular(12) : const Radius.circular(0),
+                              ),
+                            ),
+                            child: SelectableText.rich(
+                              TextSpan(
+                                children: displayText
+                                    .toStyledTextSpans(Theme.of(context).textTheme.bodyMedium!.copyWith(color: textColor)),
+                              ),
+                            )
+                        );
+                      },
+                    )
                   ],
                 ),
               );
@@ -375,7 +383,7 @@ class ChatBottomSheet extends StatelessWidget {
                           if (viewModel.textController.text.isNotEmpty) {
                             viewModel.sendMessage(viewModel.textController.text);  // Send text message
                           } else {
-                            showItemPicker(context, viewModel, clothingItems);
+                            showItemPicker(context, viewModel, clothingItemBoths);
                           }
                         }
                       },
@@ -395,25 +403,32 @@ class ChatBottomSheet extends StatelessWidget {
                         spacing: 8,
                         runSpacing: 8,
                         children: viewModel.exampleQuestions.map((q) {
-                          return GestureDetector(
-                            onTap: () => viewModel.setControllerText(q),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary.withAlpha(10),
-                                borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.secondary.withAlpha(50),
-                                  width: 2,
+                          return FutureBuilder<String>(
+                            future: viewModel.getTranslatedText(q),
+                            builder: (context, snapshot) {
+                              final displayText = snapshot.data ?? q;
+
+                              return GestureDetector(
+                                onTap: () async => viewModel.setControllerText(await viewModel.getTranslatedText(q)),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.primary.withAlpha(10),
+                                    borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+                                    border: Border.all(
+                                      color: Theme.of(context).colorScheme.secondary.withAlpha(50),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    displayText,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                q,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                ),
-                              ),
-                            ),
+                              );
+                            },
                           );
                         }).toList(),
                       ),
@@ -428,7 +443,7 @@ class ChatBottomSheet extends StatelessWidget {
   }
 
   // Show item picker
-  void showItemPicker(BuildContext context, ChatViewModel viewModel, List<ClothingItemModel> clothingItems) {
+  void showItemPicker(BuildContext context, ChatViewModel viewModel, List<ClothingItemModelBoth> clothingItemBoths) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -453,16 +468,37 @@ class ChatBottomSheet extends StatelessWidget {
                   onSelectedItemChanged: (int index) {
                     selectedIndex = index;
                   },
-                  children: clothingItems.map((item) {
-                    return Center(child: Text(item.name.truncateWithEllipsis(22), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis, maxLines: 1));
+                  children: clothingItemBoths.map((item) {
+                    String nameItem = viewModel.enableExperimentalFeatures
+                        ? item.clothingItemModelExperimental!.name
+                        : item.clothingItemModel!.name;
+
+                    return FutureBuilder<String>(
+                        future: viewModel.getTranslatedText(nameItem),
+                        builder: (context, snapshot) {
+                          final displayText = snapshot.data ?? nameItem;
+
+                          return Center(
+                            child: Text(
+                                displayText.truncateWithEllipsis(22),
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.normal),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1
+                            )
+                          );
+                        },
+                    );
                   }).toList(),
                 ),
               ),
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () {
-                  viewModel.setControllerText("${clothingItems[selectedIndex].name} price and alternatives?");
+                onPressed: () async {
+                  String controllerText = "What are prices and alternatives of ${viewModel.enableExperimentalFeatures
+                      ? clothingItemBoths[selectedIndex].clothingItemModelExperimental!.name
+                      : clothingItemBoths[selectedIndex].clothingItemModel!.name}?";
 
+                  viewModel.setControllerText(await viewModel.getTranslatedText(controllerText));
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(

@@ -1,24 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import '../detail/detail_view_model.dart';
 import '../home/home_screen.dart';
 import '../../models/optional_analysis_result_model.dart';
+import '../../models/clothing_item_model_both.dart';
 import '../../utils/constants.dart';
 import '../reusables/report_bottom_sheet.dart';
-import '../../models/clothing_item_model.dart';
-import '../../utils/extensions.dart';
 import '../reusables/stacked_text_badge.dart';
 import 'chat_bottom_sheet.dart';
 import 'clothing_item_card.dart';
 
 class DetailScreen extends StatefulWidget {
   final String imagePath;
-  final List<ClothingItemModel> clothingItems;
+  final List<ClothingItemModelBoth> clothingItemBoths;
   final OptionalAnalysisResult optionalAnalysisResult;
 
-  const DetailScreen({super.key, required this.imagePath, required this.clothingItems, required this.optionalAnalysisResult});
+  const DetailScreen({super.key, required this.imagePath, required this.clothingItemBoths, required this.optionalAnalysisResult});
 
   static const routeName = '/${Constants.detail}';
 
@@ -32,7 +30,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    viewModel = DetailViewModel(clothingItems: widget.clothingItems)..initialize();
+    viewModel = DetailViewModel(clothingItemBoths: widget.clothingItemBoths)..initialize();
   }
 
   @override
@@ -175,12 +173,12 @@ class _DetailScreenState extends State<DetailScreen> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    StackedTextBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/hanger.png", title: "+${widget.clothingItems.length}"),
+                                    StackedTextBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/hanger.png", title: "+${widget.clothingItemBoths.length}"),
                                     SizedBox(width: 16),
                                     if (viewModel.totalPrice > 0)
                                       Consumer<DetailViewModel>(
                                           builder: (context, viewModel, child) {
-                                            return SelectableText("\$${viewModel.totalPrice.toStringAsFixed(2)}", style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer));
+                                            return SelectableText("\$${viewModel.totalPrice}", style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer));
                                           }
                                       )
                                   ]
@@ -188,7 +186,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               SizedBox(height: 32),
                               Column(
                                 spacing: 32,
-                                children: widget.clothingItems
+                                children: widget.clothingItemBoths
                                     .map((item) => ClothingItemCard(
                                   vm: viewModel,
                                   imagePath: widget.imagePath,
@@ -224,7 +222,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ),
 
-              ChatBottomSheetWrapper(clothingItems: widget.clothingItems)
+              ChatBottomSheetWrapper(clothingItemBoths: widget.clothingItemBoths)
             ],
           )
         )

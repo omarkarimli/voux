@@ -124,8 +124,8 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
           BoxShadow(
             color: Theme.of(context).colorScheme.onSurface.withAlpha(100),
             blurStyle: BlurStyle.outer,
-            offset: Offset(0, 3),
-            blurRadius: 5,
+            offset: Offset(3, 3),
+            blurRadius: 3,
           ),
         ],
       ),

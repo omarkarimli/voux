@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voux/models/clothing_item_model_both.dart';
+import 'package:voux/models/clothing_item_model_experimental.dart';
 
 import '../../di/locator.dart';
 import '../../db/database.dart';
@@ -34,8 +38,8 @@ class HomeViewModel extends ChangeNotifier {
   String? _imagePath;
   String? get imagePath => _imagePath;
 
-  List<ClothingItemModel> _clothingItems = [];
-  List<ClothingItemModel> get clothingItems => _clothingItems;
+  List<ClothingItemModelBoth> _clothingItemBoths = [];
+  List<ClothingItemModelBoth> get clothingItemBoths => _clothingItemBoths;
 
   OptionalAnalysisResult? _optionalAnalysisResult;
   OptionalAnalysisResult? get optionalAnalysisResult => _optionalAnalysisResult;
@@ -51,6 +55,12 @@ class HomeViewModel extends ChangeNotifier {
 
   int? _wishlistSize;
   int? get wishlistSize => _wishlistSize;
+
+  bool enableExperimentalFeatures = false;
+
+  void getEnableExperimentalSharedPreference() {
+    enableExperimentalFeatures = locator<SharedPreferences>().getBool(Constants.enableExperimentalFeatures) ?? false;
+  }
 
   void resetNavigation() {
     _navigateToDetail = false;
@@ -158,26 +168,45 @@ class HomeViewModel extends ChangeNotifier {
 
     try {
       final responses = await Future.wait([
-        analyzeGeneral(path),
+        enableExperimentalFeatures ? analyzeGeneralExperimental(path) : analyzeGeneral(path),
         analyzeOptional(path),
       ]);
 
       _imagePath = path;
-      _clothingItems = responses[0] as List<ClothingItemModel>;
+
+      late List<ClothingItemModelBoth> rBoth;
+      if (enableExperimentalFeatures) {
+        var r = responses[0] as List<ClothingItemModelExperimental>;
+        rBoth = r.map((item) => ClothingItemModelBoth(
+          clothingItemModel: null,
+          clothingItemModelExperimental: item,
+        )).toList();
+      } else {
+        var r = responses[0] as List<ClothingItemModel>;
+        rBoth = r.map((item) => ClothingItemModelBoth(
+          clothingItemModel: item,
+          clothingItemModelExperimental: null,
+        )).toList();
+      }
+
+      _clothingItemBoths = rBoth;
       _optionalAnalysisResult = responses[1] as OptionalAnalysisResult;
 
       if (kDebugMode) {
-        print(_clothingItems);
+        print(_clothingItemBoths);
       }
 
-      if (_clothingItems.isEmpty) {
-        setError("API response was empty or null");
+      if (_clothingItemBoths.isEmpty) {
+        setError("API response was empty or null".tr());
       } else {
         updateAnalysisCount();
         setNavigateToDetail(true);
       }
     } catch (e) {
-      setError("Failed to analyze image: $e");
+      if (kDebugMode) {
+        print("❌ Failed to analyze image: $e");
+      }
+      setError("Failed to analyze image".tr());
     } finally {
       setLoading(false);
     }
@@ -218,6 +247,26 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
+  Future<List<ClothingItemModelExperimental>> analyzeGeneralExperimental(String path) async {
+    try {
+      final imageBytes = await File(path).readAsBytes();
+      final content = [
+        Content.multi([
+          TextPart(Constants.geminiPromptExperimental),
+          DataPart('image/jpeg', imageBytes),
+        ])
+      ];
+
+      final response = await model.generateContent(content);
+      return parseResponseExperimental(response.text);
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ _analyzeImage error: $e");
+      }
+      return [];
+    }
+  }
+
   List<ClothingItemModel> parseResponse(String? text) {
     if (kDebugMode) {
       print("✅ Raw JSON Response: $text");
@@ -227,7 +276,31 @@ class HomeViewModel extends ChangeNotifier {
     try {
       final cleaned = text.replaceAll('```', '').replaceAll('json', '').replaceAll('null', '"${Constants.unknown}"');
       final List<dynamic> jsonList = json.decode(cleaned);
-      return jsonList.map((item) => ClothingItemModel.fromJson(item)).toList();
+
+      return jsonList.map((item) =>
+           ClothingItemModel.fromJson(item)
+      ).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ JSON Parse Error: $e");
+      }
+      return [];
+    }
+  }
+
+  List<ClothingItemModelExperimental> parseResponseExperimental(String? text) {
+    if (kDebugMode) {
+      print("✅ Raw JSON Response: $text");
+    }
+
+    if (text == null || text.trim().isEmpty) return [];
+    try {
+      final cleaned = text.replaceAll('```', '').replaceAll('json', '').replaceAll('null', '"${Constants.unknown}"');
+      final List<dynamic> jsonList = json.decode(cleaned);
+
+      return jsonList.map((item) =>
+          ClothingItemModelExperimental.fromJson(item)
+      ).toList();
     } catch (e) {
       if (kDebugMode) {
         print("❌ JSON Parse Error: $e");

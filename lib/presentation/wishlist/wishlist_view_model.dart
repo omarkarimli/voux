@@ -1,7 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../dao/clothing_item_dao.dart';
 import '../../models/clothing_item_floor_model.dart';
+import '../../utils/constants.dart';
+import '../../utils/extensions.dart';
 
 class WishlistViewModel extends ChangeNotifier {
   final ClothingItemDao clothingItemDao;
@@ -15,6 +19,8 @@ class WishlistViewModel extends ChangeNotifier {
   bool _isSelecting = false;
   bool get isSelecting => _isSelecting;
 
+  String localeLanguageCode = 'en';
+
   Future<void> loadWishlist() async {
     wishlistItems = await clothingItemDao.getAllClothingItemFloorModels();
 
@@ -25,7 +31,9 @@ class WishlistViewModel extends ChangeNotifier {
     _isSelecting = value;
     notifyListeners();
 
-    print("isSelecting: $_isSelecting");
+    if (kDebugMode) {
+      print("isSelecting: $_isSelecting");
+    }
   }
 
   Future<void> removeSelectedItems() async {
@@ -43,13 +51,13 @@ class WishlistViewModel extends ChangeNotifier {
       int numDeleteds = 0;
       for (var item in wishlistItems) {
         if (item.isSelected) {
-          await clothingItemDao.deleteClothingItemFloorModelByClothingItemModel(item.clothingItemModel);
+          await clothingItemDao.deleteClothingItemFloorModelByClothingItemModelBoth(item.clothingItemModelBoth);
           numDeleteds++;
         }
       }
 
       if (numDeleteds == 0) {
-        onError.call("No item was selected");
+        onError.call("No item was selected".tr());
         return;
       }
 
@@ -58,16 +66,17 @@ class WishlistViewModel extends ChangeNotifier {
       setBoolSelecting(false);
       removeSelectedItems();
 
-      onSuccess.call("$numDeleteds item${numDeleteds == 1 ? '' : 's'} deleted");
-
-      notifyListeners();
+      onSuccess.call("$numDeleteds ${"deleted".tr()}");
     } catch (e) {
       debugPrint("Error deleting selected items: $e");
-      onError.call("Error deleting selected items");
+      onError.call("Error deleting selected items".tr());
     }
+    notifyListeners();
   }
 
-  void copyToClipboard(String text) {
+  void copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
+    context.showCustomSnackBar(Constants.success, "Copied to clipboard".tr());
+    notifyListeners();
   }
 }

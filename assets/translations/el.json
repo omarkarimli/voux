@@ -63,8 +63,22 @@
   "No messages yet. Start the conversation!": "Δεν υπάρχουν μηνύματα ακόμα. Ξεκινήστε τη συνομιλία!",
   "Are you sure you want to clear the chat?": "Είστε σίγουροι ότι θέλετε να διαγράψετε τη συνομιλία;",
   "Ask Voux": "Ρώτησε το Voux",
-
   "Remove from Wishlist": "Αφαίρεση από τη Λίστα Επιθυμιών",
   "Add to Wishlist": "Προσθήκη στη Λίστα Επιθυμιών",
-  "Search in Web": "Αναζήτηση στο Διαδίκτυο"
+  "Search in Web": "Αναζήτηση στο Διαδίκτυο",
+
+  "Wishlist cleared": "Η λίστα επιθυμιών καθαρίστηκε",
+  "Error updating wishlist": "Σφάλμα κατά την ενημέρωση της λίστας επιθυμιών",
+  "Enable experimental features": "Ενεργοποίηση πειραματικών λειτουργιών",
+  "Added to wishlist": "Προστέθηκε στη λίστα επιθυμιών",
+  "Removed from wishlist": "Αφαιρέθηκε από τη λίστα επιθυμιών",
+  "Could not launch": "Αδυναμία εκκίνησης",
+  "Error deleting selected items": "Σφάλμα κατά τη διαγραφή επιλεγμένων στοιχείων",
+  "deleted": "διαγράφηκε",
+  "No item was selected": "Δεν επιλέχθηκε κανένα στοιχείο",
+  "Copied to clipboard": "Αντιγράφηκε στο πρόχειρο",
+  "API response was empty or null": "Η απόκριση API ήταν κενή ή null",
+  "Failed to analyze image": "Αποτυχία ανάλυσης εικόνας",
+  "Selecting": "Επιλογή",
+  "Are you sure you want to go external browser?": "Είστε σίγουροι ότι θέλετε να μεταβείτε σε εξωτερικό πρόγραμμα περιήγησης?"
 }

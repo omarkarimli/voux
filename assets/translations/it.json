@@ -63,8 +63,22 @@
   "No messages yet. Start the conversation!": "Nessun messaggio. Inizia la conversazione!",
   "Are you sure you want to clear the chat?": "Sei sicuro di voler cancellare la chat?",
   "Ask Voux": "Chiedi a Voux",
-
   "Remove from Wishlist": "Rimuovi dalla lista dei desideri",
   "Add to Wishlist": "Aggiungi alla lista dei desideri",
-  "Search in Web": "Cerca nel Web"
+  "Search in Web": "Cerca nel Web",
+
+  "Wishlist cleared": "Lista desideri svuotata",
+  "Error updating wishlist": "Errore durante l'aggiornamento della lista desideri",
+  "Enable experimental features": "Abilita funzionalità sperimentali",
+  "Added to wishlist": "Aggiunto alla lista desideri",
+  "Removed from wishlist": "Rimosso dalla lista desideri",
+  "Could not launch": "Impossibile avviare",
+  "Error deleting selected items": "Errore durante l'eliminazione degli elementi selezionati",
+  "deleted": "eliminato",
+  "No item was selected": "Nessun elemento selezionato",
+  "Copied to clipboard": "Copiato negli appunti",
+  "API response was empty or null": "La risposta dell'API era vuota o nulla",
+  "Failed to analyze image": "Analisi dell'immagine fallita",
+  "Selecting": "Selezione",
+  "Are you sure you want to go external browser?": "Sei sicuro di voler aprire il browser esterno?"
 }

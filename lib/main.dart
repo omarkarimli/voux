@@ -10,9 +10,7 @@ import 'presentation/auth/auth_view_model.dart';
 import 'presentation/wishlist/wishlist_view_model.dart';
 import 'presentation/detail/detail_view_model.dart';
 import 'presentation/home/home_view_model.dart';
-import 'presentation/privacyPolicy/privacy_policy_screen.dart';
 import 'presentation/wishlist/wishlist_screen.dart';
-import 'presentation/agreement/agreement_screen.dart';
 import 'presentation/settings/settings_screen.dart';
 import 'presentation/splash/splash_screen.dart';
 import 'presentation/success/success_screen.dart';
@@ -112,10 +110,6 @@ class MyApp extends StatelessWidget {
         return animTransitionRoute(const OnboardingScreen());
       case AuthScreen.routeName:
         return animTransitionRoute(const AuthScreen());
-      case PrivacyPolicyScreen.routeName:
-        return animTransitionRoute(const PrivacyPolicyScreen());
-      case AgreementScreen.routeName:
-        return animTransitionRoute(const AgreementScreen());
       case SettingsScreen.routeName:
         return animTransitionRoute(SettingsScreen());
       case UpgradeScreen.routeName:
