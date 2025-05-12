@@ -50,8 +50,8 @@ class _DetailScreenState extends State<DetailScreen> {
             children: [
               // Abstract
               Positioned(
-                top: 0,
-                right: 0,
+                top: 288,
+                right: -64,
                 child: Image.asset(
                   width: 332,
                   height: 332,

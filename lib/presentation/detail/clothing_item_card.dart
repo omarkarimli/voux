@@ -177,6 +177,89 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
     );
   }
 
+  Widget imageSamples(DetailViewModel vm, String details) {
+    return FutureBuilder<List<Map<String, String>>>(
+      future: vm.fetchGoogleImages(details),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CupertinoActivityIndicator(
+              radius: 20.0,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          );
+        } else if (snapshot.hasError) {
+          if (kDebugMode) {
+            print('Error: ${snapshot.error}');
+          }
+          return SizedBox.shrink();
+        } else if (snapshot.hasData) {
+          final results = snapshot.data!;
+          return results.isNotEmpty
+              ? ClipRRect(
+            borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+            clipBehavior: Constants.clipBehaviour,
+            child: AspectRatio(
+              aspectRatio: 3 / 2, // Optional: keep a consistent image ratio
+              child: PageView.builder(
+                controller: PageController(),
+                itemCount: results.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final result = results[index];
+                  return GestureDetector(
+                    onDoubleTap: () => openLink(context, result['productUrl']!),
+                    child: Stack(
+                      children: [
+                        Image.network(
+                          result['imageUrl']!,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          // alignment: Alignment.topCenter, // top-covered
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                                bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                              ),
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                            child: IconButton(
+                              onPressed: () => showFullScreenImage(context, result['imageUrl']!),
+                              padding: const EdgeInsets.only(top: 16, left: 16),
+                              icon: Image.asset(
+                                "assets/images/expand.png",
+                                color: Theme.of(context).colorScheme.onSurface,
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          )
+              : SizedBox.shrink();
+        } else {
+          if (kDebugMode) {
+            print('No images found');
+          }
+          return SizedBox.shrink();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = widget.vm;
@@ -263,83 +346,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                       ),
                       child: Column(
                         children: [
-                          FutureBuilder<List<Map<String, String>>>(
-                            future: vm.fetchGoogleImages(details), // Fetch images with links
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(
-                                    child: CupertinoActivityIndicator(
-                                        radius: 20.0,
-                                        color: Theme.of(context).colorScheme.primary
-                                    )
-                                );
-                              } else if (snapshot.hasError) {
-                                if (kDebugMode) {
-                                  print('Error: ${snapshot.error}');
-                                }
-                                return SizedBox.shrink();
-                              } else if (snapshot.hasData) {
-                                final results = snapshot.data!;
-                                return results.isNotEmpty ? Container(
-                                  height: 96,
-                                  clipBehavior: Constants.clipBehaviour,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                                  ),
-                                  child: PageView.builder(
-                                    controller: PageController(),
-                                    itemCount: results.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (context, index) {
-                                      final result = results[index];
-                                      return GestureDetector(
-                                        onDoubleTap: () => openLink(context, result['productUrl']!),
-                                        child: Stack(
-                                          children: [
-                                            Image.network(
-                                              result['imageUrl']!,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Positioned(
-                                                bottom: 0,
-                                                right: 0,
-                                                child: Container(
-                                                  width: 36,
-                                                  height: 36,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                                      bottomRight: Radius.circular(Constants.cornerRadiusMedium),
-                                                    ),
-                                                    color: Theme.of(context).colorScheme.surface,
-                                                  ),
-                                                  child: IconButton(
-                                                      onPressed: () => showFullScreenImage(context, result['imageUrl']!),
-                                                      padding: EdgeInsets.only(top: 16, left: 16),
-                                                      icon: Image.asset(
-                                                          "assets/images/expand.png",
-                                                          color: Theme.of(context).colorScheme.onSurface,
-                                                          width: 24,
-                                                          height: 24,
-                                                      )
-                                                  ),
-                                                )
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ) : SizedBox.shrink();
-                              } else {
-                                if (kDebugMode) {
-                                  print('No images found');
-                                }
-                                return SizedBox.shrink();
-                              }
-                            },
-                          ),
+                          imageSamples(vm, details),
                           SizedBox(height: 16),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 4),

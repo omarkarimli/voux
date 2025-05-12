@@ -198,6 +198,102 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
     ) : SizedBox.shrink();
   }
 
+  Widget imageSamples() {
+    return widget.item.googleResults.isNotEmpty
+        ? ClipRRect(
+      borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+      clipBehavior: Constants.clipBehaviour,
+      child: AspectRatio(
+        aspectRatio: 4 / 3, // Optional: keep consistent image ratio
+        child: PageView.builder(
+          controller: PageController(),
+          itemCount: widget.item.googleResults.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            final result = widget.item.googleResults[index];
+            return GestureDetector(
+              onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
+              child: Stack(
+                children: [
+                  Image.network(
+                    result['imageUrl']!,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                          bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                        ),
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                      child: IconButton(
+                        onPressed: () => showFullScreenImage(context, result['imageUrl']!, true),
+                        padding: const EdgeInsets.only(top: 16, left: 16),
+                        icon: Image.asset(
+                          "assets/images/expand.png",
+                          color: Theme.of(context).colorScheme.onSurface,
+                          width: 24,
+                          height: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    )
+        : GestureDetector(
+      onTap: () => showFullScreenImage(context, widget.imagePath, false),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
+        clipBehavior: Constants.clipBehaviour,
+        child: Stack(
+          children: [
+            Image.file(
+              File(widget.imagePath),
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(Constants.cornerRadiusMedium),
+                    bottomRight: Radius.circular(Constants.cornerRadiusMedium),
+                  ),
+                  color: Theme.of(context).colorScheme.surface,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16),
+                  child: Image.asset(
+                    "assets/images/expand.png",
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -246,8 +342,9 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
                       boxShadow: [
                         BoxShadow(
                             color: Theme.of(context).colorScheme.onSurface.withAlpha(50),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3)
+                            blurRadius: 3,
+                            blurStyle: BlurStyle.outer,
+                            offset: const Offset(3, 3)
                         )
                       ],
                       // Animated border
@@ -319,102 +416,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
                                     ),
                                     child: Column(
                                       children: [
-                                        widget.item.googleResults.isNotEmpty
-                                            ? Container(
-                                          height: 96,
-                                          clipBehavior: Constants.clipBehaviour,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                                          ),
-                                          child: PageView.builder(
-                                            controller: PageController(),
-                                            itemCount: widget.item.googleResults.length,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (context, index) {
-                                              final result = widget.item.googleResults[index];
-                                              return GestureDetector(
-                                                onDoubleTap: () => goToProductWebPageInBrowser(context, result['productUrl']!),
-                                                child: Stack(
-                                                  children: [
-                                                    Image.network(
-                                                      result['imageUrl']!,
-                                                      width: double.infinity,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                    Positioned(
-                                                        bottom: 0,
-                                                        right: 0,
-                                                        child: Container(
-                                                          width: 36,
-                                                          height: 36,
-                                                          decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.only(
-                                                              topLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                                              bottomRight: Radius.circular(Constants.cornerRadiusMedium),
-                                                            ),
-                                                            color: Theme.of(context).colorScheme.surface,
-                                                          ),
-                                                          child: IconButton(
-                                                              onPressed: () => showFullScreenImage(context, result['imageUrl']!, true),
-                                                              padding: EdgeInsets.only(top: 16, left: 16),
-                                                              icon: Image.asset(
-                                                                "assets/images/expand.png",
-                                                                color: Theme.of(context).colorScheme.onSurface,
-                                                                width: 24,
-                                                                height: 24,
-                                                              )
-                                                          ),
-                                                        )
-                                                    )
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        )
-                                            : GestureDetector(
-                                            onTap: () => showFullScreenImage(context, widget.imagePath, false),
-                                            child: Container(
-                                                height: 96,
-                                                clipBehavior: Constants.clipBehaviour,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),
-                                                ),
-                                                child: Stack(
-                                                  children: [
-                                                    Image.file(
-                                                      File(widget.imagePath),
-                                                      width: double.infinity,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                    Positioned(
-                                                        bottom: 0,
-                                                        right: 0,
-                                                        child: Container(
-                                                          width: 36,
-                                                          height: 36,
-                                                          decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.only(
-                                                              topLeft: Radius.circular(Constants.cornerRadiusMedium),
-                                                              bottomRight: Radius.circular(Constants.cornerRadiusMedium),
-                                                            ),
-                                                            color: Theme.of(context).colorScheme.surface,
-                                                          ),
-                                                          child: Padding(
-                                                              padding: EdgeInsets.only(top: 16, left: 16),
-                                                              child: Image.asset(
-                                                                "assets/images/expand.png",
-                                                                color: Theme.of(context).colorScheme.onSurface,
-                                                                width: 24,
-                                                                height: 24,
-                                                              )
-                                                          ),
-                                                        )
-                                                    )
-                                                  ],
-                                                )
-                                            )
-                                        ),
+                                        imageSamples(),
                                         SizedBox(height: 16),
                                         Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 4),

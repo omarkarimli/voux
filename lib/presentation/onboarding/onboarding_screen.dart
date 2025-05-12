@@ -28,12 +28,12 @@ class OnboardingScreen extends StatelessWidget {
               blendMode: BlendMode.dstIn,
               child: Image.asset(
                 "assets/images/onboarding.png",
-                height: 512,
+                height: 384,
                 fit: BoxFit.cover,
                 width: double.infinity,
               ),
             ),
-            SizedBox(height: 42),
+            SizedBox(height: 64),
             Image.asset(
                 'assets/images/logo_light.png',
                 width: 96,
