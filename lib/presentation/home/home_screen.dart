@@ -146,8 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 )
                               ),
-                              TextSpan(text: "${"dear".tr()}\n"),
-                              TextSpan(text: "${"I hope you are".tr()}\n"),
+                              TextSpan(text: "\n${"I hope you are".tr()} "),
                               TextSpan(text: "doing well".tr(), style: TextStyle(fontWeight: FontWeight.w600)),
                             ],
                           ),
@@ -240,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (!vm.isLoading && vm.canAnalyze()) {
                           showImageSourceSheet(context, vm);
                         } else {
-                          context.showCustomSnackBar("Limit reached".tr(), "You have reached limit. Upgrade to continue.".tr());
+                          context.showCustomSnackBar(Constants.error, "You have reached limit. Upgrade to continue.".tr());
                         }
                       },
                     ),

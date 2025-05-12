@@ -51,7 +51,7 @@
   "Subscription plan": "सदस्यता योजना",
   "not found.": "नहीं मिला।",
   "Successfully subscribed to": "सफलतापूर्वक सदस्यता ली गई",
-  "No items in wishlist": "इच्छा सूची में कोई आइटम नहीं,",
+  "No items in wishlist": "इच्छा सूची में कोई आइटम नहीं",
   "Wishlist": "इच्छा सूची",
   "Report Issue": "समस्या रिपोर्ट करें",
   "Enter your report reason...": "अपनी रिपोर्ट का कारण दर्ज करें...",
@@ -65,7 +65,6 @@
   "Remove from Wishlist": "विशलिस्ट से हटाएं",
   "Add to Wishlist": "विशलिस्ट में जोड़ें",
   "Search in Web": "वेब में खोजें",
-
   "Wishlist cleared": "विशलिस्ट साफ़ की गई",
   "Error updating wishlist": "विशलिस्ट अपडेट करने में त्रुटि",
   "Enable experimental features": "प्रायोगिक सुविधाएँ सक्षम करें",

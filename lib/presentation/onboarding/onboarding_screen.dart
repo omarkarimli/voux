@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../auth/auth_screen.dart';
@@ -15,8 +16,24 @@ class OnboardingScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.asset('assets/images/collage.png', width: MediaQuery.of(context).size.width, fit: BoxFit.cover),
-            SizedBox(height: 32),
+            ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.surface,
+                  Colors.transparent
+                ],
+                begin: Alignment.center,
+                end: Alignment.bottomCenter,
+              ).createShader(bounds),
+              blendMode: BlendMode.dstIn,
+              child: Image.asset(
+                "assets/images/onboarding.png",
+                height: 512,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+            ),
+            SizedBox(height: 42),
             Image.asset(
                 'assets/images/logo_light.png',
                 width: 96,
@@ -60,7 +77,9 @@ class OnboardingScreen extends StatelessWidget {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             // TODO: Open Terms of Service page
-                            print("Terms of Service clicked!");
+                            if (kDebugMode) {
+                              print("Terms of Service clicked!");
+                            }
                           }
                     ),
                     TextSpan(text: "and "),
@@ -69,7 +88,9 @@ class OnboardingScreen extends StatelessWidget {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             // TODO: Open Privacy Policy page
-                            print("Privacy Policy clicked!");
+                            if (kDebugMode) {
+                              print("Privacy Policy clicked!");
+                            }
                           }
                     ),
                   ],

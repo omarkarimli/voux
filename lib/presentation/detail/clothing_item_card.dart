@@ -349,7 +349,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    details.translatedText(
+                                    details.translatedSelectableText(
                                       context,
                                       localeLanguageCode: vm.localeLanguageCode,
                                       style: Theme.of(context).textTheme.titleLarge,
@@ -367,7 +367,7 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
                                                   children: [
                                                     if (colorHexCode != Constants.unknown) ...[
                                                       GestureDetector(
-                                                          onTap: () => vm.copyToClipboard(context, colorHexCode),
+                                                          onDoubleTap: () => vm.copyToClipboard(context, colorHexCode),
                                                           child: Container(
                                                               clipBehavior: Constants.clipBehaviour,
                                                               decoration: BoxDecoration(

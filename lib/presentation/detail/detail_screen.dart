@@ -26,11 +26,17 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   late final DetailViewModel viewModel;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    viewModel = DetailViewModel(clothingItemBoths: widget.clothingItemBoths)..initialize();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_initialized) {
+      viewModel = DetailViewModel(clothingItemBoths: widget.clothingItemBoths);
+      viewModel.initialize(context);
+      _initialized = true;
+    }
   }
 
   @override

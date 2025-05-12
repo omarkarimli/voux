@@ -51,7 +51,7 @@
   "Subscription plan": "Abonelik planı",
   "not found.": "bulunamadı.",
   "Successfully subscribed to": "Başarıyla abone olundu",
-  "No items in wishlist": "İstek listesinde hiçbir öğe yok,",
+  "No items in wishlist": "İstek listesinde hiçbir öğe yok",
   "Wishlist": "İstek Listesi",
   "Report Issue": "Sorun Bildir",
   "Enter your report reason...": "Rapor nedeninizi girin...",
@@ -65,7 +65,6 @@
   "Remove from Wishlist": "İstek listesinden kaldır",
   "Add to Wishlist": "İstek listesine ekle",
   "Search in Web": "Web'de ara",
-
   "Wishlist cleared": "İstek listesi temizlendi",
   "Error updating wishlist": "İstek listesi güncellenirken hata",
   "Enable experimental features": "Deneysel özellikleri etkinleştir",

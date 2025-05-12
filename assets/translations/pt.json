@@ -51,7 +51,7 @@
   "Subscription plan": "Plano de assinatura",
   "not found.": "não encontrado.",
   "Successfully subscribed to": "Assinatura realizada com sucesso em",
-  "No items in wishlist": "Nenhum item na lista de desejos,",
+  "No items in wishlist": "Nenhum item na lista de desejos",
   "Wishlist": "Lista de Desejos",
   "Report Issue": "Relatar Problema",
   "Enter your report reason...": "Digite o motivo do seu relatório...",
@@ -65,7 +65,6 @@
   "Remove from Wishlist": "Remover da lista de desejos",
   "Add to Wishlist": "Adicionar à lista de desejos",
   "Search in Web": "Pesquisar na web",
-
   "Wishlist cleared": "Lista de desejos limpa",
   "Error updating wishlist": "Erro ao atualizar lista de desejos",
   "Enable experimental features": "Ativar recursos experimentais",

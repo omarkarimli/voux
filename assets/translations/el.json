@@ -52,7 +52,7 @@
   "Subscription plan": "Πλάνο συνδρομής",
   "not found.": "δεν βρέθηκε.",
   "Successfully subscribed to": "Επιτυχής εγγραφή στο",
-  "No items in wishlist": "Δεν υπάρχουν αντικείμενα στη λίστα επιθυμιών",
+  "No items in wishlist": "Δεν υπάρχουν στοιχεία στη λίστα επιθυμιών",
   "Wishlist": "Λίστα επιθυμιών",
   "Report Issue": "Αναφορά προβλήματος",
   "Enter your report reason...": "Εισαγάγετε τον λόγο αναφοράς...",
@@ -66,7 +66,6 @@
   "Remove from Wishlist": "Αφαίρεση από τη Λίστα Επιθυμιών",
   "Add to Wishlist": "Προσθήκη στη Λίστα Επιθυμιών",
   "Search in Web": "Αναζήτηση στο Διαδίκτυο",
-
   "Wishlist cleared": "Η λίστα επιθυμιών καθαρίστηκε",
   "Error updating wishlist": "Σφάλμα κατά την ενημέρωση της λίστας επιθυμιών",
   "Enable experimental features": "Ενεργοποίηση πειραματικών λειτουργιών",

@@ -51,7 +51,7 @@
   "Subscription plan": "Paket langganan",
   "not found.": "tidak ditemukan.",
   "Successfully subscribed to": "Berhasil berlangganan",
-  "No items in wishlist": "Tidak ada item dalam daftar keinginan,",
+  "No items in wishlist": "Tidak ada item dalam daftar keinginan",
   "Wishlist": "Daftar Keinginan",
   "Report Issue": "Laporkan Masalah",
   "Enter your report reason...": "Masukkan alasan laporan Anda...",
@@ -65,7 +65,6 @@
   "Remove from Wishlist": "Hapus dari Daftar Keinginan",
   "Add to Wishlist": "Tambahkan ke Daftar Keinginan",
   "Search in Web": "Cari di Web",
-
   "Wishlist cleared": "Daftar keinginan dikosongkan",
   "Error updating wishlist": "Gagal memperbarui daftar keinginan",
   "Enable experimental features": "Aktifkan fitur eksperimental",

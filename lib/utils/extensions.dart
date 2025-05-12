@@ -1,9 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:translator/translator.dart';
-import 'package:voux/utils/translation_cache.dart';
-
+import '../utils/translation_cache.dart';
 import '../di/locator.dart';
 import 'constants.dart';
 
@@ -159,7 +157,7 @@ extension PriceFormatting on String {
 }
 
 extension TranslationExtension on String {
-  Widget translatedText(
+  Widget translatedSelectableText(
       BuildContext context, {
         required String localeLanguageCode,
         TextStyle? style,
@@ -189,6 +187,40 @@ extension TranslationExtension on String {
         }
         // Fallback to original text while loading or on error
         return SelectableText(this, style: style);
+      },
+    );
+  }
+
+  Widget translatedText(
+      BuildContext context, {
+        required String localeLanguageCode,
+        TextStyle? style,
+      }) {
+    // Access services via locator
+    final translationCache = locator<TranslationCache>();
+    final translator = locator<GoogleTranslator>();
+
+    if (localeLanguageCode == "en") {
+      return Text(this, style: style);
+    }
+
+    // Check cache first
+    final cachedTranslation = translationCache.get(this, localeLanguageCode);
+    if (cachedTranslation != null) {
+      return Text(cachedTranslation, style: style);
+    }
+
+    // If not in cache, fetch and cache
+    return FutureBuilder<Translation>(
+      future: translator.translate(this, from: 'en', to: localeLanguageCode),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          // Cache the new translation
+          translationCache.set(this, localeLanguageCode, snapshot.data!.text);
+          return Text(snapshot.data!.text, style: style);
+        }
+        // Fallback to original text while loading or on error
+        return Text(this, style: style);
       },
     );
   }

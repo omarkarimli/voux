@@ -51,7 +51,7 @@
   "Subscription plan": "サブスクリプションプラン",
   "not found.": "見つかりません。",
   "Successfully subscribed to": "正常にサブスクライブしました",
-  "No items in wishlist": "ウィッシュリストにアイテムがありません,",
+  "No items in wishlist": "ウィッシュリストにアイテムがありません",
   "Wishlist": "ウィッシュリスト",
   "Report Issue": "問題を報告",
   "Enter your report reason...": "報告理由を入力してください...",
@@ -65,7 +65,6 @@
   "Remove from Wishlist": "ウィッシュリストから削除",
   "Add to Wishlist": "ウィッシュリストに追加",
   "Search in Web": "ウェブで検索",
-
   "Wishlist cleared": "ウィッシュリストをクリアしました",
   "Error updating wishlist": "ウィッシュリストの更新エラー",
   "Enable experimental features": "実験的機能を有効にする",

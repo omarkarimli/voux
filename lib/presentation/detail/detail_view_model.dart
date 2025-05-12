@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -22,10 +23,10 @@ class DetailViewModel extends ChangeNotifier {
   bool enableExperimentalFeatures = false;
   String localeLanguageCode = 'en';
 
-  void initialize() {
+  void initialize(BuildContext context) {
     enableExperimentalFeatures = locator<SharedPreferences>().getBool(Constants.enableExperimentalFeatures) ?? false;
 
-    localeLanguageCode = locator<SharedPreferences>().getString(Constants.language) ?? 'en';
+    localeLanguageCode = context.locale.languageCode;
 
     calculateTotalPrice();
   }
@@ -94,7 +95,7 @@ class DetailViewModel extends ChangeNotifier {
 
   void copyToClipboard(BuildContext context, String text) async{
     Clipboard.setData(ClipboardData(text: text));
-    context.showCustomSnackBar(Constants.success, "Copied to clipboard");
+    context.showCustomSnackBar(Constants.success, "Copied to clipboard".tr());
     notifyListeners();
   }
 }

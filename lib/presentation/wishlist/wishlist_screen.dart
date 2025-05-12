@@ -1,14 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voux/presentation/wishlist/clothing_item_wishlist_card.dart';
-import 'package:voux/presentation/wishlist/wishlist_more_bottom_sheet.dart';
-import 'package:voux/utils/extensions.dart';
-import '../../di/locator.dart';
 import '../home/home_screen.dart';
 import '../wishlist/wishlist_view_model.dart';
+import '../wishlist/clothing_item_wishlist_card.dart';
+import '../wishlist/wishlist_more_bottom_sheet.dart';
+import '../../utils/extensions.dart';
 import '../../utils/constants.dart';
 
 class WishlistScreen extends StatefulWidget {
@@ -30,7 +27,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
     if (!initialized) {
       vm = Provider.of<WishlistViewModel>(context, listen: false); // on true, don't work checkbox
-      vm.localeLanguageCode = locator<SharedPreferences>().getString(Constants.language) ?? 'en';
+      vm.localeLanguageCode = context.locale.languageCode;
 
       initialized = true;
     }

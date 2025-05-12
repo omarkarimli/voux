@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -43,7 +44,9 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
   void initState() {
     super.initState();
 
-    print(widget.item.clothingItemModelBoth.clothingItemModel?.price);
+    if (kDebugMode) {
+      print(widget.item.clothingItemModelBoth.clothingItemModel?.price);
+    }
 
     enableExperimentalFeatures = locator<SharedPreferences>().getBool(Constants.enableExperimentalFeatures) ?? false;
 
@@ -62,7 +65,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
         : item.clothingItemModelBoth.clothingItemModel?.toDetailString(widget.optionalAnalysisResult)
         ?? (item.clothingItemModelBoth.clothingItemModel?.name ?? Constants.unknown);
 
-    return details != Constants.unknown ? details.translatedText(
+    return details != Constants.unknown ? details.translatedSelectableText(
       context,
       localeLanguageCode: widget.vm.localeLanguageCode,
       style: Theme.of(context).textTheme.titleLarge,
@@ -169,7 +172,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
         ?? Constants.unknown;
 
     return colorName != Constants.unknown ? GestureDetector(
-        onTap: () {
+        onDoubleTap: () {
           widget.vm.copyToClipboard(widget.parentContext, colorHexCode);
         },
         child: Container(
@@ -474,7 +477,9 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
   // Show source selection sheet
   void showStorePicker(BuildContext context, List<StoreModel> modelList) {
     for (var model in modelList) {
-      print('Store Name: ${model.name}, Price: ${model.price}');
+      if (kDebugMode) {
+        print('Store Name: ${model.name}, Price: ${model.price}');
+      }
     }
     List<String> list = modelList.map((e) => e.name).toList();
 
