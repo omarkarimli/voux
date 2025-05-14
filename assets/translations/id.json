@@ -78,5 +78,10 @@
   "API response was empty or null": "Respons API kosong atau null",
   "Failed to analyze image": "Gagal menganalisis gambar",
   "Selecting": "Memilih",
-  "Are you sure you want to go external browser?": "Apakah Anda yakin ingin membuka browser eksternal?"
+  "Are you sure you want to go external browser?": "Apakah Anda yakin ingin membuka browser eksternal?",
+  "History": "Riwayat",
+  "No items in history": "Tidak ada item dalam riwayat",
+  "Are you sure you want to clear the history?": "Apakah Anda yakin ingin menghapus riwayat?",
+  "History cleared": "Riwayat telah dihapus",
+  "Error updating history": "Gagal memperbarui riwayat"
 }

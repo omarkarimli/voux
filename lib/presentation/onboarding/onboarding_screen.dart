@@ -1,13 +1,22 @@
-import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../auth/auth_screen.dart';
 import '../../utils/constants.dart';
+import '../../utils/extensions.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
   static const routeName = '/${Constants.onboarding}';
+
+  Future<void> openLink(BuildContext context, String url) async {
+    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      context.showCustomSnackBar(Constants.error, "Could not launch".tr());
+      throw Exception('Could not launch $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,24 +25,20 @@ class OnboardingScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ShaderMask(
-              shaderCallback: (bounds) => LinearGradient(
-                colors: [
-                  Theme.of(context).colorScheme.surface,
-                  Colors.transparent
-                ],
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-              ).createShader(bounds),
-              blendMode: BlendMode.dstIn,
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(Constants.cornerRadiusLarge),
+                bottomRight: Radius.circular(Constants.cornerRadiusLarge),
+              ),
               child: Image.asset(
                 "assets/images/onboarding.png",
-                height: 384,
+                width: MediaQuery.of(context).size.width,
+                height: 422,
                 fit: BoxFit.cover,
-                width: double.infinity,
+                alignment: Alignment.topCenter
               ),
             ),
-            SizedBox(height: 64),
+            SizedBox(height: 48),
             Image.asset(
                 'assets/images/logo_light.png',
                 width: 96,
@@ -75,23 +80,13 @@ class OnboardingScreen extends StatelessWidget {
                     TextSpan(text: "Terms of Service ",
                         style: TextStyle(color: Colors.blue),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            // TODO: Open Terms of Service page
-                            if (kDebugMode) {
-                              print("Terms of Service clicked!");
-                            }
-                          }
+                          ..onTap = () => openLink(context, "https://google.com")
                     ),
                     TextSpan(text: "and "),
                     TextSpan(text: "Privacy Policy",
                         style: TextStyle(color: Colors.blue),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            // TODO: Open Privacy Policy page
-                            if (kDebugMode) {
-                              print("Privacy Policy clicked!");
-                            }
-                          }
+                          ..onTap = () => openLink(context, "https://google.com")
                     ),
                   ],
                 ),

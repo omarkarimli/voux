@@ -80,5 +80,10 @@
   "API response was empty or null": "API রেসপন্স খালি বা null ছিল",
   "Failed to analyze image": "ছবি বিশ্লেষণ করতে ব্যর্থ",
   "Selecting": "নির্বাচন করা হচ্ছে",
-  "Are you sure you want to go external browser?": "আপনি কি নিশ্চিতভাবে বাহ্যিক ব্রাউজারে যেতে চান?"
+  "Are you sure you want to go external browser?": "আপনি কি নিশ্চিতভাবে বাহ্যিক ব্রাউজারে যেতে চান?",
+  "History": "ইতিহাস",
+  "No items in history": "ইতিহাসে কোন আইটেম নেই",
+  "Are you sure you want to clear the history?": "আপনি কি নিশ্চিতভাবে ইতিহাস পরিষ্কার করতে চান?",
+  "History cleared": "ইতিহাস পরিষ্কার করা হয়েছে",
+  "Error updating history": "ইতিহাস আপডেট করতে ত্রুটি"
 }

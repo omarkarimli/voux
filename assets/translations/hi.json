@@ -78,5 +78,10 @@
   "API response was empty or null": "API प्रतिक्रिया खाली या नल थी",
   "Failed to analyze image": "छवि विश्लेषण विफल",
   "Selecting": "चयन कर रहा है",
-  "Are you sure you want to go external browser?": "क्या आप वाकई बाहरी ब्राउज़र पर जाना चाहते हैं?"
+  "Are you sure you want to go external browser?": "क्या आप वाकई बाहरी ब्राउज़र पर जाना चाहते हैं?",
+  "History": "इतिहास",
+  "No items in history": "इतिहास में कोई आइटम नहीं",
+  "Are you sure you want to clear the history?": "क्या आप वाकई इतिहास साफ़ करना चाहते हैं?",
+  "History cleared": "इतिहास साफ़ हो गया",
+  "Error updating history": "इतिहास अपडेट करने में त्रुटि"
 }

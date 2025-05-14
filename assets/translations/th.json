@@ -78,5 +78,10 @@
   "API response was empty or null": "การตอบสนองของ API ว่างเปล่าหรือ null",
   "Failed to analyze image": "ไม่สามารถวิเคราะห์ภาพได้",
   "Selecting": "กำลังเลือก",
-  "Are you sure you want to go external browser?": "คุณแน่ใจหรือไม่ว่าต้องการไปที่เบราว์เซอร์ภายนอก?"
+  "Are you sure you want to go external browser?": "คุณแน่ใจหรือไม่ว่าต้องการไปที่เบราว์เซอร์ภายนอก?",
+  "History": "ประวัติ",
+  "No items in history": "ไม่มีรายการในประวัติ",
+  "Are you sure you want to clear the history?": "คุณแน่ใจหรือไม่ว่าต้องการล้างประวัติ?",
+  "History cleared": "ล้างประวัติแล้ว",
+  "Error updating history": "เกิดข้อผิดพลาดในการอัปเดตประวัติ"
 }

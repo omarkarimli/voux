@@ -79,5 +79,11 @@
   "API response was empty or null": "API response was empty or null",
   "Failed to analyze image": "Failed to analyze image",
   "Selecting": "Selecting",
-  "Are you sure you want to go external browser?": "Are you sure you want to go external browser?"
+  "Are you sure you want to go external browser?": "Are you sure you want to go external browser?",
+
+  "History": "History",
+  "No items in history": "No items in history",
+  "Are you sure you want to clear the history?": "Are you sure you want to clear the history?",
+  "History cleared": "History cleared",
+  "Error updating history": "Error updating history"
 }

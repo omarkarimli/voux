@@ -78,5 +78,10 @@
   "API response was empty or null": "كان رد API فارغًا أو غير موجود",
   "Failed to analyze image": "فشل تحليل الصورة",
   "Selecting": "تحديد",
-  "Are you sure you want to go external browser?": "هل أنت متأكد أنك تريد الانتقال إلى متصفح خارجي؟"
+  "Are you sure you want to go external browser?": "هل أنت متأكد أنك تريد الانتقال إلى متصفح خارجي؟",
+  "History": "السجل",
+  "No items in history": "لا توجد عناصر في السجل",
+  "Are you sure you want to clear the history?": "هل أنت متأكد أنك تريد مسح السجل؟",
+  "History cleared": "تم مسح السجل",
+  "Error updating history": "خطأ في تحديث السجل"
 }

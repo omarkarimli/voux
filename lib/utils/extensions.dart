@@ -143,19 +143,6 @@ extension StyledTextExtension on String {
   }
 }
 
-extension PriceFormatting on String {
-  String toFormattedPrice() {
-    // Check if the string contains a decimal point
-    if (contains('.') && split('.')[1] == '00') {
-      // If the decimal part is .00, remove it
-      return "\$${split('.')[0]}";
-    } else {
-      // Otherwise, keep the original string
-      return "\$$this";
-    }
-  }
-}
-
 extension TranslationExtension on String {
   Widget translatedSelectableText(
       BuildContext context, {

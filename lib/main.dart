@@ -6,6 +6,8 @@ import 'di/locator.dart';
 import 'theme/theme_util.dart';
 import 'theme/theme.dart';
 import 'utils/constants.dart';
+import 'presentation/history/history_screen.dart';
+import 'presentation/history/history_view_model.dart';
 import 'presentation/auth/auth_view_model.dart';
 import 'presentation/wishlist/wishlist_view_model.dart';
 import 'presentation/detail/detail_view_model.dart';
@@ -81,10 +83,12 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => locator<HomeViewModel>()),
             ChangeNotifierProvider(create: (_) => locator<DetailViewModel>()),
             ChangeNotifierProvider(create: (_) => locator<WishlistViewModel>()),
+            ChangeNotifierProvider(create: (_) => locator<HistoryViewModel>()),
             ChangeNotifierProvider(create: (_) => locator<AuthViewModel>()),
             // Add more providers here if necessary
           ],
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: Constants.appName,
             theme: theme.light(),
             darkTheme: theme.dark(),
@@ -118,6 +122,8 @@ class MyApp extends StatelessWidget {
         return animTransitionRoute(SuccessScreen());
       case WishlistScreen.routeName:
         return animTransitionRoute(WishlistScreen());
+      case HistoryScreen.routeName:
+        return animTransitionRoute(HistoryScreen());
       default:
         return null;
     }

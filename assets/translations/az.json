@@ -78,5 +78,10 @@
   "API response was empty or null": "API cavabı boş və ya null idi",
   "Failed to analyze image": "Şəkli təhlil etmək mümkün olmadı",
   "Selecting": "Seçim",
-  "Are you sure you want to go external browser?": "Xarici brauzerə keçmək istədiyinizə əminsiniz?"
+  "Are you sure you want to go external browser?": "Xarici brauzerə keçmək istədiyinizə əminsiniz?",
+  "History": "Tarixçə",
+  "No items in history": "Tarixçədə heç bir element yoxdur",
+  "Are you sure you want to clear the history?": "Tarixçəni təmizləmək istədiyinizə əminsiniz?",
+  "History cleared": "Tarixçə təmizləndi",
+  "Error updating history": "Tarixçəni yeniləmə xətası"
 }

@@ -4,9 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translator/translator.dart';
+import 'package:voux/dao/clothing_item_history_dao.dart';
+import 'package:voux/db/history_database.dart';
 
 import '../presentation/auth/auth_view_model.dart';
 import '../presentation/detail/detail_view_model.dart';
+import '../presentation/history/history_view_model.dart';
 import '../presentation/reusables/more_bottom_sheet_view_model.dart';
 import '../dao/clothing_item_dao.dart';
 import '../db/database.dart';
@@ -21,8 +24,14 @@ Future<void> setupLocator() async {
   final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   locator.registerLazySingleton(() => database);
 
+  final historyDatabase = await $FloorHistoryAppDatabase.databaseBuilder('history_database.db').build();
+  locator.registerLazySingleton(() => historyDatabase);
+
   final clothingItemDao = database.clothingItemDao;
   locator.registerLazySingleton(() => clothingItemDao);
+
+  final clothingItemHistoryDao = historyDatabase.clothingItemHistoryDao;
+  locator.registerLazySingleton(() => clothingItemHistoryDao);
 
   final prefs = await SharedPreferences.getInstance();
   locator.registerLazySingleton(() => prefs);
@@ -60,5 +69,9 @@ Future<void> setupLocator() async {
 
   locator.registerFactory(() => WishlistViewModel(
       clothingItemDao: locator<ClothingItemDao>()
+  ));
+
+  locator.registerFactory(() => HistoryViewModel(
+      clothingItemHistoryDao: locator<ClothingItemHistoryDao>()
   ));
 }

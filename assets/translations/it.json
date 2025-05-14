@@ -79,5 +79,10 @@
   "API response was empty or null": "La risposta dell'API era vuota o nulla",
   "Failed to analyze image": "Analisi dell'immagine fallita",
   "Selecting": "Selezione",
-  "Are you sure you want to go external browser?": "Sei sicuro di voler aprire il browser esterno?"
+  "Are you sure you want to go external browser?": "Sei sicuro di voler aprire il browser esterno?",
+  "History": "Cronologia",
+  "No items in history": "Nessun elemento nella cronologia",
+  "Are you sure you want to clear the history?": "Sei sicuro di voler cancellare la cronologia?",
+  "History cleared": "Cronologia cancellata",
+  "Error updating history": "Errore durante l'aggiornamento della cronologia"
 }

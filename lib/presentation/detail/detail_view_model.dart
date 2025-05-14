@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voux/dao/clothing_item_history_dao.dart';
+import '../../models/clothing_item_floor_model.dart';
 import '../../models/clothing_item_model_both.dart';
 import '../../di/locator.dart';
 import '../../utils/constants.dart';
@@ -25,7 +27,6 @@ class DetailViewModel extends ChangeNotifier {
 
   void initialize(BuildContext context) {
     enableExperimentalFeatures = locator<SharedPreferences>().getBool(Constants.enableExperimentalFeatures) ?? false;
-
     localeLanguageCode = context.locale.languageCode;
 
     calculateTotalPrice();

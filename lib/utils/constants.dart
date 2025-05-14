@@ -1,6 +1,21 @@
 import 'dart:ui';
 
 class Constants {
+  // Pages
+  static const String appName = "Voux";
+  static const String splash = "splash";
+  static const String onboarding = "onboarding";
+  static const String home = "home";
+  static const String detail = "detail";
+  static const String auth = "auth";
+  static const String privacyPolicy = "privacyPolicy";
+  static const String agreement = "agreement";
+  static const String settings = "settings";
+  static const String upgrade = "upgrade";
+  static const String success = "success";
+  static const String wishlist = "wishlist";
+  static const String history = "history";
+
   static const listLanguages = [
     'Azərbaycanca',   // Azerbaijani
     'Türkçe',            // Turkish
@@ -67,19 +82,6 @@ class Constants {
   // Custom Search Engine API (CSE)
   static const String cseApiKey = "AIzaSyDmlzapaTiCmCQGhlobeHqjPGCE9UAdxKA";
   static const String cseId = "55f994cb2ea4442b2";
-
-  static const String appName = "Voux";
-  static const String splash = "splash";
-  static const String onboarding = "onboarding";
-  static const String home = "home";
-  static const String detail = "detail";
-  static const String auth = "auth";
-  static const String privacyPolicy = "privacyPolicy";
-  static const String agreement = "agreement";
-  static const String settings = "settings";
-  static const String upgrade = "upgrade";
-  static const String success = "success";
-  static const String wishlist = "wishlist";
 
   // Error Messages
   static const String error = "error";

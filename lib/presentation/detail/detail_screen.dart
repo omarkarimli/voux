@@ -35,6 +35,7 @@ class _DetailScreenState extends State<DetailScreen> {
     if (!_initialized) {
       viewModel = DetailViewModel(clothingItemBoths: widget.clothingItemBoths);
       viewModel.initialize(context);
+
       _initialized = true;
     }
   }

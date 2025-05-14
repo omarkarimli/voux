@@ -132,7 +132,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
         final price = experimentalModel.selectedStorePrice();
         if (price != Constants.unknown) {
           return Text(
-            price.toFormattedPrice(),
+            "\$$price",
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
               color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
@@ -171,7 +171,7 @@ class _ClothingItemWishlistCardState extends State<ClothingItemWishlistCard> {
         : item.clothingItemModelBoth.clothingItemModel?.colorHexCode
         ?? Constants.unknown;
 
-    return colorName != Constants.unknown ? GestureDetector(
+    return colorName != Constants.unknown && colorHexCode != Constants.unknown ? GestureDetector(
         onDoubleTap: () {
           widget.vm.copyToClipboard(widget.parentContext, colorHexCode);
         },

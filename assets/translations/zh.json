@@ -78,5 +78,10 @@
   "API response was empty or null": "API响应为空或null",
   "Failed to analyze image": "图片分析失败",
   "Selecting": "选择中",
-  "Are you sure you want to go external browser?": "您确定要转到外部浏览器吗？"
+  "Are you sure you want to go external browser?": "您确定要转到外部浏览器吗？",
+  "History": "历史记录",
+  "No items in history": "历史记录为空",
+  "Are you sure you want to clear the history?": "您确定要清空历史记录吗？",
+  "History cleared": "历史记录已清空",
+  "Error updating history": "更新历史记录时出错"
 }

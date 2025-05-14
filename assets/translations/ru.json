@@ -78,5 +78,10 @@
   "API response was empty or null": "Ответ API был пустым или null",
   "Failed to analyze image": "Не удалось проанализировать изображение",
   "Selecting": "Выбор",
-  "Are you sure you want to go external browser?": "Вы уверены, что хотите перейти во внешний браузер?"
+  "Are you sure you want to go external browser?": "Вы уверены, что хотите перейти во внешний браузер?",
+  "History": "История",
+  "No items in history": "Нет записей в истории",
+  "Are you sure you want to clear the history?": "Вы уверены, что хотите очистить историю?",
+  "History cleared": "История очищена",
+  "Error updating history": "Ошибка при обновлении истории"
 }

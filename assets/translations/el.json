@@ -79,5 +79,10 @@
   "API response was empty or null": "Η απόκριση API ήταν κενή ή null",
   "Failed to analyze image": "Αποτυχία ανάλυσης εικόνας",
   "Selecting": "Επιλογή",
-  "Are you sure you want to go external browser?": "Είστε σίγουροι ότι θέλετε να μεταβείτε σε εξωτερικό πρόγραμμα περιήγησης?"
+  "Are you sure you want to go external browser?": "Είστε σίγουροι ότι θέλετε να μεταβείτε σε εξωτερικό πρόγραμμα περιήγησης?",
+  "History": "Ιστορικό",
+  "No items in history": "Δεν υπάρχουν στοιχεία στο ιστορικό",
+  "Are you sure you want to clear the history?": "Είστε σίγουροι ότι θέλετε να διαγράψετε το ιστορικό;",
+  "History cleared": "Το ιστορικό διαγράφηκε",
+  "Error updating history": "Σφάλμα κατά την ενημέρωση του ιστορικού"
 }

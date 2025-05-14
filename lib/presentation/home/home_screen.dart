@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:voux/presentation/history/history_screen.dart';
 
 import '../../models/optional_analysis_result_model.dart';
 import '../wishlist/wishlist_screen.dart';
@@ -146,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 )
                               ),
-                              TextSpan(text: "\n${"I hope you are".tr()} "),
+                              TextSpan(text: "\n${"I hope you are".tr()}\n"),
                               TextSpan(text: "doing well".tr(), style: TextStyle(fontWeight: FontWeight.w600)),
                             ],
                           ),
@@ -352,33 +353,36 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/ai_search.png"),
-                  ],
-                ),
-                SizedBox(height: 22),
-                Padding(
-                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Total explored".tr(), style: Theme.of(context).textTheme.bodyLarge),
-                        SizedBox(height: 4),
-                        Text("${vm.userModel?.currentAnalysisCount ?? 0} ${"images".tr()}", style: Theme.of(context).textTheme.headlineMedium),
-                      ],
-                    ),
-                  )
-                ),
-              ],
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, HistoryScreen.routeName),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      StackedAvatarBadge(profileImage: "assets/images/woman_1.png", badgeImage: "assets/images/ai_search.png"),
+                    ],
+                  ),
+                  SizedBox(height: 22),
+                  Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Total explored".tr(), style: Theme.of(context).textTheme.bodyLarge),
+                            SizedBox(height: 4),
+                            Text("${vm.userModel?.currentAnalysisCount ?? 0} ${"images".tr()}", style: Theme.of(context).textTheme.headlineMedium),
+                          ],
+                        ),
+                      )
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(

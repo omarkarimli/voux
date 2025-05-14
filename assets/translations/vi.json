@@ -79,5 +79,10 @@
   "API response was empty or null": "Phản hồi API trống hoặc null",
   "Failed to analyze image": "Không thể phân tích hình ảnh",
   "Selecting": "Đang chọn",
-  "Are you sure you want to go external browser?": "Bạn có chắc muốn mở trình duyệt bên ngoài không?"
+  "Are you sure you want to go external browser?": "Bạn có chắc muốn mở trình duyệt bên ngoài không?",
+  "History": "Lịch sử",
+  "No items in history": "Không có mục nào trong lịch sử",
+  "Are you sure you want to clear the history?": "Bạn có chắc muốn xóa lịch sử không?",
+  "History cleared": "Đã xóa lịch sử",
+  "Error updating history": "Lỗi khi cập nhật lịch sử"
 }

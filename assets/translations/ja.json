@@ -78,5 +78,10 @@
   "API response was empty or null": "APIの応答が空またはnullでした",
   "Failed to analyze image": "画像の解析に失敗しました",
   "Selecting": "選択中",
-  "Are you sure you want to go external browser?": "外部ブラウザに移動しますか？"
+  "Are you sure you want to go external browser?": "外部ブラウザに移動しますか？",
+  "History": "履歴",
+  "No items in history": "履歴に項目がありません",
+  "Are you sure you want to clear the history?": "履歴を消去してもよろしいですか？",
+  "History cleared": "履歴を消去しました",
+  "Error updating history": "履歴の更新中にエラーが発生しました"
 }

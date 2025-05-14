@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../dao/clothing_item_history_dao.dart';
+import '../../di/locator.dart';
+import '../../models/clothing_item_floor_model.dart';
 import '../reusables/stacked_avatar_badge.dart';
 import '../reusables/more_bottom_sheet.dart';
 import '../../models/store_model.dart';
@@ -31,8 +34,10 @@ class ClothingItemCard extends StatefulWidget {
 }
 
 class _ClothingItemCardState extends State<ClothingItemCard> {
-
+  bool _didRunPostBuild = false;
   bool enableExperimentalFeatures = false;
+
+  List<Map<String, String>> googleResults = [];
 
   @override
   void initState() {
@@ -177,7 +182,27 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
     );
   }
 
+  void addItemsToHistory() async {
+    final ClothingItemHistoryDao clothingItemHistoryDao = locator.get();
+    final clothingItemFloorModel = ClothingItemFloorModel(
+        null,
+        widget.imagePath,
+        googleResults,
+        widget.item,
+        widget.optionalAnalysisResult
+    );
+    await clothingItemHistoryDao.insertClothingItemFloorModel(clothingItemFloorModel);
+  }
+
   Widget imageSamples(DetailViewModel vm, String details) {
+    // Run once after the first build frame
+    if (!_didRunPostBuild) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        addItemsToHistory();
+      });
+      _didRunPostBuild = true;
+    }
+
     return FutureBuilder<List<Map<String, String>>>(
       future: vm.fetchGoogleImages(details),
       builder: (context, snapshot) {
@@ -195,6 +220,8 @@ class _ClothingItemCardState extends State<ClothingItemCard> {
           return SizedBox.shrink();
         } else if (snapshot.hasData) {
           final results = snapshot.data!;
+          googleResults = results;
+
           return results.isNotEmpty
               ? ClipRRect(
             borderRadius: BorderRadius.circular(Constants.cornerRadiusMedium),

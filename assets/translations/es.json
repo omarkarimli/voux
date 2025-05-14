@@ -78,5 +78,10 @@
   "API response was empty or null": "La respuesta de la API estaba vacía o nula",
   "Failed to analyze image": "Error al analizar la imagen",
   "Selecting": "Seleccionando",
-  "Are you sure you want to go external browser?": "¿Estás seguro de que quieres ir al navegador externo?"
+  "Are you sure you want to go external browser?": "¿Estás seguro de que quieres ir al navegador externo?",
+  "History": "Historial",
+  "No items in history": "No hay elementos en el historial",
+  "Are you sure you want to clear the history?": "¿Estás seguro de que quieres borrar el historial?",
+  "History cleared": "Historial borrado",
+  "Error updating history": "Error al actualizar el historial"
 }
